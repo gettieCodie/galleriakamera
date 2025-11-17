@@ -165,7 +165,7 @@ include 'includes/header_user.php';
             <h1>Trending Now</h1>
         </div>
         <div class="products-grid">
-        <?php
+        <!--
         include 'includes/db_connect.php';
         
         $query = "SELECT p.*, SUM(o.quantity) as total_sold 
@@ -174,12 +174,12 @@ include 'includes/header_user.php';
                 GROUP BY p.id 
                 ORDER BY total_sold DESC 
                 LIMIT 4";
-        $result = mysqli_query($conn, $query);
+        $result = mysqli_query($conn, $query); 
         
         if(mysqli_num_rows($result) > 0) {
             // WITH DATA - Real products
             while($product = mysqli_fetch_assoc($result)) {
-        ?>
+        ?> -->
         <div class="product-card has-data">
             <div class="product-badge">Best Seller</div>
             <div class="product-image">
@@ -192,12 +192,12 @@ include 'includes/header_user.php';
                 Add to cart
             </button>
         </div>
-        <?php
+        <!-- 
             }
         } else {
             // NO DATA - Placeholder products
             for($i = 1; $i <= 4; $i++) {
-        ?>
+        ?> -->
         <div class="product-card no-data">
             <div class="product-badge placeholder-badge">Best Seller</div>
             <div class="product-image placeholder-image">
@@ -210,11 +210,11 @@ include 'includes/header_user.php';
                 Add to cart
             </button>
         </div>
-        <?php
+        <!-- 
             }
         }
         mysqli_close($conn);
-        ?>
+        ?> -->
     </div>
 
     <div class="view-more-container">
