@@ -1,8 +1,8 @@
 <?php 
 include 'db_connect.php';
 
-$email = $_POST['email'];
-$password = $_POST['password'];
+$email = trim($_POST['email']);
+$password = trim($_POST['password']);
 
 // Check if email exists
 $stmt = $conn->prepare("SELECT * FROM Customers WHERE Email = ?");

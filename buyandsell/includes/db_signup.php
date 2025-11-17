@@ -3,10 +3,12 @@ session_start(); // Start session
 include 'db_connect.php';
 
 // Get form data
-$fullname = $_POST['fullname'];
-$email = $_POST['email'];
-$password = $_POST['password'];
+$fullname = trim($_POST['fullname']);
+$email = trim($_POST['email']);
+$password = trim($_POST['password']);
 $role = $_POST['role'];
+
+$errors = [];
 
 // For security 
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
