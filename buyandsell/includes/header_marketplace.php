@@ -49,17 +49,15 @@
             <!-- Navigation Links (right side) -->
             <nav class="nav-links">
                 <ul>
-                    
-                    <div class="nav-links-icons">
-                        <i class="fa-solid fa-magnifying-glass" id="search-toggle"></i>
-                        <i class="fa-regular fa-heart" onclick="window.location.href='wishlist.php'"></i>
-                        <i class="fa-solid fa-bag-shopping" onclick="window.location.href='cart.php'"></i>
-                    </div>
-                    <li><a href="../dashboard.php">My Dashboard</a></li>
-                    <li><a href="../logout.php" class="logout-btn">Logout</a></li>
+                    <li><a href="../dashboard.php" class="dashboard-link">
+                        <img src="assets/images/dashboard.png" alt="Dashboard Icon">
+                        My Dashboard
+                    </a></li>
+
+                    <li><a href="../logout.php" class="logout-btn"><img src="assets/images/logout.png" alt="Logout Icon">   Logout</a></li>
                 </ul>
             </nav>
-        </div>s
+        </div>
     </header>
 </body>
 </html>
