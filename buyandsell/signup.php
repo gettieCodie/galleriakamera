@@ -10,7 +10,7 @@ include 'includes/header_user.php';
 <div class="container">
     <h2>Create an Account</h2>
 
-    <form action="includes/db_signup.php" method="POST">
+    <form action="core/db_signup.php" method="POST">
         <label for="fullname">Full Name</label>
         <input type="text" id="fullname" name="fullname" placeholder="Enter your name" required>
 

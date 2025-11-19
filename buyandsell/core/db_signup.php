@@ -61,7 +61,7 @@ if($stmt->execute()){
         $mail->isHTML(true);
         $mail->Subject = "Verify your Galleria Kamera account";
 
-        $verify_link = "http://localhost/galleriakamera/buyandsell/includes/verify.php?token=$token";
+        $verify_link = "http://localhost/galleriakamera/buyandsell/core/verify.php?token=$token";
 
         $mail->Body = '
         <!DOCTYPE html>
@@ -122,7 +122,7 @@ if($stmt->execute()){
 
         $mail->send();
         $_SESSION['success'] = "Account created! Check your email to verify.";
-        header("Location: ../login.php");
+        header("Location: ../includes/confirm_box.php"); 
         exit;
 
     } catch (Exception $e) {

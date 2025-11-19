@@ -8,7 +8,7 @@ include 'includes/header_user.php';
 <div class="container">
     <h2>User Login</h2>
 
-    <form action="includes/db_login.php" method="POST">
+    <form action="core/db_login.php" method="POST">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
