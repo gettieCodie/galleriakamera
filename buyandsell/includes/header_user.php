@@ -13,10 +13,14 @@
             <a href="index.php">    
                 <img src="assets/images/logo.svg" alt="Galleria Kamera" class="logo_gk">
             </a>
-            <div class="nav-links">
+            <!-- <div class="nav-links">
                 <i class="fa-solid fa-magnifying-glass" id="search-toggle"></i>
                 <i class="fa-regular fa-heart" onclick="window.location.href='wishlist.php'"></i>
                 <i class="fa-solid fa-bag-shopping" onclick="window.location.href='cart.php'"></i>
+            </div> -->
+            <div class="nav-links">
+                <a href="login.php">Login</a>
+                <a href="signup.php">Register</a>
             </div>
         </nav>
     </div>
