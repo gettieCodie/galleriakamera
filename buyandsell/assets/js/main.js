@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // SHOW MORE / SHOW LESS BUTTON
     const btn = document.getElementById("toggleMoreBtn");
     const moreItems = document.querySelectorAll(".more-item");
     const ctaBox = document.getElementById("ctaBox");

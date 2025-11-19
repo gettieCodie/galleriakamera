@@ -18,7 +18,7 @@ $stmt = $conn->prepare("UPDATE Customers SET IsVerified = 1, VerifyToken = NULL 
 $stmt->bind_param("i", $user['CustomerID']);
 $stmt->execute();
 
-echo "<h2>Email verified successfully!</h2>";
-echo "<a href='../login.php'>Click here to log in</a>";
+header("Location: ../includes/email_verified.php?email=" . urlencode($user['Email']));
+exit;
 
 ?>
