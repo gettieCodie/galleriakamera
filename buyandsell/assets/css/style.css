@@ -574,7 +574,7 @@ input, select {
 }
 
 /* confirmation box ----------------------------------------------------------------------------------------------*/
-/* Full-page container */
+
 .confirm-page {
     display: flex;
     justify-content: center;
@@ -687,6 +687,46 @@ input, select {
     .confirm-box p {
         font-size: 15px;
     }
+}
+
+/* verified ---------------------------------------------------------------------------------------------- */
+/* Icon container styling */
+.icon-container {
+    margin-bottom: 20px;
+}
+
+.success-icon {
+    width: 64px;
+    height: 64px;
+    color: #10B981; /* Tailwind green-500 */
+}
+
+/* Highlighted email */
+.highlight-email {
+    font-weight: 500;
+    color: #111827;
+}
+
+/* Optional: Style the "Go to Login" button like your resend button */
+.login-btn {
+    display: inline-block;
+    padding: 10px 30px;
+    margin: 20px 0 0 0;
+    background: #372200;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.3s ease, transform 0.3s ease;
+    text-decoration: none; /* remove underline */
+}
+
+.login-btn:hover {
+    background: #5a3a00;
+    transform: translateY(-2px);
 }
 
 
