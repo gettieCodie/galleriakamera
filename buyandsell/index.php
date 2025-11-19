@@ -161,6 +161,7 @@ include 'includes/header_user.php';
         </div>
     </section>
 
+<<<<<<< HEAD
 <!-- Best Sellers Section -->
 <section class="best-sellers-section">
 
@@ -173,21 +174,62 @@ include 'includes/header_user.php';
             <div class="img-wrap">
                 <img src="assets/images/xt100.jpg" alt="Fujifilm XT100">
                 <button class="wishlist-btn">♡</button>
+=======
+    <!-- Best Sellers Section -->
+    <section class="best-sellers-section">
+        <div class="trending-header">
+            <h1>Trending Now</h1>
+        </div>
+        <div class="products-grid">
+        <!--
+        include 'includes/db_connect.php';
+        
+        $query = "SELECT p.*, SUM(o.quantity) as total_sold 
+                FROM products p 
+                LEFT JOIN orders o ON p.id = o.product_id 
+                GROUP BY p.id 
+                ORDER BY total_sold DESC 
+                LIMIT 4";
+        $result = mysqli_query($conn, $query); 
+        
+        if(mysqli_num_rows($result) > 0) {
+            // WITH DATA - Real products
+            while($product = mysqli_fetch_assoc($result)) {
+        ?> -->
+        <div class="product-card has-data">
+            <div class="product-badge">Best Seller</div>
+            <div class="product-image">
+                <img src="assets/images/products/<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>" onerror="this.src='assets/images/placeholder.jpg'">
+>>>>>>> b8c489a00de152c40b6610e861d16b246bb59e43
             </div>
             <h3>Fujifilm XT100</h3>
             <p class="price">₱28,500</p>
             <button class="add-cart">Add to Cart</button>
         </div>
+<<<<<<< HEAD
 
         <div class="product-card">
             <div class="img-wrap">
                 <img src="assets/images/xa5.jpg" alt="Fujifilm XA5">
                 <button class="wishlist-btn">♡</button>
+=======
+        <!-- 
+            }
+        } else {
+            // NO DATA - Placeholder products
+            for($i = 1; $i <= 4; $i++) {
+        ?> -->
+        <div class="product-card no-data">
+            <div class="product-badge placeholder-badge">Best Seller</div>
+            <div class="product-image placeholder-image">
+                <div class="image-placeholder">📷</div>
+>>>>>>> b8c489a00de152c40b6610e861d16b246bb59e43
             </div>
             <h3>Fujifilm XA5</h3>
             <p class="price">₱26,000</p>
             <button class="add-cart">Add to Cart</button>
         </div>
+<<<<<<< HEAD
 
         <div class="product-card">
             <div class="img-wrap">
@@ -250,6 +292,13 @@ include 'includes/header_user.php';
             <button class="add-cart">Add to Cart</button>
         </div>
 
+=======
+        <!-- 
+            }
+        }
+        mysqli_close($conn);
+        ?> -->
+>>>>>>> b8c489a00de152c40b6610e861d16b246bb59e43
     </div>
 
     <!-- Expand Button -->
