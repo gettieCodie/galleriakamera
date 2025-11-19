@@ -1,0 +1,197 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body & Font */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f5f7fa;
+    color: #333;
+}
+
+/* Navigation Bar Styles */
+.navbar {
+    background-color: #372200; /* Dark brown background */
+    color: #222222;
+    padding: 15px 20px;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #e0e0e0;
+    width: 100%;
+    position: fixed; /* Make navbar fixed */
+    top: 0; /* Stick to top */
+    left: 0;
+    z-index: 1000; /* Ensure it stays above other content */
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    backdrop-filter: blur(10px); /* This creates the blur effect */
+    -webkit-backdrop-filter: blur(10px); /* For Safari support */
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1290px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+
+
+/* Logo Section */
+.logo img {
+    height: 40px; /* Adjust logo size */
+}
+
+/* Camera Brands Section (Center) */
+.camera-brands {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+.camera-brands .brand-item {
+    position: relative;
+}
+
+.camera-brands span {
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: color 0.3s ease;
+}
+
+.camera-brands span:hover {
+    color: #ffb84d; /* Hover color */
+}
+
+.camera-models {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border-radius: 5px;
+    display: none;
+    min-width: 160px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    z-index: 10;
+}
+
+.camera-brands .brand-item:hover .camera-models {
+    display: block;
+}
+
+.camera-models li {
+    padding: 8px 12px;
+}
+
+.camera-models li a {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.camera-models li a:hover {
+    background-color: #f0f0f0;
+}
+
+/* Navigation links (right side) */
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links ul {
+    list-style-type: none;
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links li {
+    position: relative;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    transition: background 0.3s ease;
+}
+
+.nav-links a:hover {
+    background-color: #5a3a00; /* Darker brown on hover */
+    border-radius: 5px;
+}
+
+/* Logout Button Styling */
+.logout-btn {
+    background-color: #e74c3c;
+    border-radius: 5px;
+    padding: 8px 15px;
+    color: white;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Mobile Menu */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.mobile-menu-toggle .bar {
+    width: 30px;
+    height: 4px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .camera-brands {
+        display: none; /* Hide camera brands on small screens */
+    }
+
+    .nav-links {
+        display: none; /* Hide links by default */
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .nav-links.active {
+        display: block;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background-color: #372200;
+        padding: 20px 0;
+        text-align: center;
+    }
+
+    .nav-links ul {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav-links a {
+        font-size: 18px;
+    }
+}

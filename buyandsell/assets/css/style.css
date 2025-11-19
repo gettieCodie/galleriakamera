@@ -306,7 +306,6 @@ input, select {
 }
 
 
-
 .brand-title, .brand-description {
     font-size: small;
     color: #777777;
@@ -379,7 +378,6 @@ input, select {
 }
 
 /* trending ----------------------------------------------------------------------------------------------*/
-
 
 .price-section {
     display: flex;
@@ -933,4 +931,5 @@ input, select {
     font-size: 14px;
     color: #777;
 }
+
 
