@@ -5,6 +5,8 @@ include 'includes/header_user.php';
 // include 'gridsystem.php';
 ?>
 
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <div class="container">
     <h2>Create an Account</h2>
 
@@ -24,7 +26,7 @@ include 'includes/header_user.php';
             <option value="seller">Seller</option>
             <option value="both">Both</option>
         </select>
-
+        <div class="g-recaptcha" data-sitekey="6LdcWw8sAAAAACDSJC7L4GtnWH9E30qzxzFA5pLy"></div>
         <button class="btn" type="submit">Sign Up</button>
     </form>
 

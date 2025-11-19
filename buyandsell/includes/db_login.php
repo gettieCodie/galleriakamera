@@ -19,18 +19,51 @@ if($result->num_rows == 0){
 $user = $result->fetch_assoc();
 
 // Verify password
-if(password_verify($password, $user['Password'])){
-    $_SESSION['user_id'] = $user['CustomerID'];
-    $_SESSION['user_name'] = $user['FullName'];
-    $_SESSION['user_role'] = $user['Role'];
-
-    $_SESSION['success'] = "Welcome, " . $user['FullName'] . "!";
-    header("Location: ../index.php");
-    exit;
-} else {
+if(!password_verify($password, $user['Password'])){
     $_SESSION['error'] = "Incorrect password. Try again.";
     header("Location: ../login.php");
     exit;
 }
+
+// Check if admin
+if($user['CustomerID'] == 1 && $user['Role'] === 'admin'){
+    $_SESSION['admin_id'] = $user['CustomerID'];
+    $_SESSION['admin_name'] = $user['FullName'];
+    $_SESSION['admin_role'] = 'admin';
+
+    $_SESSION['success'] = "Welcome, Admin " . $user['FullName'] . "!";
+    header("Location: ../admin/admin_dashboard.php");
+    exit;
+}
+
+// Normal customer login
+$_SESSION['user_id'] = $user['CustomerID'];
+$_SESSION['user_name'] = $user['FullName'];
+$_SESSION['user_role'] = $user['Role'];
+
+$_SESSION['success'] = "Welcome, " . $user['FullName'] . "!";
+header("Location: ../index.php");
+exit;
+
+// if($user['IsVerified'] == 0){
+//     $_SESSION['error'] = "Please verify your email before logging in.";
+//     header("Location: ../login.php");
+//     exit;
+// }
+
+// // Verify password
+// if(password_verify($password, $user['Password'])){
+//     $_SESSION['user_id'] = $user['CustomerID'];
+//     $_SESSION['user_name'] = $user['FullName'];
+//     $_SESSION['user_role'] = $user['Role'];
+
+//     $_SESSION['success'] = "Welcome, " . $user['FullName'] . "!";
+//     header("Location: ../index.php");
+//     exit;
+// } else {
+//     $_SESSION['error'] = "Incorrect password. Try again.";
+//     header("Location: ../login.php");
+//     exit;
+// }
 
 ?>
