@@ -55,4 +55,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
+    // BOOTSTRAP FORM VALIDATION
+    // ------------------------------------------
+    // Bootstrap validation
+    const forms = document.querySelectorAll('.needs-validation');
+
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+
+            // Check form validity + recaptcha
+            if (!form.checkValidity() || grecaptcha.getResponse() === "") {
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (grecaptcha.getResponse() === "") {
+                    alert("Please complete the reCAPTCHA");
+                }
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+    });
+
 });

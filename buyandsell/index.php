@@ -21,6 +21,7 @@ include 'includes/header_user.php';
     
     
 </head>
+
 <body>
     <!-- Tagline Section -->
     <section class="tagline-section">
@@ -161,7 +162,6 @@ include 'includes/header_user.php';
         </div>
     </section>
 
-<<<<<<< HEAD
 <!-- Best Sellers Section -->
 <section class="best-sellers-section">
 
@@ -174,131 +174,137 @@ include 'includes/header_user.php';
             <div class="img-wrap">
                 <img src="assets/images/xt100.jpg" alt="Fujifilm XT100">
                 <button class="wishlist-btn">♡</button>
-=======
-    <!-- Best Sellers Section -->
-    <section class="best-sellers-section">
-        <div class="trending-header">
-            <h1>Trending Now</h1>
-        </div>
-        <div class="products-grid">
-        <!--
-        include 'includes/db_connect.php';
-        
-        $query = "SELECT p.*, SUM(o.quantity) as total_sold 
-                FROM products p 
-                LEFT JOIN orders o ON p.id = o.product_id 
-                GROUP BY p.id 
-                ORDER BY total_sold DESC 
-                LIMIT 4";
-        $result = mysqli_query($conn, $query); 
-        
-        if(mysqli_num_rows($result) > 0) {
-            // WITH DATA - Real products
-            while($product = mysqli_fetch_assoc($result)) {
-        ?> -->
-        <div class="product-card has-data">
-            <div class="product-badge">Best Seller</div>
-            <div class="product-image">
-                <img src="assets/images/products/<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>" onerror="this.src='assets/images/placeholder.jpg'">
->>>>>>> b8c489a00de152c40b6610e861d16b246bb59e43
             </div>
+
             <h3>Fujifilm XT100</h3>
-            <p class="price">₱28,500</p>
-            <button class="add-cart">Add to Cart</button>
+
+            <div class="price-section">
+                <p class="price">₱28,500</p>
+                <p class="savings">Save ₱5,000</p>
+            </div>
+
+            <p class="original-price">Brand New Price: <s>₱33,500</s></p>
         </div>
-<<<<<<< HEAD
+
 
         <div class="product-card">
             <div class="img-wrap">
                 <img src="assets/images/xa5.jpg" alt="Fujifilm XA5">
                 <button class="wishlist-btn">♡</button>
-=======
-        <!-- 
-            }
-        } else {
-            // NO DATA - Placeholder products
-            for($i = 1; $i <= 4; $i++) {
-        ?> -->
-        <div class="product-card no-data">
-            <div class="product-badge placeholder-badge">Best Seller</div>
-            <div class="product-image placeholder-image">
-                <div class="image-placeholder">📷</div>
->>>>>>> b8c489a00de152c40b6610e861d16b246bb59e43
             </div>
+
             <h3>Fujifilm XA5</h3>
-            <p class="price">₱26,000</p>
-            <button class="add-cart">Add to Cart</button>
+
+            <div class="price-section">
+                <p class="price">₱26,000</p>
+                <p class="savings">Save ₱4,000</p>
+            </div>
+
+            <p class="original-price">Brand New Price: <s>₱30,000</s></p>
         </div>
-<<<<<<< HEAD
+
 
         <div class="product-card">
             <div class="img-wrap">
                 <img src="assets/images/m100.jpg" alt="Canon M100">
                 <button class="wishlist-btn">♡</button>
             </div>
+
             <h3>Canon EOS M100</h3>
-            <p class="price">₱24,000</p>
-            <button class="add-cart">Add to Cart</button>
+
+            <div class="price-section">
+                <p class="price">₱24,000</p>
+                <p class="savings">Save ₱3,500</p>
+            </div>
+
+            <p class="original-price">Brand New Price: <s>₱27,500</s></p>
         </div>
+
 
         <div class="product-card">
             <div class="img-wrap">
-                <img src="assets/images/a6000.jpg" alt="Canon M100">
+                <img src="assets/images/a6000.jpg" alt="Sony A6000">
                 <button class="wishlist-btn">♡</button>
             </div>
+
             <h3>Sony A6000</h3>
-            <p class="price">₱25,000</p>
-            <button class="add-cart">Add to Cart</button>
+
+            <div class="price-section">
+                <p class="price">₱25,000</p>
+                <p class="savings">Save ₱5,000</p>
+            </div>
+
+            <p class="original-price">Brand New Price: <s>₱30,000</s></p>
         </div>
+
 
         <!-- HIDDEN CARDS -->
         <div class="product-card more-item">
             <div class="img-wrap">
-                <img src="assets/images/a6400.jpg" alt="Sony A6000">
+                <img src="assets/images/a6400.jpg" alt="Sony A6400">
                 <button class="wishlist-btn">♡</button>
             </div>
+
             <h3>Sony A6400</h3>
-            <p class="price">₱45,000</p>
-            <button class="add-cart">Add to Cart</button>
+
+            <div class="price-section">
+                <p class="price">₱45,000</p>
+                <p class="savings">Save ₱7,000</p>
+            </div>
+
+            <p class="original-price">Brand New Price: <s>₱52,000</s></p>
         </div>
+
 
         <div class="product-card more-item">
             <div class="img-wrap">
                 <img src="assets/images/sve10.jpg" alt="Sony ZV-E10">
                 <button class="wishlist-btn">♡</button>
             </div>
+
             <h3>Sony ZV-E10</h3>
-            <p class="price">₱38,000</p>
-            <button class="add-cart">Add to Cart</button>
+
+            <div class="price-section">
+                <p class="price">₱38,000</p>
+                <p class="savings">Save ₱4,000</p>
+            </div>
+
+            <p class="original-price">Brand New Price: <s>₱42,000</s></p>
         </div>
+
 
         <div class="product-card more-item">
             <div class="img-wrap">
-                <img src="assets/images/xt30.webp" alt="Sony A6000">
+                <img src="assets/images/xt30.webp" alt="Fujifilm XT30 II">
                 <button class="wishlist-btn">♡</button>
             </div>
+
             <h3>Fujifilm XT30 II</h3>
-            <p class="price">₱56,000</p>
-            <button class="add-cart">Add to Cart</button>
+
+            <div class="price-section">
+                <p class="price">₱56,000</p>
+                <p class="savings">Save ₱6,000</p>
+            </div>
+
+            <p class="original-price">Brand New Price: <s>₱62,000</s></p>
         </div>
 
         <div class="product-card more-item">
             <div class="img-wrap">
-                <img src="assets/images/m50 ii.webp" alt="Sony ZV-E10">
+                <img src="assets/images/m50 ii.webp" alt="Canon M50 II">
                 <button class="wishlist-btn">♡</button>
             </div>
+
             <h3>Canon M50 II</h3>
-            <p class="price">₱38,000</p>
-            <button class="add-cart">Add to Cart</button>
+
+            <div class="price-section">
+                <p class="price">₱38,000</p>
+                <p class="savings">Save ₱5,000</p>
+            </div>
+
+            <p class="original-price">Brand New Price: <s>₱43,000</s></p>
         </div>
 
-=======
-        <!-- 
-            }
-        }
-        mysqli_close($conn);
-        ?> -->
->>>>>>> b8c489a00de152c40b6610e861d16b246bb59e43
     </div>
 
     <!-- Expand Button -->
@@ -313,6 +319,7 @@ include 'includes/header_user.php';
     </div>
 
 </section>
+
 
     <!-- testimonial -->
         <section class="testimonial-section">
