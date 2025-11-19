@@ -26,7 +26,7 @@ $fullname = $_SESSION['signup_name'] ?? '';
 
             <h2>Confirm Your Account</h2>
 
-            <p>A confirmation email has been sent to <span class="highlight-email">youremail@example.com</span>.</p>
+            <p>A confirmation email has been sent to <span class="highlight-email"><?php echo htmlspecialchars($email); ?></span>.</p>
 
             <p class="no-email">Didn't receive the email?</p>
             <button class="resend-btn">Resend Email</button>
