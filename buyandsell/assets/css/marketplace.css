@@ -61,14 +61,13 @@ body {
 .camera-brands span {
     font-size: 16px;
     font-weight: 500;
-    text-transform: uppercase;
     cursor: pointer;
     padding: 5px 10px;
     transition: color 0.3s ease;
 }
 
 .camera-brands span:hover {
-    color: #ffb84d; /* Hover color */
+    color: #422800; /* Hover color */
 }
 
 .camera-models {
@@ -82,6 +81,7 @@ body {
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
     padding: 10px 0;
     z-index: 10;
+    list-style: none;
 }
 
 .camera-brands .brand-item:hover .camera-models {
@@ -119,31 +119,81 @@ body {
 }
 
 .nav-links a {
-    color: white;
+    color: rgb(34, 34, 34);
     text-decoration: none;
     font-weight: 500;
     font-size: 16px;
-    text-transform: uppercase;
     padding: 5px 10px;
     transition: background 0.3s ease;
 }
 
 .nav-links a:hover {
-    background-color: #5a3a00; /* Darker brown on hover */
+    background-color: #eeeeee; /* Darker brown on hover */
     border-radius: 5px;
 }
+
+.nav-links-icons {
+    display: flex;      /* Align icons in a row */
+    gap: 15px;          /* Adjust space between icons */
+    align-items: center; /* Align icons vertically */
+}
+
+.nav-links-icons i {
+    font-size: 20px;    /* Adjust icon size */
+    cursor: pointer;   /* Change cursor to pointer on hover */
+}
+
+
+/* dashboard */
+.dashboard-link {
+    display: flex;                     /* Align the image and text horizontally */
+    align-items: center;               /* Vertically center them */
+    padding: 12px 20px;                /* Add padding inside the link */
+    background-color: transparent;     /* Transparent background */
+    border: 1px solid #ccc;           /* Soft gray border for outline */
+    border-radius: 7px;               /* Rounded corners */
+    text-decoration: none;             /* Remove underline */
+    color: #333;                       /* Text color */
+    transition: all 0.3s ease;         /* Smooth transition for hover effects */
+    margin: 10px 0;                    /* Add some space between list items */
+}
+
+/* Space between the icon and the text */
+.dashboard-link img {
+    margin-right: 10px;                /* Space between image and text */
+    width: 15px;                       /* Set width for the image */
+    height: 15px;                      /* Set height for the image */
+}
+
+/* Hover effect for the link */
+.dashboard-link:hover {
+    background-color: #f0f0f0;         /* Light gray background on hover */
+    border-color: #bbbbbb;             /* Change border color to blue */                 /* Change text color to blue */    /* Slight lift effect */
+}
+
+
 
 /* Logout Button Styling */
 .logout-btn {
-    background-color: #e74c3c;
-    border-radius: 5px;
-    padding: 8px 15px;
-    color: white;
-    font-weight: 500;
+    display: flex;                     /* Align the image and text horizontally */
+    align-items: center;               /* Vertically center them */
+    padding: 12px 20px;                /* Add padding inside the link */
+    background-color: transparent;     /* Transparent background */          /* Soft gray border for outline */
+    border-radius: 7px;               /* Rounded corners */
+    text-decoration: none;             /* Remove underline */
+    color: #333;                       /* Text color */
+    transition: all 0.3s ease;         /* Smooth transition for hover effects */
+    margin: 10px 0; 
+}
+
+.logout-btn img {
+    margin-right: 10px;                /* Space between image and text */
+    width: 15px;                       /* Set width for the image */
+    height: 15px;                      /* Set height for the image */
 }
 
 .logout-btn:hover {
-    background-color: #c0392b;
+    background-color: #eeeeee;
 }
 
 /* Mobile Menu */
