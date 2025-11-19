@@ -1,3 +1,10 @@
+<?php
+session_start();
+
+$email = $_SESSION['signup_email'];
+$fullname = $_SESSION['signup_name'] ?? '';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
