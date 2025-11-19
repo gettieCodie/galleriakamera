@@ -1,72 +1,68 @@
 <?php
-session_start(); // Start session
+session_start();
 include 'db_connect.php';
 require '../phpmailer/PHPMailer.php';
 require '../phpmailer/SMTP.php';
 require '../phpmailer/Exception.php';
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$secretKey = "6LdcWw8sAAAAAGupVBCFI1oFHD0ZoPJgva14a_mt";
-$recaptchaResponse = $_POST['g-recaptcha-response'];
-$verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$recaptchaResponse");
-$responseData = json_decode($verifyResponse, true);
-
-if(!$responseData['success']){
-    $_SESSION['error'] = "Please complete the CAPTCHA.";
-    header("Location: ../signup.php");
+if(!isset($_POST['email'])){
+    $_SESSION['error'] = "No email provided.";
+    header("Location: ../includes/confirm_box.php");
     exit;
 }
 
-// Get form data
-$fullname = trim($_POST['fullname']);
-$email = trim($_POST['email']);
-$password = trim($_POST['password']);
-$role = $_POST['role'];
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+$email = $_POST['email'];
 
-$_SESSION['signup_email'] = $email;
-$_SESSION['signup_name'] = $fullname;
-
-// Check if email exists
+// Fetch user info
 $stmt = $conn->prepare("SELECT * FROM Customers WHERE Email = ?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if($result->num_rows > 0){
-    $_SESSION['error'] = "Email already registered. Please login.";
-    header("Location: ../signup.php");
+if($result->num_rows == 0){
+    $_SESSION['error'] = "Email not found.";
+    header("Location: ../includes/confirm_box.php");
     exit;
 }
 
+$user = $result->fetch_assoc();
+
+$fullname = $user['FullName'];
+
+// Check if already verified
+if($user['IsVerified'] == 1){
+    $_SESSION['success'] = "Account already verified. Please login.";
+    header("Location: ../login.php");
+    exit;
+}
+
+// Generate a new token and update database
 $token = bin2hex(random_bytes(16));
+$stmt = $conn->prepare("UPDATE Customers SET VerifyToken = ? WHERE Email = ?");
+$stmt->bind_param("ss", $token, $email);
+$stmt->execute();
 
-$stmt = $conn->prepare("INSERT INTO Customers (FullName, Email, Password, Role, VerifyToken, IsVerified) VALUES (?, ?, ?, ?, ?, 0)");
-$stmt->bind_param("sssss", $fullname, $email, $hashed_password, $role, $token);
+// Send verification email
+$mail = new PHPMailer(true);
+try {
+    $mail->isSMTP();
+    $mail->Host = "smtp.gmail.com";
+    $mail->SMTPAuth = true;
+    $mail->Username = "noreplygalleriakamera@gmail.com";
+    $mail->Password = "veoa gfsh pjbu wfka"; // Be careful with storing passwords in plain text
+    $mail->SMTPSecure = "tls";
+    $mail->Port = 587;
 
-if($stmt->execute()){
-    // Send verification email
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host = "smtp.gmail.com";
-        $mail->SMTPAuth = true;
-        $mail->Username = "noreplygalleriakamera@gmail.com";
-        $mail->Password = "veoa gfsh pjbu wfka";
-        $mail->SMTPSecure = "tls";
-        $mail->Port = 587;
+    $mail->setFrom("noreplygalleriakamera@gmail.com", "Galleria Kamera");
+    $mail->addAddress($email);
+    $mail->isHTML(true);
+    $mail->Subject = "Verify your Galleria Kamera account";
 
-        $mail->setFrom("noreplygalleriakamera@gmail.com", "Galleria Kamera");
-        $mail->addAddress($email);
+    $verify_link = "http://localhost/galleriakamera/buyandsell/core/verify.php?token=$token";
 
-        $mail->isHTML(true);
-        $mail->Subject = "Verify your Galleria Kamera account";
-
-        $verify_link = "http://localhost/galleriakamera/buyandsell/core/verify.php?token=$token";
-
-        $mail->Body = '
+    $mail->Body = ' 
         <!DOCTYPE html>
         <html>
         <head>
@@ -122,21 +118,14 @@ if($stmt->execute()){
         </html>
         ';
 
+    $mail->send();
 
-        $mail->send();
-        $_SESSION['success'] = "Account created! Check your email to verify.";
-        header("Location: ../includes/confirm_box.php"); 
-        exit;
+    $_SESSION['success'] = "Verification email resent! Check your inbox.";
+    header("Location: ../includes/confirm_box.php");
+    exit;
 
-    } catch (Exception $e) {
-        $_SESSION['error'] = "Error sending email. Try again.";
-        header("Location: ../signup.php");
-        exit;
-    }
-
-} else {
-    $_SESSION['error'] = "Account creation failed.";
-    header("Location: ../signup.php");
+} catch (Exception $e) {
+    $_SESSION['error'] = "Failed to resend email. Try again later.";
+    header("Location: ../includes/confirm_box.php");
     exit;
 }
-?>
