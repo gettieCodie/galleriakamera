@@ -9,26 +9,31 @@ $fullname = $_SESSION['signup_name'] ?? '';
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Confirm Account</title>
+    <title>Confirm Your Account</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <section class="confirm-page">
+    <div class="confirm-page">
         <div class="confirm-box">
 
-            <h2>Confirm your account</h2>
+            <!-- Icon for confirmation -->
+            <div class="icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="success-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
 
-            <p>A confirmation email has been sent to </p>
-            <p>Please check your inbox (and spam folder), and click on the link in the confirmation email to verify your account.</p>
+            <h2>Confirm Your Account</h2>
 
-            <label for="email" class="no-email">Email not received?</label>
+            <p>A confirmation email has been sent to <span class="highlight-email">youremail@example.com</span>.</p>
 
-            <button class="resend-btn">Resend</button>
+            <p class="no-email">Didn't receive the email?</p>
+            <button class="resend-btn">Resend Email</button>
 
             <a href="../login.php" class="back">Back to Login</a>
 
         </div>
-    </section>
-
+    </div>
 </body>
 </html>
