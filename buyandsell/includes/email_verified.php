@@ -1,3 +1,7 @@
+<?php
+$email = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +23,9 @@
 
             <h2>Email Confirmed!</h2>
 
-            <p>Your email <span class="highlight-email">youremail@example.com</span> has been successfully verified.</p>
+            <p>Your email <span class="highlight-email">
+                 <?php echo $email ?: 'your email'; ?>
+            </span> has been successfully verified.</p>
 
             <p class="no-email">You can now proceed to login and access your account.</p>
 

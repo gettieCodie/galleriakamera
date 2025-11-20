@@ -655,7 +655,7 @@ input, select {
 }
 
 .resend-btn:hover {
-    background: #2563eb;
+    background: #372200 !important;
     transform: translateY(-2px);
 }
 

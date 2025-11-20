@@ -78,6 +78,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }, false);
     });
 
+    // ===== Redirect all buttons to signup.php temporarily, except the Show More button =====
+    const allButtons = document.querySelectorAll('button');
+    allButtons.forEach(button => {
+        // Skip the button if it has id="toggleMoreBtn"
+        if (button.id !== 'toggleMoreBtn') {
+            button.addEventListener('click', () => {
+                window.location.href = 'signup.php';
+            });
+        }
+    });
 
     
 });

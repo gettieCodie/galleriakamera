@@ -29,7 +29,10 @@ $fullname = $_SESSION['signup_name'] ?? '';
             <p>A confirmation email has been sent to <span class="highlight-email"><?php echo htmlspecialchars($email); ?></span>.</p>
 
             <p class="no-email">Didn't receive the email?</p>
-            <button class="resend-btn">Resend Email</button>
+            <form action="../core/resend_verif.php" method="POST">
+                <input type="hidden" name="email" value="<?php echo $email; ?>">
+                <button type="submit" class="resend-btn">Resend Email</button>
+            </form>
 
             <a href="../login.php" class="back">Back to Login</a>
 
