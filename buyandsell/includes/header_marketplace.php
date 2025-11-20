@@ -49,15 +49,13 @@
             <!-- Navigation Links (right side) -->
             <nav class="nav-links">
                 <ul>
-                    <li><a href="../dashboard.php" class="dashboard-link">
+                    <li><a href="dashboard_user.php" class="dashboard-link">
                         <img src="assets/images/dashboard.png" alt="Dashboard Icon">
                         My Dashboard
                     </a></li>
-
-                    <li><a href="../logout.php" class="logout-btn"><img src="assets/images/logout.png" alt="Logout Icon">   Logout</a></li>
+                    <li><a href="index.php" class="logout-btn"><img src="assets/images/logout.png" alt="Logout Icon">   Logout</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-</body>
-</html>
+

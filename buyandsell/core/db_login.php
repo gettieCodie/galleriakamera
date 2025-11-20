@@ -42,7 +42,7 @@ $_SESSION['user_name'] = $user['FullName'];
 $_SESSION['user_role'] = $user['Role'];
 
 $_SESSION['success'] = "Welcome, " . $user['FullName'] . "!";
-header("Location: ../index.php");
+header("Location: ../marketplace.php");
 exit;
 
 // if($user['IsVerified'] == 0){

@@ -10,9 +10,10 @@ body {
     font-family: 'DM Sans', sans-serif;
     background: #f5f7fa;
     color: #333;
+    padding-top: 120px; 
 }
 
-/* Navigation Bar Styles */
+/* Navigation Bar Styles ---------------------------------------------------------------------------------*/
 .navbar {
     background-color: #372200; /* Dark brown background */
     color: #222222;
@@ -38,8 +39,6 @@ body {
     margin: 0 auto;
     padding: 0 20px;
 }
-
-
 
 /* Logo Section */
 .logo img {
@@ -128,7 +127,7 @@ body {
 }
 
 .nav-links a:hover {
-    background-color: #eeeeee; /* Darker brown on hover */
+    background-color: #eeeeee;
     border-radius: 5px;
 }
 
@@ -244,4 +243,392 @@ body {
     .nav-links a {
         font-size: 18px;
     }
+}
+
+
+
+/* search---------------------------------------------------------------------------------------------- */
+/* Outer wrapper for centering */
+.search-actions-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 160px;
+  padding: 0 20px;
+}
+
+/* Inner container (max width 1338px) */
+.search-actions-container {
+  max-width: 1250px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Search bar (same style, just no max-width now) */
+.search-bar-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid #ececec;
+}
+
+.search-bar-container input {
+  flex: 1;
+  border: none !important;
+  outline: none !important;
+  background: transparent;
+  font-size: 15px;
+  color: #111;
+}
+
+.search-clear {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  padding: 6px;
+  cursor: pointer;
+  color: #888;
+  font-size: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px; /* keeps nice hover circle */
+}
+
+/* -------------------- */
+/* Action Buttons       */
+/* -------------------- */
+.actions-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Make the button a clean icon container */
+.action-btn {
+  width: 24px;             /* button width */
+  height: 24px;            /* button height */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);        /* moves button up slightly */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* subtle shadow for depth */
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .search-actions-wrapper {
+    padding: 10px 12px;
+  }
+  .action-btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+}
+
+
+/* product cards -----------------------------------------------------------------------------------*/
+.marketplace-wrapper{
+    max-width: 1280px;      /* Maximum width */
+    margin: 60px auto 0;
+    padding: 0 20px;        /* Optional padding for smaller screens */
+    box-sizing: border-box; /* Include padding in width */
+}
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15,15,15,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15,15,15,0.08);
+}
+
+.product-details {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.product-prices {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.current-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+
+.original-price {
+  font-size: 14px;
+  color: #888;
+  text-decoration: line-through;
+}
+
+.savings {
+  font-size: 13px;
+  color: #27ae60; /* green for savings */
+}
+
+.actions-group {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-top: 1px solid #ececec;
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(0,0,0,0.04);
+}
+
+.action-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ensures image covers the container nicely */
+}
+
+/* Keep your existing styles and add these new ones */
+
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15,15,15,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative; /* Added for condition badge */
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15,15,15,0.08);
+}
+
+.product-image-container {
+  position: relative; /* Added for condition badge */
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-condition {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: white;
+}
+
+.condition-new {
+  background: #27ae60; /* Green for new items */
+}
+
+.condition-used {
+  background: #f39c12; /* Orange for used items */
+}
+
+.product-details {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.product-specs {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+.product-description {
+  font-size: 13px;
+  color: #777;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-prices {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.current-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+
+.original-price {
+  font-size: 14px;
+  color: #888;
+  text-decoration: line-through;
+}
+
+.savings {
+  font-size: 13px;
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.actions-group {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-top: 1px solid #ececec;
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+  border-radius: 6px;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(0,0,0,0.04);
+}
+
+.action-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Error and empty states */
+.error-message {
+  text-align: center;
+  padding: 20px;
+  color: #e74c3c;
+  background: #fdf2f2;
+  border-radius: 8px;
+  margin: 20px 0;
+  grid-column: 1 / -1;
+}
+
+.no-listings {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  grid-column: 1 / -1;
+}
+
+.no-listings-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.no-listings h2 {
+  color: #666;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.no-listings p {
+  color: #888;
+  font-size: 14px;
 }

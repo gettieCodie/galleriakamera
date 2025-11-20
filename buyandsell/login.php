@@ -1,6 +1,5 @@
 <?php
 session_start();
-include 'includes/header_hero.php';
 include 'includes/header_user.php';
 // include 'gridsystem.php';
 ?>
