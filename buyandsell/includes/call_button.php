@@ -61,7 +61,7 @@
         let isPlaying = false;
         
         // Set the start and end time for the audio clip (in seconds)
-        const clipStart = 1;
+        const clipStart = 2;
         const clipEnd = 15;
         
         // Set the audio to start at the desired position
@@ -85,7 +85,7 @@
         });
         
         // Reset when audio ends naturally
-        audioPlayer.addEventListener('ended', function() {
+            audioPlayer.addEventListener('ended', function() {
             audioPlayer.currentTime = clipStart;
             isPlaying = false;
             callButton.classList.remove('playing');
