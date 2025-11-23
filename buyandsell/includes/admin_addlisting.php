@@ -107,7 +107,7 @@ form.addEventListener('submit', function(e) {
   submitButton.textContent = 'Adding...';
   hideMessage();
 
-  fetch('core/upload_listings.php', {
+  fetch('../core/upload_listings.php', {
     method: 'POST',
     body: formData
   })

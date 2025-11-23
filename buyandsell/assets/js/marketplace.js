@@ -1,6 +1,90 @@
 const productList = document.getElementById("product-list");
 const noListings = document.getElementById("no-listings");
 
+// Define functions FIRST before they're referenced
+window.addToWishlist = async function(listingId) {
+    const formData = new FormData();
+    formData.append("listing_id", listingId);
+
+    const res = await fetch("core/add_wishlist.php", {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin"
+    });
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+        updateWishlistBadge();
+        alert("Added to wishlist!");
+    } else {
+        alert("Error: " + (data.msg || "Failed to add"));
+    }
+}
+
+window.addToCart = async function(listingId) {
+    const formData = new FormData();
+    formData.append("listing_id", listingId);
+
+    const res = await fetch("core/add_cart.php", {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin"
+    });
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+        updateCartBadge();
+        alert("Added to cart!");
+    } else {
+        alert("Error: " + (data.msg || "Failed to add"));
+    }
+}
+
+// async function updateWishlistBadge() {
+//     const res = await fetch("core/count_wishlist.php");
+//     const data = await res.json();
+//     document.getElementById("wishlist-count").textContent = data.count;
+// }
+
+async function updateWishlistBadge() {
+    try {
+        const res = await fetch("core/count_wishlist.php");
+        const text = await res.text(); // Get as text first
+        console.log("Wishlist response:", text); // Debug log
+        
+        const data = JSON.parse(text); // Then parse
+        const badge = document.getElementById("wishlist-count");
+        if (badge) {
+            badge.textContent = data.count || 0;
+        }
+    } catch (error) {
+        console.error("Error updating wishlist badge:", error);
+    }
+}
+
+// async function updateCartBadge() {
+//     const res = await fetch("core/count_cart.php");
+//     const data = await res.json();
+//     document.getElementById("cart-count").textContent = data.count;
+// }
+async function updateCartBadge() {
+    try {
+        const res = await fetch("core/count_cart.php");
+        const text = await res.text(); // Get as text first
+        console.log("Cart response:", text); // Debug log
+        
+        const data = JSON.parse(text); // Then parse
+        const badge = document.getElementById("cart-count");
+        if (badge) {
+            badge.textContent = data.count || 0;
+        }
+    } catch (error) {
+        console.error("Error updating cart badge:", error);
+    }
+}
+
 async function loadMarketplace() {
     try {
         const res = await fetch('core/get_listings.php');
@@ -85,23 +169,23 @@ async function loadMarketplace() {
     }
 }
 
-// Placeholder functions for buttons
-function addToWishlist(listingId) {
-    console.log('Add to wishlist:', listingId);
-    // Implement wishlist functionality
-}
-
-function addToCart(listingId) {
-    console.log('Add to cart:', listingId);
-    // Implement cart functionality
-}
-
 // Refresh listings when new products are added
 function refreshListings() {
     loadMarketplace();
+    updateWishlistBadge();
+    updateCartBadge();
 }
 
-document.addEventListener('DOMContentLoaded', loadMarketplace);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Marketplace loaded, updating badges...");
+    loadMarketplace();
+    updateWishlistBadge();
+    updateCartBadge();
+});
 
 // Optional: Auto-refresh every 30 seconds to see new listings
-setInterval(loadMarketplace, 30000);
+setInterval(() => {
+    loadMarketplace();
+    updateWishlistBadge();
+    updateCartBadge();
+}, 30000);

@@ -1,4 +1,5 @@
 <?php 
+session_start();
 include 'db_connect.php';
 
 $email = trim($_POST['email']);
@@ -25,6 +26,13 @@ if(!password_verify($password, $user['Password'])){
     exit;
 }
 
+// Block Login if not verified
+if($user['IsVerified'] == 0){
+    $_SESSION['error'] = "Please verify your email before logging in.";
+    header("Location: ../login.php");
+    exit;
+}
+
 // Check if admin
 if($user['CustomerID'] == 1 && $user['Role'] === 'admin'){
     $_SESSION['admin_id'] = $user['CustomerID'];
@@ -44,26 +52,5 @@ $_SESSION['user_role'] = $user['Role'];
 $_SESSION['success'] = "Welcome, " . $user['FullName'] . "!";
 header("Location: ../marketplace.php");
 exit;
-
-// if($user['IsVerified'] == 0){
-//     $_SESSION['error'] = "Please verify your email before logging in.";
-//     header("Location: ../login.php");
-//     exit;
-// }
-
-// // Verify password
-// if(password_verify($password, $user['Password'])){
-//     $_SESSION['user_id'] = $user['CustomerID'];
-//     $_SESSION['user_name'] = $user['FullName'];
-//     $_SESSION['user_role'] = $user['Role'];
-
-//     $_SESSION['success'] = "Welcome, " . $user['FullName'] . "!";
-//     header("Location: ../index.php");
-//     exit;
-// } else {
-//     $_SESSION['error'] = "Incorrect password. Try again.";
-//     header("Location: ../login.php");
-//     exit;
-// }
 
 ?>

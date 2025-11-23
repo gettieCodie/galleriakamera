@@ -11,15 +11,18 @@
 
     <!-- Action Bar -->
     <div class="actions-group">
-    <button class="action-btn cart-btn">
+
+    <button class="action-btn cart-btn" onclick="window.location.href='cart.php'">
         <img src="assets/images/shopping-bag.png" class="icon-img" alt="Cart">
+        <span id="cart-count" class="badge">0</span>
     </button>
 
-    <button class="action-btn wishlist-btn">
+    <button class="action-btn wishlist-btn" onclick="window.location.href='wishlist.php'">
         <img src="assets/images/wishlist.png" class="icon-img" alt="Wishlist">
+        <span id="wishlist-count" class="badge">0</span>
     </button>
     </div>
 
-
+    
   </div>
 </div>

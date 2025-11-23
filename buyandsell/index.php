@@ -317,7 +317,7 @@ include 'includes/header_user.php';
     <!-- CTA (Hidden until expanded) -->
     <div class="cta-box" id="ctaBox">
         <p>Want to purchase these cameras?</p>
-        <a href="register.php" class="cta-btn">Create an Account</a>
+        <a href="signup.php" class="cta-btn">Create an Account</a>
     </div>
 
 </section>

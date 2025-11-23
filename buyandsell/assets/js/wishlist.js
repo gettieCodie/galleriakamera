@@ -1,0 +1,151 @@
+async function loadWishlist() {
+    try {
+        const res = await fetch('core/get_wishlist.php');
+        
+        if (!res.ok) {
+            throw new Error('Failed to fetch wishlist');
+        }
+        
+        const items = await res.json();
+        console.log("Wishlist items: ", items);
+
+        const wishlistGrid = document.getElementById("wishlist-grid");
+        const emptyWishlist = document.getElementById("empty-wishlist");
+        
+        wishlistGrid.innerHTML = "";
+        
+        if (items.length > 0) {
+            emptyWishlist.style.display = "none";
+            wishlistGrid.style.display = "grid";
+            
+            items.forEach(product => {
+                const name = `${product.brand} ${product.model}`;
+                const price = parseFloat(product.selling_price).toLocaleString('en-PH', {
+                    style: 'currency',
+                    currency: 'PHP',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                const originalPrice = parseFloat(product.original_price).toLocaleString('en-PH', {
+                    style: 'currency',
+                    currency: 'PHP',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                const savings = (product.original_price - product.selling_price).toLocaleString('en-PH', {
+                    style: 'currency',
+                    currency: 'PHP',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                
+                const image = product.image_path || 'assets/images/empty-box.png';
+                const conditionClass = product.condition.toLowerCase() === 'new' ? 'condition-new' : 'condition-used';
+                
+                const card = document.createElement("div");
+                card.className = "product-card";
+                card.innerHTML = `
+                    <div class="product-image-container">
+                        <img src="${image}" class="product-image" alt="${name}" onerror="this.src='assets/images/empty-box.png'">
+                        <span class="product-condition ${conditionClass}">${product.condition}</span>
+                        <span class="wishlist-badge">
+                            <img src="assets/images/wishlist.png" alt="Wishlist" style="width: 14px; height: 14px;">
+                        </span>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">${name}</h3>
+                        <p class="product-specs">${product.megapixels}MP • ${product.sensor}</p>
+                        <p class="product-description">${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}</p>
+                        <div class="product-prices">
+                            <span class="current-price">${price}</span>
+                            <span class="original-price">${originalPrice}</span>
+                        </div>
+                        <div class="savings">You save ${savings}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-remove" data-listing-id="${product.listing_id}">
+                            Remove from Wishlist
+                        </button>
+                    </div>
+                `;
+                
+                wishlistGrid.appendChild(card);
+                
+                const removeBtn = card.querySelector('.btn-remove');
+                removeBtn.addEventListener('click', () => removeFromWishlist(product.listing_id));
+            });
+        } else {
+            wishlistGrid.style.display = "none";
+            emptyWishlist.style.display = "flex";
+        }
+    } catch (error) {
+        console.error("Failed to load wishlist:", error);
+        document.getElementById("empty-wishlist").style.display = "flex";
+    }
+}
+
+async function removeFromWishlist(listingId) {
+    if (!confirm("Remove this item from your wishlist?")) {
+        return;
+    }
+    
+    try {
+        const formData = new FormData();
+        formData.append("listing_id", listingId);
+        
+        const res = await fetch("core/delete_wishlist.php", {
+            method: "POST",
+            body: formData
+        });
+        
+        const data = await res.json();
+        console.log("Remove response:", data);
+        
+        if (data.status === "ok") {
+            await updateWishlistBadge();
+            await loadWishlist();
+        }
+    } catch (error) {
+        console.error("Error removing from wishlist:", error);
+        alert("Failed to remove item");
+    }
+}
+
+async function updateWishlistBadge() {
+    try {
+        const res = await fetch("core/count_wishlist.php");
+        const text = await res.text();
+        console.log("Wishlist badge response:", text);
+        
+        const data = JSON.parse(text);
+        const badge = document.getElementById("wishlist-count");
+        if (badge) {
+            badge.textContent = data.count || 0;
+        }
+    } catch (error) {
+        console.error("Error updating wishlist badge:", error);
+    }
+}
+
+async function updateCartBadge() {
+    try {
+        const res = await fetch("core/count_cart.php");
+        const text = await res.text();
+        console.log("Cart badge response:", text);
+        
+        const data = JSON.parse(text);
+        const badge = document.getElementById("cart-count");
+        if (badge) {
+            badge.textContent = data.count || 0;
+        }
+    } catch (error) {
+        console.error("Error updating cart badge:", error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Wishlist page loaded, updating badges...");
+    loadWishlist();
+    updateWishlistBadge();
+    updateCartBadge();
+});
