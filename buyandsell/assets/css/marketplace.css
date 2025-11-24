@@ -8,7 +8,7 @@
 /* Body & Font */
 body {
     font-family: 'DM Sans', sans-serif;
-    background: #f5f7fa;
+    background: #f8f5fa;
     color: #333;
     padding-top: 120px; 
 }
@@ -166,8 +166,8 @@ body {
 
 /* Hover effect for the link */
 .dashboard-link:hover {
-    background-color: #f0f0f0;         /* Light gray background on hover */
-    border-color: #bbbbbb;             /* Change border color to blue */                 /* Change text color to blue */    /* Slight lift effect */
+    background-color: #f0f0f0;         
+    border-color: #bbbbbb;             
 }
 
 
@@ -409,9 +409,11 @@ body {
 }
 
 .product-prices {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   gap: 8px;
+  align-items: center;
+  width: 100%;
 }
 
 .current-price {
@@ -424,6 +426,7 @@ body {
   font-size: 14px;
   color: #888;
   text-decoration: line-through;
+  white-space: nowrap;
 }
 
 .savings {
@@ -507,7 +510,7 @@ body {
 }
 
 .product-condition {
-  position: absolute;
+  position: absolute; 
   top: 8px;
   right: 8px;
   padding: 4px 8px;

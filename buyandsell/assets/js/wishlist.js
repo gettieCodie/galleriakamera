@@ -39,18 +39,15 @@ async function loadWishlist() {
                     maximumFractionDigits: 2
                 });
                 
-                const image = product.image_path || 'assets/images/empty-box.png';
+                const image = product.image_path || 'assets/images/empty.png';
                 const conditionClass = product.condition.toLowerCase() === 'new' ? 'condition-new' : 'condition-used';
                 
                 const card = document.createElement("div");
                 card.className = "product-card";
                 card.innerHTML = `
                     <div class="product-image-container">
-                        <img src="${image}" class="product-image" alt="${name}" onerror="this.src='assets/images/empty-box.png'">
+                        <img src="${image}" class="product-image" alt="${name}" onerror="this.src='assets/images/empty.png'">
                         <span class="product-condition ${conditionClass}">${product.condition}</span>
-                        <span class="wishlist-badge">
-                            <img src="assets/images/wishlist.png" alt="Wishlist" style="width: 14px; height: 14px;">
-                        </span>
                     </div>
                     <div class="product-details">
                         <h3 class="product-title">${name}</h3>

@@ -56,9 +56,6 @@ async function loadCart() {
                     <div class="product-image-container">
                         <img src="${image}" class="product-image" alt="${name}" onerror="this.src='assets/images/empty-box.png'">
                         <span class="product-condition ${conditionClass}">${product.condition}</span>
-                        <span class="cart-badge">
-                            <img src="assets/images/shopping-bag.png" alt="Cart" style="width: 14px; height: 14px;">
-                        </span>
                     </div>
                     <div class="product-details">
                         <h3 class="product-title">${name}</h3>

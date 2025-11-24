@@ -71,7 +71,6 @@ include 'includes/header_dashboard_user.php';
                 </div>
                 <p class="section-subtitle">Track your listed cameras and their status</p>
                 
-        <div class = "selling-grid">
                 <!-- Status Tabs -->
                 <div class="status-tabs">
                     <button class="status-tab active" data-status="all">All</button>
@@ -89,7 +88,7 @@ include 'includes/header_dashboard_user.php';
                         <p>Start selling your cameras by clicking "Sell an Item"</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- My Purchases Section -->
             <section class="purchases-section">
