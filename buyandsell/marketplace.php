@@ -22,3 +22,6 @@ include 'includes/search_filter.php';
 
 <!-- JS -->
 <script type="module" src="assets/js/marketplace.js"></script>
+<script src="assets/js/search.js" defer></script>
+
+
