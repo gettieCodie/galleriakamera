@@ -37,7 +37,7 @@ include 'includes/search_filter.php';
     
     <!-- Empty State -->
     <div id="empty-cart" class="empty-state" style="display: none;">
-      <img src="assets/images/empty-box.png" alt="Empty cart" class="empty-icon">
+      <img src="assets/images/empty.png" alt="Empty cart" class="empty-icon">
       <h2>Your cart is empty</h2>
       <p>Add some cameras to your cart to get started!</p>
       <button onclick="window.location.href='marketplace.php'" class="btn-primary">Browse Marketplace</button>
@@ -47,6 +47,7 @@ include 'includes/search_filter.php';
 
 <!-- JS -->
 <script src="assets/js/cart.js"></script>
+<script src="assets/js/search.js" defer></script>
 
 </body>
 </html>

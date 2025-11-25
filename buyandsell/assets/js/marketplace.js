@@ -1,7 +1,6 @@
 const productList = document.getElementById("product-list");
 const noListings = document.getElementById("no-listings");
 
-// Define functions FIRST before they're referenced
 window.addToWishlist = async function(listingId) {
     const formData = new FormData();
     formData.append("listing_id", listingId);
@@ -42,12 +41,6 @@ window.addToCart = async function(listingId) {
     }
 }
 
-// async function updateWishlistBadge() {
-//     const res = await fetch("core/count_wishlist.php");
-//     const data = await res.json();
-//     document.getElementById("wishlist-count").textContent = data.count;
-// }
-
 async function updateWishlistBadge() {
     try {
         const res = await fetch("core/count_wishlist.php");
@@ -64,11 +57,6 @@ async function updateWishlistBadge() {
     }
 }
 
-// async function updateCartBadge() {
-//     const res = await fetch("core/count_cart.php");
-//     const data = await res.json();
-//     document.getElementById("cart-count").textContent = data.count;
-// }
 async function updateCartBadge() {
     try {
         const res = await fetch("core/count_cart.php");
@@ -94,72 +82,85 @@ async function loadMarketplace() {
         }
         
         const listings = await res.json();
+        console.log('Loaded listings:', listings);
 
-        productList.innerHTML = "";
+        //Store all products globally for searcgh
+        window.allProducts = listings;
 
-        if (listings.length > 0) {
-            noListings.style.display = "none";
-
-            listings.forEach(product => {
-                const name = `${product.brand} ${product.model}`;
-                const price = parseFloat(product.selling_price).toLocaleString('en-PH', {
-                    style: 'currency',
-                    currency: 'PHP',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-                const originalPrice = parseFloat(product.original_price).toLocaleString('en-PH', {
-                    style: 'currency',
-                    currency: 'PHP',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-                const savings = (product.original_price - product.selling_price).toLocaleString('en-PH', {
-                    style: 'currency',
-                    currency: 'PHP',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-                
-                // Use the first image or default image
-                const image = product.image_path || product.images?.[0] || 'assets/images/empty-box.png';
-                
-                // Format condition with proper styling
-                const conditionClass = product.condition.toLowerCase() === 'new' ? 'condition-new' : 'condition-used';
-
-                const card = document.createElement("div");
-                card.className = "product-card";
-                card.innerHTML = `
-                    <div class="product-image-container">
-                        <img src="${image}" class="product-image" alt="${name}" onerror="this.src='assets/images/empty-box.png'">
-                        <span class="product-condition ${conditionClass}">${product.condition}</span>
-                    </div>
-                    <div class="product-details">
-                        <h3 class="product-title">${name}</h3>
-                        <p class="product-specs">${product.megapixels}MP • ${product.sensor}</p>
-                        <p class="product-description">${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}</p>
-                        <div class="product-prices">
-                            <span class="current-price">${price}</span>
-                            <span class="original-price">${originalPrice}</span>
-                        </div>
-                        <div class="savings">You save ${savings}</div>
-                    </div>
-                    <div class="actions-group">
-                        <button class="action-btn wishlist-btn" onclick="addToWishlist(${product.listing_id})">
-                            <img src="assets/images/wishlist.png" alt="Add to Wishlist">
-                        </button>
-                        <button class="action-btn cart-btn" onclick="addToCart(${product.listing_id})">
-                            <img src="assets/images/shopping-bag.png" alt="Add to Cart">
-                        </button>
-                    </div>
-                `;
-                productList.appendChild(card);
-            });
+        //Display all products initially
+        if(typeof displayProducts == 'function'){
+            displayProducts(allProducts);
         } else {
-            noListings.style.display = "flex";
+            console.error('displayProducts function not found!');
         }
+
+        // productList.innerHTML = "";
+
+        // if (listings.length > 0) {
+        //     noListings.style.display = "none";
+
+        //     listings.forEach(product => {
+        //         const name = `${product.brand} ${product.model}`;
+        //         const price = parseFloat(product.selling_price).toLocaleString('en-PH', {
+        //             style: 'currency',
+        //             currency: 'PHP',
+        //             minimumFractionDigits: 2,
+        //             maximumFractionDigits: 2
+        //         });
+        //         const originalPrice = parseFloat(product.original_price).toLocaleString('en-PH', {
+        //             style: 'currency',
+        //             currency: 'PHP',
+        //             minimumFractionDigits: 2,
+        //             maximumFractionDigits: 2
+        //         });
+        //         const savings = (product.original_price - product.selling_price).toLocaleString('en-PH', {
+        //             style: 'currency',
+        //             currency: 'PHP',
+        //             minimumFractionDigits: 2,
+        //             maximumFractionDigits: 2
+        //         });
+                
+        //         // Use the first image or default image
+        //         const image = product.image_path || product.images?.[0] || 'assets/images/empty-box.png';
+                
+        //         // Format condition with proper styling
+        //         const conditionClass = product.condition.toLowerCase() === 'new' ? 'condition-new' : 'condition-used';
+
+        //         const card = document.createElement("div");
+        //         card.className = "product-card";
+        //         card.innerHTML = `
+        //             <div class="product-image-container">
+        //                 <img src="${image}" class="product-image" alt="${name}" onerror="this.src='assets/images/empty-box.png'">
+        //                 <span class="product-condition ${conditionClass}">${product.condition}</span>
+        //             </div>
+        //             <div class="product-details">
+        //                 <h3 class="product-title">${name}</h3>
+        //                 <p class="product-specs">${product.megapixels}MP • ${product.sensor}</p>
+        //                 <p class="product-description">${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}</p>
+        //                 <div class="product-prices">
+        //                     <span class="current-price">${price}</span>
+        //                     <span class="original-price">${originalPrice}</span>
+        //                 </div>
+        //                 <div class="savings">You save ${savings}</div>
+        //             </div>
+        //             <div class="actions-group">
+        //                 <button class="action-btn wishlist-btn" onclick="addToWishlist(${product.listing_id})">
+        //                     <img src="assets/images/wishlist.png" alt="Add to Wishlist">
+        //                 </button>
+        //                 <button class="action-btn cart-btn" onclick="addToCart(${product.listing_id})">
+        //                     <img src="assets/images/shopping-bag.png" alt="Add to Cart">
+        //                 </button>
+        //             </div>
+        //         `;
+        //         productList.appendChild(card);
+        //     });
+        // } else {
+        //     noListings.style.display = "flex";
+        // }
     } catch (error) {
         console.error("Failed to load listings:", error);
+        const noListings = document.getElementById("no-listings");
+        const productList = document.getElementById("product-list");
         noListings.style.display = "flex";
         productList.innerHTML = `
             <div class="error-message">
@@ -181,11 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMarketplace();
     updateWishlistBadge();
     updateCartBadge();
+    initializeSearch();
+    console.log("Search initialization attempt complete.");
 });
 
-// Optional: Auto-refresh every 30 seconds to see new listings
-setInterval(() => {
-    loadMarketplace();
-    updateWishlistBadge();
-    updateCartBadge();
-}, 30000);
+// // Optional: Auto-refresh every 30 seconds to see new listings
+// setInterval(() => {
+//     loadMarketplace();
+//     updateWishlistBadge();
+//     updateCartBadge();
+// }, 30000);

@@ -866,3 +866,33 @@ body {
 .btn-checkout:hover {
     background-color: #059669;
 }
+
+/* search function -----------------------------------------------------------------------------------*/
+
+/* No Results State */
+.no-results {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.no-results img {
+    margin-bottom: 1.5rem;
+}
+
+.no-results h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.no-results p {
+    color: #6b7280;
+    font-size: 1rem;
+}
+

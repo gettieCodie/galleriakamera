@@ -17,7 +17,7 @@ include 'includes/search_filter.php';
     
     <!-- Empty State -->
     <div id="empty-wishlist" class="empty-state" style="display: none;">
-      <img src="assets/images/empty-box.png" alt="Empty wishlist" class="empty-icon">
+      <img src="assets/images/empty.png" alt="Empty wishlist" class="empty-icon">
       <h2>Your wishlist is empty</h2>
       <p>Start adding your favorite cameras to your wishlist!</p>
       <button onclick="window.location.href='marketplace.php'" class="btn-primary">Browse Marketplace</button>
@@ -27,6 +27,7 @@ include 'includes/search_filter.php';
 
 <!-- JS -->
 <script src="assets/js/wishlist.js"></script>
+<script src="assets/js/search.js" defer></script>
 
 </body>
 </html>
