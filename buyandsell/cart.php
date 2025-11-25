@@ -31,7 +31,7 @@ include 'includes/search_filter.php';
           <span>Total:</span>
           <span id="total">₱0.00</span>
         </div>
-        <button class="btn-checkout">Proceed to Checkout</button>
+        <button onclick="window.location.href='checkout/checkout_user.php'">Proceed to Checkout</button>
       </div>
     </div>
     

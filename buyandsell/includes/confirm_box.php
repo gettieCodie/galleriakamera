@@ -1,3 +1,5 @@
+<!-- email confirmation -->
+
 <?php
 session_start();
 
