@@ -185,10 +185,3 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSearch();
     console.log("Search initialization attempt complete.");
 });
-
-// // Optional: Auto-refresh every 30 seconds to see new listings
-// setInterval(() => {
-//     loadMarketplace();
-//     updateWishlistBadge();
-//     updateCartBadge();
-// }, 30000);
