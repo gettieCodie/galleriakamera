@@ -13,8 +13,8 @@ include 'gk-chat-service/chat-widget.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galleria Kamera - Premium Second Hand Cameras</title>
     <link rel="icon" type="image/svg+xml" href="assets/images/logomark.svg">
-<link rel="icon" type="image/png" href="assets/images/favicon.png">
-<link rel="alternate icon" type="image/x-icon" href="assets/images/favicon.ico">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="alternate icon" type="image/x-icon" href="assets/images/favicon.ico">
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -138,7 +138,7 @@ include 'gk-chat-service/chat-widget.php';
     </section>
 
     <!-- Announcement Section -->
-    <section class="announcement-section">
+    <!-- <section class="announcement-section">
         <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -163,7 +163,8 @@ include 'gk-chat-service/chat-widget.php';
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-    </section>
+    </section> -->
+    <?php include 'includes/announcement.php'; ?>
 
 <!-- Best Sellers Section -->
 <section class="best-sellers-section">

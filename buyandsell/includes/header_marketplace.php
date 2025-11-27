@@ -15,7 +15,7 @@
     <header class="navbar">
         <div class="container">
             <!-- Logo Section -->
-            <a href="#" class="logo">
+            <a href="marketplace.php" class="logo">
                 <img src="assets/images/logo.svg" alt="Logo">
             </a>
 
