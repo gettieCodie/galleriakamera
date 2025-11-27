@@ -2,6 +2,7 @@
 session_start();
 include 'includes/header_marketplace.php'; 
 include 'includes/search_filter.php';
+include 'gk-chat-service/chat-widget.php';
 ?>
 
 <div class="marketplace-wrapper">
