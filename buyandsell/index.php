@@ -1,6 +1,7 @@
 <?php 
 session_start();
 include 'includes/header_user.php';
+include 'gk-chat-service/chat-widget.php';
 // include 'gridsystem.php';
 ?>
 

@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeDashboard() {
+    console.log("Dashboard initializing...");
     // Initialize modal functionality
     initializeSellItemModal();
     
