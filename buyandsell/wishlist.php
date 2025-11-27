@@ -1,7 +1,6 @@
 <?php 
 session_start();
 include 'includes/header_marketplace.php'; 
-include 'includes/search_filter.php';
 ?>
 
 <div class="wishlist-wrapper">
