@@ -81,14 +81,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===== Redirect all buttons to signup.php temporarily =====
 // Except the Show More button and Contact button (music player)
 const allButtons = document.querySelectorAll('button');
+
 allButtons.forEach(button => {
-    // Skip buttons with id="toggleMoreBtn" or id="callButton"
-    if (button.id !== 'toggleMoreBtn' && button.id !== 'callButton') {
+    // Skip buttons with id="toggleMoreBtn" or id="callButton", and carousel prev/next buttons
+    if (
+        button.id !== 'toggleMoreBtn' && 
+        button.id !== 'callButton' &&
+        button.id !== 'carouselPrev' &&
+        button.id !== 'carouselNext'
+    ) {
         button.addEventListener('click', () => {
             window.location.href = 'signup.php';
         });
     }
 });
-
     
 });
