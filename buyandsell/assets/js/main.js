@@ -76,8 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             form.classList.add('was-validated');
         }, false);
-    });
-
+    }); 
     // ===== Redirect all buttons to signup.php temporarily =====
 // Except the Show More button and Contact button (music player)
 const allButtons = document.querySelectorAll('button');
@@ -88,7 +87,9 @@ allButtons.forEach(button => {
         button.id !== 'toggleMoreBtn' && 
         button.id !== 'callButton' &&
         button.id !== 'carouselPrev' &&
-        button.id !== 'carouselNext'
+        button.id !== 'carouselNext' &&
+        !button.classList.contains('carousel-control-prev') &&
+        !button.classList.contains('carousel-control-next')
     ) {
         button.addEventListener('click', () => {
             window.location.href = 'signup.php';

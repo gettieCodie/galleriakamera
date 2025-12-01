@@ -1,6 +1,18 @@
 <!-- includes/confirmation.php -->
 <?php
 $order_id = $_GET['order_id'] ?? 'ORD' . date('YmdHis');
+
+// Fetch order
+$stmt = $conn->prepare("SELECT * FROM orders WHERE OrderID = ?");
+$stmt->bind_param("i", $order_id);
+$stmt->execute();
+$order = $stmt->get_result()->fetch_assoc();
+
+// Fetch order items
+$stmt_items = $conn->prepare("SELECT * FROM orderitems WHERE OrderID = ?");
+$stmt_items->bind_param("i", $order_id);
+$stmt_items->execute();
+$order_items = $stmt_items->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
 <section id="confirmation" class="form-section">
     <div class="confirmation-header">

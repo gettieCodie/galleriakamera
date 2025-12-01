@@ -3,7 +3,7 @@
     
     <div class="cart-info">
         <p>You have 1 item in your cart</p>
-        <a href="#" class="edit-link">Edit</a>
+        <a href="../cart.php" class="edit-link">Edit</a>
     </div>
     
     <div class="cart-item">
