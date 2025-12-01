@@ -15,9 +15,9 @@ window.addToWishlist = async function(listingId) {
 
     if (data.status === "ok") {
         updateWishlistBadge();
-        alert("Added to wishlist!");
+        Toast.success("Added to wishlist! ❤️");
     } else {
-        alert("Error: " + (data.msg || "Failed to add"));
+        Toast.error(data.msg || "Failed to add to wishlist");
     }
 }
 
@@ -35,9 +35,9 @@ window.addToCart = async function(listingId) {
 
     if (data.status === "ok") {
         updateCartBadge();
-        alert("Added to cart!");
+        Toast.success("Added to cart! 🛒");
     } else {
-        alert("Error: " + (data.msg || "Failed to add"));
+        Toast.error(data.msg || "Failed to add to cart");
     }
 }
 

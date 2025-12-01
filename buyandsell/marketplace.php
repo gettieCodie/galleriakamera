@@ -22,7 +22,8 @@ include 'gk-chat-service/chat-widget.php';
 </div>
 
 <!-- JS -->
-<script type="module" src="assets/js/marketplace.js"></script>
+<script src="assets/js/toast.js"></script>
+<script src="assets/js/marketplace.js"></script>
 <script src="assets/js/search.js" defer></script>
 
 

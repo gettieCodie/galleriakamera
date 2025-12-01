@@ -21,9 +21,9 @@ $sql = "SELECT
     l.megapixels,
     l.sensor,
     (SELECT image_path FROM listing_images WHERE listing_id = l.listing_id LIMIT 1) as image_path,
-    w.dateadded
+    w.DateAdded
 FROM Wishlist w
-JOIN listings l ON w.listingid = l.listing_id
+JOIN listings l ON w.ListingID = l.listing_id
 WHERE w.CustomerID = ?
 ORDER BY w.DateAdded DESC";
 
