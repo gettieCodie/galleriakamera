@@ -30,7 +30,7 @@ include 'includes/header_marketplace.php';
           <span>Total:</span>
           <span id="total">₱0.00</span>
         </div>
-        <button onclick="window.location.href='checkout/checkout_user.php'">Proceed to Checkout</button>
+        <button class="btn-checkout" onclick="window.location.href='checkout/checkout_user.php'">Proceed to Checkout</button>
       </div>
     </div>
     
