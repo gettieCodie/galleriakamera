@@ -1,5 +1,3 @@
-<!-- Add Listing Button -->
-<button id="addListingBtn">Add New Camera Listing</button>
 
 <!-- Modal Form -->
 <div id="listingModal" class="modal" style="display:none;">
@@ -68,87 +66,114 @@
 
 <!-- Modal JS with AJAX -->
 <script>
-const modal = document.getElementById('listingModal');
-const btn = document.getElementById('addListingBtn');
-const span = document.getElementsByClassName('close')[0];
-const cancel = document.getElementById('cancelBtn');
-const form = document.getElementById('cameraForm');
-const messageContainer = document.getElementById('messageContainer');
+// Admin Dashboard Modal Functionality
+function initializeListingModal() {
+    const modal = document.getElementById('listingModal');
+    const btn = document.getElementById('addListingBtn');
+    const span = document.getElementsByClassName('close')[0];
+    const cancel = document.getElementById('cancelBtn');
+    const form = document.getElementById('cameraForm');
+    const messageContainer = document.getElementById('messageContainer');
 
-// Show modal
-btn.onclick = () => {
-  modal.style.display = 'flex';
-  resetForm();
-};
-
-// Hide modal
-span.onclick = cancel.onclick = () => {
-  modal.style.display = 'none';
-  resetForm();
-};
-
-// Hide modal when clicking outside
-window.onclick = (e) => { 
-  if (e.target == modal) {
-    modal.style.display = 'none';
-    resetForm();
-  }
-};
-
-// Form submission with AJAX
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const formData = new FormData(this);
-  const submitButton = this.querySelector('button[type="submit"]');
-  
-  // Disable submit button and show loading state
-  submitButton.disabled = true;
-  submitButton.textContent = 'Adding...';
-  hideMessage();
-
-  fetch('../core/upload_listings.php', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      showMessage(data.message, 'success');
-      form.reset();
-      // Optional: Redirect or refresh listings after success
-      setTimeout(() => {
-        modal.style.display = 'none';
-        resetForm();
-        // You can add code here to refresh the listings display
-      }, 2000);
-    } else {
-      showMessage(data.errors.join('<br>'), 'error');
+    // Show modal
+    if (btn && modal) {
+        btn.addEventListener('click', function() {
+            modal.style.display = 'flex';
+            resetForm();
+        });
     }
-  })
-  .catch(error => {
-    showMessage('An error occurred while submitting the form.', 'error');
-    console.error('Error:', error);
-  })
-  .finally(() => {
-    submitButton.disabled = false;
-    submitButton.textContent = 'Add Listing';
-  });
+
+    // Hide modal
+    if (span) {
+        span.addEventListener('click', function() {
+            modal.style.display = 'none';
+            resetForm();
+        });
+    }
+
+    if (cancel) {
+        cancel.addEventListener('click', function() {
+            modal.style.display = 'none';
+            resetForm();
+        });
+    }
+
+    // Hide modal when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            resetForm();
+        }
+    });
+
+    // Form submission with AJAX
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            
+            // Disable submit button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Adding...';
+            hideMessage();
+
+            fetch('../core/upload_listings.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    form.reset();
+                    // Optional: Redirect or refresh listings after success
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        resetForm();
+                        // You can add code here to refresh the listings display
+                    }, 2000);
+                } else {
+                    showMessage(data.errors.join('<br>'), 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('An error occurred while submitting the form.', 'error');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Add Listing';
+            });
+        });
+    }
+
+    // Helper functions
+    function showMessage(message, type) {
+        if (messageContainer) {
+            messageContainer.innerHTML = message;
+            messageContainer.className = type;
+            messageContainer.style.display = 'block';
+        }
+    }
+
+    function hideMessage() {
+        if (messageContainer) {
+            messageContainer.style.display = 'none';
+        }
+    }
+
+    function resetForm() {
+        if (form) {
+            form.reset();
+            hideMessage();
+        }
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    initializeListingModal();
 });
-
-// Helper functions
-function showMessage(message, type) {
-  messageContainer.innerHTML = message;
-  messageContainer.className = type;
-  messageContainer.style.display = 'block';
-}
-
-function hideMessage() {
-  messageContainer.style.display = 'none';
-}
-
-function resetForm() {
-  form.reset();
-  hideMessage();
-}
 </script>
