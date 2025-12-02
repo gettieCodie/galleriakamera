@@ -22,6 +22,72 @@ document.addEventListener('DOMContentLoaded', function() {
     const successNotification = document.getElementById('success-notification');
     const closeNotificationBtn = document.getElementById('close-notification');
     
+     // Replace this with your cart total
+    const totalAmountVariable = 18000; // Example
+
+    // --- Helper function: get selected payment method ---
+    function getSelectedPaymentMethod() {
+        const mainPayment = document.querySelector('input[name="payment_method"]:checked')?.value;
+        if (mainPayment === 'cod') {
+            return 'COD';
+        } else if (mainPayment === 'ewallet') {
+            const ewalletSelected = document.querySelector('input[name="ewallet_provider"]:checked')?.value;
+            return ewalletSelected ? ewalletSelected.toUpperCase() : 'E-WALLET';
+        }
+        return 'COD'; // Default fallback
+    }
+
+    // --- Helper function: save order + shipping to backend ---
+    function saveOrderAndShipping() {
+        const data = {
+            first_name: document.getElementById("first-name").value,
+            last_name: document.getElementById("last-name").value,
+            mobile_number: document.getElementById("mobile-number").value,
+            alternate_number: document.getElementById("alternate-number").value || null,
+            address_line_1: document.getElementById("address-line-1").value,
+            address_line_2: document.getElementById("address-line-2").value || null,
+            region: document.getElementById("region").value,
+            city: document.getElementById("city").value,
+            barangay: document.getElementById("barangay").value,
+            postal_code: document.getElementById("postal-code").value,
+            landmark: document.getElementById("landmark").value || null,
+            email: document.getElementById("email").value,
+            total_amount: totalAmountVariable,
+            payment_method: getSelectedPaymentMethod()
+        };
+
+        console.log("Sending data to server:", data); // Debug log
+
+        return fetch("../core/db_shippingadd.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => {
+            console.log("Response status:", res.status); // Debug log
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(res => {
+            console.log("Server response:", res); // Debug log
+            if (res.status === "success") {
+                console.log("Order & shipping details saved!");
+                return true;
+            } else {
+                console.error("DB Error:", res.message);
+                alert("Error saving order: " + res.message);
+                return false;
+            }
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+            alert("Network error: " + error.message);
+            return false;
+        });
+    }
+
     // Continue to Payment Button Handler
     continueToPaymentBtn.addEventListener('click', function() {
         if (customerDetailsForm.checkValidity()) {
@@ -117,18 +183,49 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Confirm Order Handlers
     confirmCodBtn.addEventListener('click', function() {
-        showSuccessNotification();
+        if (agreeTermsCheckbox.checked) {
+            // Disable button to prevent double-clicks
+            confirmCodBtn.disabled = true;
+            confirmCodBtn.textContent = 'Processing...';
+            
+            saveOrderAndShipping().then(success => {
+                if (success) {
+                    showSuccessNotification();
+                } else {
+                    // Re-enable button if failed
+                    confirmCodBtn.disabled = false;
+                    confirmCodBtn.textContent = 'Confirm Order';
+                }
+            });
+        }
     });
     
     confirmEwalletBtn.addEventListener('click', function() {
-        showSuccessNotification();
+         const ewalletSelected = document.querySelector('input[name="ewallet_provider"]:checked');
+        if (ewalletSelected) {
+            // Disable button to prevent double-clicks
+            confirmEwalletBtn.disabled = true;
+            confirmEwalletBtn.textContent = 'Processing...';
+            
+            saveOrderAndShipping().then(success => {
+                if (success) {
+                    showSuccessNotification();
+                } else {
+                    // Re-enable button if failed
+                    confirmEwalletBtn.disabled = false;
+                    confirmEwalletBtn.textContent = 'Confirm Order';
+                }
+            });
+        } else {
+            alert("Please select an E-Wallet provider.");
+        }
     });
     
     // Success Notification Handler
     closeNotificationBtn.addEventListener('click', function() {
         successNotification.style.display = 'none';
         // In a real application, you would redirect to the order confirmation page
-        window.location.href = 'marketplace.php';
+        window.location.href = '../marketplace.php';
     });
     
     // Function to show success notification
@@ -137,9 +234,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // In a real application, you would submit the form data to the server here
         // For now, we'll just log the form data
-        const formData = new FormData(customerDetailsForm);
-        const data = Object.fromEntries(formData);
-        console.log('Order Data:', data);
+        // const formData = new FormData(customerDetailsForm);
+        // const data = Object.fromEntries(formData);
+        // console.log('Order Data:', data);
     }
     
     // Initialize form states
