@@ -1,158 +1,429 @@
+<?php 
+session_start();
+if(!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$order_id = $_GET['order_id'] ?? null;
+if (!$order_id) {
+    header("Location: dashboard_user.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Order Receipt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Receipt #<?php echo htmlspecialchars($order_id); ?></title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
-            padding: 40px;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            border-color: #aaa;
         }
 
         .receipt-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: auto;
             background: #fff;
-            padding: 30px;
+            padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
-        h2 {
+        .receipt-header {
             text-align: center;
-            margin-bottom: 10px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .order-info, .items, .summary {
-            margin-top: 20px;
+        .receipt-header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
         }
 
-        .label {
-            font-weight: bold;
+        .receipt-header .order-id {
+            color: #666;
+            font-size: 1.1em;
         }
 
-        .item-row, .summary-row {
+        .receipt-date {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .items-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .summary {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .summary-row {
             display: flex;
             justify-content: space-between;
-            margin: 8px 0;
+            padding: 8px 0;
+            font-size: 1.1em;
         }
 
-        hr {
-            margin: 20px 0;
-        }
-
-        .total {
-            font-size: 1.2em;
+        .summary-row.total {
+            font-size: 1.4em;
             font-weight: bold;
+            border-top: 2px solid #000;
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-shipped {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .actions {
+            margin-top: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-print {
-            width: 100%;
-            padding: 12px;
-            background: black;
+            background: #000;
             color: #fff;
-            border: none;
-            font-size: 1em;
-            border-radius: 8px;
-            cursor: pointer;
         }
 
         .btn-print:hover {
-            background: #444;
+            background: #333;
+        }
+
+        .btn-download {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .btn-download:hover {
+            background: #0056b3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #721c24;
+            background: #f8d7da;
+            border-radius: 8px;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+
+            .back-btn,
+            .actions {
+                display: none;
+            }
+
+            .receipt-container {
+                box-shadow: none;
+                max-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="receipt-container">
-    <h2>Order Receipt</h2>
-    <p style="text-align:center;" id="date"></p>
+<a href="dashboard_user.php" class="back-btn">
+    <i class="fas fa-arrow-left"></i>
+    Back to Dashboard
+</a>
 
-    <div class="order-info">
-        <p><span class="label">Order ID:</span> <span id="orderID"></span></p>
-        <p><span class="label">Customer:</span> <span id="customerName"></span></p>
-        <p><span class="label">Email:</span> <span id="customerEmail"></span></p>
+<div class="receipt-container" id="receiptContainer">
+    <div class="loading">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+        <p>Loading receipt...</p>
     </div>
-
-    <hr>
-
-    <div class="items">
-        <h3>Items</h3>
-        <div id="itemList"></div>
-    </div>
-
-    <hr>
-
-    <div class="summary">
-        <div class="summary-row">
-            <span>Subtotal:</span>
-            <span id="subtotal"></span>
-        </div>
-
-        <div class="summary-row">
-            <span>Delivery:</span>
-            <span>FREE</span>
-        </div>
-
-        <div class="summary-row total">
-            <span>Total:</span>
-            <span id="total"></span>
-        </div>
-    </div>
-
-    <hr>
-
-    <button class="btn-print" onclick="window.print()">Print Receipt</button>
 </div>
 
 <script>
-    // ================================
-    // SAMPLE ORDER DATA (Replace later)
-    // ================================
-    const order = {
-        orderID: "A09312",
-        customerName: "Trisha Nicole Sañosa",
-        email: "trish@gmail.com",
-        items: [
-            { name: "Canon B", variant: "Black", price: 18000, qty: 1 },
-            { name: "Sony 143", variant: "Black", price: 26500, qty: 1 },
-            { name: "Wow Dada", variant: "Full", price: 123, qty: 1 }
-        ]
-    };
+const orderID = <?php echo json_encode($order_id); ?>;
 
-    // ================================
-    // DISPLAY DATE
-    // ================================
-    document.getElementById("date").innerText =
-        new Date().toLocaleString("en-US", { 
-            dateStyle: "medium", 
-            timeStyle: "short" 
+document.addEventListener('DOMContentLoaded', function() {
+    loadReceipt();
+});
+
+function loadReceipt() {
+    fetch(`core/get_order_details.php?order_id=${orderID}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                displayReceipt(data.order);
+            } else {
+                showError(data.message);
+            }
+        })
+        .catch(error => {
+            showError('Failed to load receipt: ' + error.message);
         });
+}
 
-    // Display basic info
-    document.getElementById("orderID").innerText = order.orderID;
-    document.getElementById("customerName").innerText = order.customerName;
-    document.getElementById("customerEmail").innerText = order.email;
+function displayReceipt(order) {
+    const container = document.getElementById('receiptContainer');
+    
+    const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    
+    container.innerHTML = `
+        <div class="receipt-header">
+            <h1>Order Receipt</h1>
+            <p class="order-id">Order #${order.orderID}</p>
+        </div>
 
-    // Display items
-    let itemList = document.getElementById("itemList");
-    let subtotal = 0;
+        <div class="receipt-date">
+            ${new Date(order.date).toLocaleString('en-US', { 
+                dateStyle: 'full', 
+                timeStyle: 'short' 
+            })}
+        </div>
 
-    order.items.forEach(item => {
-        let row = document.createElement("div");
-        row.className = "item-row";
-        row.innerHTML = `
-            <span>${item.name} (${item.variant}) x${item.qty}</span>
-            <span>₱${(item.price * item.qty).toLocaleString()}</span>
-        `;
-        itemList.appendChild(row);
-        subtotal += item.price * item.qty;
-    });
+        <div class="section">
+            <h2 class="section-title">Customer Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Name</span>
+                    <span class="info-value">${order.customerName}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">${order.email}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Mobile</span>
+                    <span class="info-value">+63 ${order.mobile}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Payment Method</span>
+                    <span class="info-value">${order.paymentMethod}</span>
+                </div>
+            </div>
+        </div>
 
-    document.getElementById("subtotal").innerText = "₱" + subtotal.toLocaleString();
-    document.getElementById("total").innerText = "₱" + subtotal.toLocaleString();
+        <div class="section">
+            <h2 class="section-title">Delivery Address</h2>
+            <p class="info-value">
+                ${order.address}<br>
+                ${order.city}, ${order.region} ${order.postalCode}
+            </p>
+        </div>
 
+        <div class="section">
+            <h2 class="section-title">Order Status</h2>
+            <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Order Items</h2>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Variant</th>
+                        <th class="text-right">Price</th>
+                        <th class="text-right">Qty</th>
+                        <th class="text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${order.items.map(item => `
+                        <tr>
+                            <td>${item.name}</td>
+                            <td>${item.variant || 'N/A'}</td>
+                            <td class="text-right">₱${item.price.toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
+                            <td class="text-right">${item.qty}</td>
+                            <td class="text-right">₱${(item.price * item.qty).toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="summary">
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>₱${subtotal.toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+            </div>
+            <div class="summary-row">
+                <span>Delivery:</span>
+                <span>FREE</span>
+            </div>
+            <div class="summary-row total">
+                <span>Total:</span>
+                <span>₱${order.total.toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-print" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                Print Receipt
+            </button>
+            <button class="btn btn-download" onclick="downloadPDF()">
+                <i class="fas fa-download"></i>
+                Download PDF
+            </button>
+        </div>
+    `;
+}
+
+function showError(message) {
+    const container = document.getElementById('receiptContainer');
+    container.innerHTML = `
+        <div class="error">
+            <i class="fas fa-exclamation-circle fa-2x"></i>
+            <h3>Error Loading Receipt</h3>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+function downloadPDF() {
+    // Simple download using print
+    // For a proper PDF, you'd need a library like jsPDF
+    window.print();
+}
 </script>
 
 </body>

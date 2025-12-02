@@ -932,4 +932,200 @@ input, select {
     color: #777;
 }
 
+/* ========================================
+   PURCHASES SECTION
+   ======================================== */
 
+.purchases-section {
+    margin-top: 40px;
+}
+
+.purchases-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.purchase-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.purchase-card:hover {
+    border-color: #000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.purchase-icon {
+    width: 60px;
+    height: 60px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.purchase-icon i {
+    font-size: 24px;
+    color: #495057;
+}
+
+.purchase-info {
+    flex: 1;
+}
+
+.purchase-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 8px;
+}
+
+.purchase-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.purchase-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.purchase-meta i {
+    font-size: 0.85em;
+}
+
+.purchase-date {
+    color: #6c757d;
+}
+
+.purchase-amount {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.purchase-items {
+    color: #6c757d;
+}
+
+.purchase-status {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.status-processing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-shipped {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-delivered {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.payment-method {
+    font-size: 0.85em;
+    color: #6c757d;
+    padding: 4px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.purchase-arrow {
+    color: #adb5bd;
+    font-size: 1.2em;
+}
+
+.purchase-card:hover .purchase-arrow {
+    color: #000;
+    transform: translateX(4px);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 1.3em;
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #6c757d;
+    font-size: 0.95em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .purchase-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .purchase-meta {
+        justify-content: center;
+    }
+    
+    .purchase-status {
+        justify-content: center;
+    }
+    
+    .purchase-arrow {
+        display: none;
+    }
+}
