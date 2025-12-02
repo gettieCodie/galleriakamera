@@ -121,6 +121,83 @@ try {
     }
     $stmtBilling->close();
 
+   // 4️⃣ Copy cart items to orderitems table
+    // Query to get all necessary info - adjust column names based on your listings table
+    $sqlGetCart = "SELECT c.ListingID, c.Quantity, 
+                        CONCAT(l.brand, ' ', l.model) AS ProductName,
+                        l.selling_price AS Price
+                   FROM cart c
+                   INNER JOIN listings l ON c.ListingID = l.listing_id
+                   WHERE c.CustomerID = ?";
+    $stmtGetCart = $conn->prepare($sqlGetCart);
+    if (!$stmtGetCart) {
+        throw new Exception("Get cart prepare failed: " . $conn->error);
+    }
+    
+    $stmtGetCart->bind_param("i", $customerID);
+    
+    if (!$stmtGetCart->execute()) {
+        throw new Exception("Get cart failed: " . $stmtGetCart->error);
+    }
+    
+    $cartResult = $stmtGetCart->get_result();
+    $stmtGetCart->close();
+    
+    // Insert each cart item into orderitems
+    if ($cartResult->num_rows > 0) {
+        $sqlInsertItem = "INSERT INTO orderitems (OrderID, ListingID, ProductName, Variant, Quantity, Price) 
+                          VALUES (?, ?, ?, ?, ?, ?)";
+        $stmtInsertItem = $conn->prepare($sqlInsertItem);
+        if (!$stmtInsertItem) {
+            throw new Exception("Insert order item prepare failed: " . $conn->error);
+        }
+        
+        while ($item = $cartResult->fetch_assoc()) {
+            $listingID = $item['ListingID'];
+            $quantity = $item['Quantity'];
+            
+            // Try different possible column names for ProductName
+            $productName = $item['ProductName'] ?? $item['Name'] ?? $item['Title'] ?? 'Unknown Product';
+            
+            // Try different possible column names for Price
+            $price = $item['Price'] ?? $item['selling_price'] ?? $item['ListingPrice'] ?? 0;
+            
+            // Variant is always null since cart doesn't have it
+            $variant = null;
+            
+            $stmtInsertItem->bind_param(
+                "iissid",
+                $orderID,
+                $listingID,
+                $productName,
+                $variant,
+                $quantity,
+                $price
+            );
+            
+            if (!$stmtInsertItem->execute()) {
+                throw new Exception("Insert order item failed: " . $stmtInsertItem->error);
+            }
+        }
+        $stmtInsertItem->close();
+    }
+
+    // 5️⃣ Clear the cart after successful order
+    $sqlClearCart = "DELETE FROM cart WHERE CustomerID = ?";
+    $stmtClearCart = $conn->prepare($sqlClearCart);
+    if (!$stmtClearCart) {
+        throw new Exception("Clear cart prepare failed: " . $conn->error);
+    }
+    
+    $stmtClearCart->bind_param("i", $customerID);
+    
+    if (!$stmtClearCart->execute()) {
+        throw new Exception("Clear cart failed: " . $stmtClearCart->error);
+    }
+    
+    $cartItemsCleared = $stmtClearCart->affected_rows;
+    $stmtClearCart->close();
+
     $conn->commit();
     
     http_response_code(200);
