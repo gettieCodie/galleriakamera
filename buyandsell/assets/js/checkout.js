@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalAmountVariable = 18000; // Example
 
     // --- Helper function: get selected payment method ---
-    function getSelectedPaymentMethod() {
+   function getSelectedPaymentMethod() {
         const mainPayment = document.querySelector('input[name="payment_method"]:checked')?.value;
         if (mainPayment === 'cod') {
             return 'COD';
@@ -39,7 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Helper function: save order + shipping to backend ---
     function saveOrderAndShipping() {
+        const sameAsDelivery = document.getElementById("same-as-delivery").checked;
+        
         const data = {
+            // Shipping/Delivery Address
             first_name: document.getElementById("first-name").value,
             last_name: document.getElementById("last-name").value,
             mobile_number: document.getElementById("mobile-number").value,
@@ -53,7 +56,24 @@ document.addEventListener('DOMContentLoaded', function() {
             landmark: document.getElementById("landmark").value || null,
             email: document.getElementById("email").value,
             total_amount: totalAmountVariable,
-            payment_method: getSelectedPaymentMethod()
+            payment_method: getSelectedPaymentMethod(),
+            
+            // Billing Address
+            same_as_delivery: sameAsDelivery,
+            billing_first_name: sameAsDelivery ? document.getElementById("first-name").value : document.getElementById("billing-first-name").value,
+            billing_last_name: sameAsDelivery ? document.getElementById("last-name").value : document.getElementById("billing-last-name").value,
+            billing_mobile_number: sameAsDelivery ? document.getElementById("mobile-number").value : document.getElementById("billing-mobile-number").value,
+            billing_alternate_number: sameAsDelivery ? (document.getElementById("alternate-number").value || null) : (document.getElementById("billing-alternate-number").value || null),
+            billing_address_line_1: sameAsDelivery ? document.getElementById("address-line-1").value : document.getElementById("business-address-line-1").value,
+            billing_address_line_2: sameAsDelivery ? (document.getElementById("address-line-2").value || null) : (document.getElementById("business-address-line-2").value || null),
+            billing_barangay: sameAsDelivery ? document.getElementById("barangay").value : document.getElementById("business-barangay").value,
+            billing_city: sameAsDelivery ? document.getElementById("city").value : document.getElementById("business-city").value,
+            billing_region: sameAsDelivery ? document.getElementById("region").value : document.getElementById("business-region").value,
+            billing_postal_code: sameAsDelivery ? document.getElementById("postal-code").value : document.getElementById("business-postal-code").value,
+            billing_email: sameAsDelivery ? document.getElementById("email").value : document.getElementById("business-email").value,
+            tin: document.getElementById("tax-id").value || null,
+            business_name: document.getElementById("business-name").value || null,
+            business_style: document.getElementById("business-style").value || null
         };
 
         console.log("Sending data to server:", data); // Debug log
@@ -63,21 +83,30 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
         })
-        .then(res => {
-            console.log("Response status:", res.status); // Debug log
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
+        .then(async res => {
+            console.log("Response status:", res.status);
+            
+            const text = await res.text();
+            console.log("Raw response:", text);
+            
+            try {
+                const json = JSON.parse(text);
+                return { ok: res.ok, data: json };
+            } catch (e) {
+                console.error("JSON parse error:", e);
+                console.error("Response text:", text);
+                throw new Error("Server returned invalid JSON. Check console for details.");
             }
-            return res.json();
         })
-        .then(res => {
-            console.log("Server response:", res); // Debug log
-            if (res.status === "success") {
+        .then(({ ok, data }) => {
+            console.log("Server response:", data);
+            
+            if (ok && data.status === "success") {
                 console.log("Order & shipping details saved!");
                 return true;
             } else {
-                console.error("DB Error:", res.message);
-                alert("Error saving order: " + res.message);
+                console.error("DB Error:", data.message);
+                alert("Error saving order: " + data.message);
                 return false;
             }
         })
