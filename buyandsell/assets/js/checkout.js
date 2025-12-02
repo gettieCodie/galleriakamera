@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
     closeNotificationBtn.addEventListener('click', function() {
         successNotification.style.display = 'none';
         // In a real application, you would redirect to the order confirmation page
-        // window.location.href = 'order-confirmation.php';
+        window.location.href = 'marketplace.php';
     });
     
     // Function to show success notification
