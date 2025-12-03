@@ -194,8 +194,50 @@ function loadSellingItems() {
 }
 
 function loadWishlist() {
+    console.log('Loading wishlist...');
+
     const container = document.getElementById('wishlist-items');
-    // Similar structure to marketplace product cards
+
+      fetch('core/get_wishlist.php')
+        .then(res => res.json())
+        .then(data => {
+            console.log("Wishlist data:", data);
+
+            if (!Array.isArray(data) || data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="assets/images/empty.png" class="empty-icon">
+                        <h3>Wishlist is empty</h3>
+                        <p>Save cameras you're interested in from the marketplace</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Render items
+            container.innerHTML = data.map(item => `
+                <div class="wishlist-card">
+                    <img 
+                        src="${item.image_path ? item.image_path : 'assets/images/empty.png'}" 
+                        class="wishlist-image"
+                        onerror="this.src='assets/images/empty.png'"
+                    >
+                    <div class="wishlist-info">
+                        <h4>${item.brand} ${item.model}</h4>
+                        <p>${item.megapixels}MP • ${item.sensor}</p>
+                        <p class="wishlist-price">₱${parseFloat(item.selling_price).toLocaleString()}</p>
+                    </div>
+                </div>
+            `).join('');
+        })
+        .catch(error => {
+            console.error("Wishlist fetch error:", error);
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>Error loading wishlist</h3>
+                </div>
+            `;
+        });
 }
 
 function loadReviews() {
