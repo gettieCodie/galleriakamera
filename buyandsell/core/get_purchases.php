@@ -50,7 +50,7 @@ try {
             'payment_method' => $row['PaymentMethod'],
             'status' => $row['Status'] ?? 'Pending',
             'customer_name' => $row['FirstName'] . ' ' . $row['LastName'],
-            'item_count' => $row['ItemCount']
+            'items_count' => $row['ItemCount']
         ];
     }
     
