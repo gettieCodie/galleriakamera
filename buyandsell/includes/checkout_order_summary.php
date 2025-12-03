@@ -66,8 +66,13 @@ $total = $subtotal + $vat + $delivery;
     <h2>Order Summary</h2>
     
     <div class="cart-info">
+<<<<<<< HEAD
         <p>You have <?php echo $item_count; ?> item<?php echo $item_count !== 1 ? 's' : ''; ?> in your cart</p>
         <a href="../cart.php" class="edit-link">Edit Cart</a>
+=======
+        <p>You have 1 item in your cart</p>
+        <a href="../cart.php" class="edit-link">Edit</a>
+>>>>>>> f179fb805ef04ef2752c9737b3c0cac69facaba8
     </div>
     
     <?php if(!empty($cart_items)): ?>
