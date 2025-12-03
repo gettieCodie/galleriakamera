@@ -1,6 +1,38 @@
 <?php 
 session_start();
 include '../includes/header_dashboard_admin.php';
+include '../core/db_connect.php';
+
+// Fetch all listings from database
+$listings = [];
+$limit = 3; // Show only last 3
+try {
+    $sql = "SELECT 
+        l.listing_id,
+        l.brand,
+        l.model,
+        l.selling_price,
+        l.original_price,
+        l.created_at,
+        (SELECT image_path FROM listing_images WHERE listing_id = l.listing_id LIMIT 1) as image_path,
+        DATEDIFF(NOW(), l.created_at) as days_listed
+    FROM listings l
+    ORDER BY l.created_at DESC
+    LIMIT ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $limit);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $listings[] = $row;
+        }
+    }
+    $stmt->close();
+} catch (Exception $e) {
+    error_log("Error fetching listings: " . $e->getMessage());
+}
 ?>
 
 <div class="admin-dashboard-wrapper">
@@ -140,7 +172,7 @@ include '../includes/header_dashboard_admin.php';
                 <div class="inventory-section">
                     <div class="section-header">
                         <h3 class="section-title">Inventory Summary</h3>
-                        <button class="btn-view-all">View All Inventory</button>
+                        <button class="btn-view-all" onclick="window.location.href='admin_products.php'">View All Inventory</button>
                     </div>
                     <div class="inventory-table">
                         <div class="table-header">
@@ -148,45 +180,37 @@ include '../includes/header_dashboard_admin.php';
                             <div class="col">Status</div>
                             <div class="col">Days Listed</div>
                             <div class="col">Price</div>
-                            <div class="col">Views</div>
+                            <div class="col">Original</div>
                             <div class="col">Actions</div>
                         </div>
                         <div class="table-body">
-                            <!-- Item 1 -->
-                            <div class="table-row">
-                                <div class="col camera-info">
-                                    <img src="assets/images/camera1.jpg" alt="Sony A7 III" class="camera-thumb">
-                                    <div>
-                                        <h4>Sony A7 III</h4>
-                                        <p>24MP • Full Frame</p>
+                            <?php if (!empty($listings)): ?>
+                                <?php foreach ($listings as $item): ?>
+                                    <div class="table-row">
+                                        <div class="col camera-info">
+                                            <img src="<?php echo $item['image_path'] ? (strpos($item['image_path'], 'uploads/') === 0 ? '../' . $item['image_path'] : $item['image_path']) : '../assets/images/empty.png'; ?>" alt="<?php echo htmlspecialchars($item['brand'] . ' ' . $item['model']); ?>" class="camera-thumb" onerror="this.src='../assets/images/empty.png'">
+                                            <div>
+                                                <h4><?php echo htmlspecialchars($item['brand']); ?> <?php echo htmlspecialchars($item['model']); ?></h4>
+                                                <p>Listed: <?php echo date('M d, Y', strtotime($item['created_at'])); ?></p>
+                                            </div>
+                                        </div>
+                                        <div class="col"><span class="status in-stock">Listed</span></div>
+                                        <div class="col"><?php echo (int)$item['days_listed']; ?> day<?php echo $item['days_listed'] !== '1' ? 's' : ''; ?></div>
+                                        <div class="col price">₱<?php echo number_format((float)$item['selling_price'], 2); ?></div>
+                                        <div class="col">₱<?php echo number_format((float)$item['original_price'], 2); ?></div>
+                                        <div class="col">
+                                            <button class="btn-action view-more" data-id="<?php echo $item['listing_id']; ?>" onclick="editListing(<?php echo $item['listing_id']; ?>)">Edit</button>
+                                            <button class="btn-action btn-delete" data-id="<?php echo $item['listing_id']; ?>" onclick="deleteListing(<?php echo $item['listing_id']; ?>, '<?php echo htmlspecialchars($item['brand'] . ' ' . $item['model']); ?>')">Remove</button>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="table-row">
+                                    <div class="col" style="grid-column: 1/-1; text-align: center; padding: 30px; color: #999;">
+                                        <p>No listings yet. Add a new listing to get started.</p>
                                     </div>
                                 </div>
-                                <div class="col"><span class="status in-stock">In Stock</span></div>
-                                <div class="col">3 days</div>
-                                <div class="col price">₱45,000</div>
-                                <div class="col">156</div>
-                                <div class="col">
-                                    <button class="btn-action view-more" data-id="1">View More</button>
-                                </div>
-                            </div>
-                            <!-- Item 2 -->
-                            <div class="table-row">
-                                <div class="col camera-info">
-                                    <img src="assets/images/camera2.jpg" alt="Canon R5" class="camera-thumb">
-                                    <div>
-                                        <h4>Canon R5</h4>
-                                        <p>45MP • Full Frame</p>
-                                    </div>
-                                </div>
-                                <div class="col"><span class="status low-stock">Low Stock</span></div>
-                                <div class="col">7 days</div>
-                                <div class="col price">₱120,000</div>
-                                <div class="col">289</div>
-                                <div class="col">
-                                    <button class="btn-action view-more" data-id="2">View More</button>
-                                </div>
-                            </div>
-                            <!-- Add more items as needed -->
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -588,6 +612,161 @@ include '../includes/header_dashboard_admin.php';
 <!-- Include the Add Listing Modal -->
 <?php include '../includes/admin_addlisting.php'; ?>
 <script src="../assets/js/admin_dashboard.js"></script>
+
+<style>
+.btn-delete {
+    background-color: #ff3b30 !important;
+    color: white !important;
+    margin-left: 5px;
+}
+.btn-delete:hover {
+    background-color: #e63321 !important;
+}
+
+/* Delete Confirmation Modal */
+.delete-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.delete-modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.delete-modal-content h2 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 20px;
+}
+
+.delete-modal-content p {
+    color: #666;
+    margin: 0 0 20px 0;
+}
+
+.delete-modal-content .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.delete-modal-content .btn-confirm {
+    background-color: #ff3b30;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-modal-content .btn-confirm:hover {
+    background-color: #e63321;
+}
+
+.delete-modal-content .btn-cancel {
+    background-color: #e5e7eb;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-modal-content .btn-cancel:hover {
+    background-color: #d1d5db;
+}
+</style>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="delete-modal">
+    <div class="delete-modal-content">
+        <h2>Delete Listing?</h2>
+        <p>Are you sure you want to delete <strong id="deleteItemName"></strong>? This action cannot be undone.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn-confirm" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let deleteListingId = null;
+
+function editListing(listingId) {
+    // Redirect to edit page or open edit modal
+    window.location.href = 'edit_listing.php?id=' + listingId;
+}
+
+function deleteListing(listingId, itemName) {
+    deleteListingId = listingId;
+    document.getElementById('deleteItemName').textContent = itemName;
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    deleteListingId = null;
+}
+
+function confirmDelete() {
+    if (!deleteListingId) return;
+    
+    fetch('../core/delete_listing.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            listing_id: deleteListingId
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('Listing deleted successfully!');
+            location.reload();
+        } else {
+            alert('Error deleting listing: ' + (data.message || 'Unknown error'));
+            console.log('Delete response:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+    });
+    
+    closeDeleteModal();
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('deleteModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+
 <?php include 'includes/footer.php'; ?>
 
 
