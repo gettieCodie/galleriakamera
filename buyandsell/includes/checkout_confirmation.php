@@ -1,4 +1,4 @@
-<!-- includes/confirmation.php -->
+includes/confirmation.php
 <?php
 $order_id = $_GET['order_id'] ?? 'ORD' . date('YmdHis');
 
@@ -71,7 +71,7 @@ $order_items = $stmt_items->get_result()->fetch_all(MYSQLI_ASSOC);
         
         <div class="navigation-buttons">
             <a href="my-purchases.php" class="btn-primary">View My Purchases</a>
-            <a href="index.php" class="btn-secondary">Continue Shopping</a>
+            <a href="../../marketplace.php" class="btn-secondary">Continue Shopping</a>
         </div>
     </div>
 </section>

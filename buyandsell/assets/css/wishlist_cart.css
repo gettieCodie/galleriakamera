@@ -90,3 +90,128 @@
 .btn-checkout:hover {
     background-color: #059669;
 }
+
+/* Remove Confirmation Modal */
+.remove-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.remove-modal {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.remove-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.remove-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111;
+}
+
+.remove-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.remove-modal-close:hover {
+    background: #f3f4f6;
+    color: #111;
+}
+
+.remove-modal-body {
+    padding: 1.5rem;
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.remove-modal-footer {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    justify-content: flex-end;
+}
+
+.remove-modal-cancel,
+.remove-modal-confirm {
+    padding: 0.625rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.remove-modal-cancel {
+    background: #f3f4f6;
+    color: #111;
+}
+
+.remove-modal-cancel:hover {
+    background: #e5e7eb;
+}
+
+.remove-modal-confirm {
+    background: #ef4444;
+    color: white;
+}
+
+.remove-modal-confirm:hover {
+    background: #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}

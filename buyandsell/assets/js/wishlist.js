@@ -82,10 +82,56 @@ async function loadWishlist() {
 }
 
 async function removeFromWishlist(listingId) {
-    if (!confirm("Remove this item from your wishlist?")) {
-        return;
-    }
+    // Show custom modal instead of confirm dialog
+    showRemoveWishlistConfirmModal(listingId);
+}
+
+function showRemoveWishlistConfirmModal(listingId) {
+    // Create modal overlay
+    const modal = document.createElement('div');
+    modal.className = 'remove-modal-overlay';
+    modal.innerHTML = `
+        <div class="remove-modal">
+            <div class="remove-modal-header">
+                <h2>Remove Item</h2>
+                <button class="remove-modal-close" aria-label="Close">✕</button>
+            </div>
+            <div class="remove-modal-body">
+                <p>Are you sure you want to remove this item from your wishlist?</p>
+            </div>
+            <div class="remove-modal-footer">
+                <button class="remove-modal-cancel">Cancel</button>
+                <button class="remove-modal-confirm">Remove</button>
+            </div>
+        </div>
+    `;
     
+    document.body.appendChild(modal);
+    
+    // Close button
+    const closeBtn = modal.querySelector('.remove-modal-close');
+    closeBtn.addEventListener('click', () => modal.remove());
+    
+    // Cancel button
+    const cancelBtn = modal.querySelector('.remove-modal-cancel');
+    cancelBtn.addEventListener('click', () => modal.remove());
+    
+    // Confirm button
+    const confirmBtn = modal.querySelector('.remove-modal-confirm');
+    confirmBtn.addEventListener('click', async () => {
+        modal.remove();
+        await performRemoveFromWishlist(listingId);
+    });
+    
+    // Close on overlay click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+async function performRemoveFromWishlist(listingId) {
     try {
         const formData = new FormData();
         formData.append("listing_id", listingId);

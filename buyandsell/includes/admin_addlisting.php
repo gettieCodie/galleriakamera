@@ -39,8 +39,10 @@
       <label>Upload Images (6 max, JPG/PNG, max 2MB each):</label>
       <input type="file" name="images[]" accept=".jpg,.jpeg,.png" multiple required><br><br>
 
-      <button type="submit" name="submit">Add Listing</button>
-      <button type="button" id="cancelBtn">Cancel</button>
+      <div class="form-buttons">
+        <button type="button" id="cancelBtn" class="btn-cancel">Cancel</button>
+        <button type="submit" name="submit" class="btn-submit">Add Listing</button>
+      </div>
     </form>
   </div>
 </div>
@@ -60,6 +62,46 @@
   position: absolute; top: 10px; right: 15px; cursor: pointer; 
   font-size: 24px; font-weight: bold;
 }
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+}
+.btn-submit {
+  padding: 10px 20px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+.btn-submit:hover {
+  background-color: #5568d3;
+}
+.btn-submit:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.btn-cancel {
+  padding: 10px 20px;
+  background-color: #f3f4f6;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+.btn-cancel:hover {
+  background-color: #e5e7eb;
+}
 .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 </style>
@@ -69,7 +111,7 @@
 // Admin Dashboard Modal Functionality
 function initializeListingModal() {
     const modal = document.getElementById('listingModal');
-    const btn = document.getElementById('addListingBtn');
+    const btn = document.getElementById('openListingModal');
     const span = document.getElementsByClassName('close')[0];
     const cancel = document.getElementById('cancelBtn');
     const form = document.getElementById('cameraForm');
@@ -119,12 +161,21 @@ function initializeListingModal() {
             submitButton.textContent = 'Adding...';
             hideMessage();
 
-            fetch('../core/upload_listings.php', {
+            // Determine the correct path based on where the script is running from
+            const uploadPath = document.location.pathname.includes('/admin/') 
+                ? '../core/upload_listings.php' 
+                : 'core/upload_listings.php';
+            
+            fetch(uploadPath, {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
             .then(data => {
+                console.log('Response data:', data);
                 if (data.success) {
                     showMessage(data.message, 'success');
                     form.reset();

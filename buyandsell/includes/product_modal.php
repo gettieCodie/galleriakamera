@@ -19,8 +19,6 @@
                                 <img id="mainImage" src="" alt="Product" class="w-full h-full object-contain p-4">
                             </div>
                         </div>
-                        <div class="swiper-button-prev modal-nav-prev"></div>
-                        <div class="swiper-button-next modal-nav-next"></div>
                     </div>
                 </div>
                 
@@ -176,8 +174,27 @@
 let currentModalProduct = null;
 let modalCarousel = null;
 
-function openProductModal(product) {
+async function openProductModal(product) {
     currentModalProduct = product;
+    
+    // Fetch all images for this product
+    let allImages = [];
+    try {
+        const response = await fetch(`core/get_listings.php?listing_id=${product.listing_id}`);
+        const data = await response.json();
+        if (data && data.images) {
+            allImages = data.images;
+        }
+    } catch (error) {
+        console.error('Error fetching product images:', error);
+        // Fallback to single image if fetch fails
+        allImages = [product.image_path];
+    }
+    
+    // If no images fetched, use the main product image
+    if (allImages.length === 0) {
+        allImages = [product.image_path || 'assets/images/empty.png'];
+    }
     
     // Update product details
     document.getElementById('productTitle').textContent = `${product.brand} ${product.model}`;
@@ -204,7 +221,7 @@ function openProductModal(product) {
     }
     
     // Set main image
-    document.getElementById('mainImage').src = product.image_path || 'assets/images/empty.png';
+    document.getElementById('mainImage').src = allImages[0] || 'assets/images/empty.png';
     
     // Generate specs
     const specsHTML = `
@@ -227,17 +244,26 @@ function openProductModal(product) {
     `;
     document.getElementById('productSpecs').innerHTML = specsHTML;
     
-    // Create thumbnail gallery (using main image for now)
+    // Create thumbnail gallery with all images
     const thumbGallery = document.getElementById('thumbnailGallery');
     thumbGallery.innerHTML = '';
     
-    const thumbDiv = document.createElement('div');
-    thumbDiv.className = 'modal-thumbnail active';
-    const thumbImg = document.createElement('img');
-    thumbImg.src = product.image_path || 'assets/images/empty.png';
-    thumbImg.alt = 'Product thumbnail';
-    thumbDiv.appendChild(thumbImg);
-    thumbGallery.appendChild(thumbDiv);
+    allImages.forEach((imagePath, index) => {
+        const thumbDiv = document.createElement('div');
+        thumbDiv.className = `modal-thumbnail ${index === 0 ? 'active' : ''}`;
+        thumbDiv.onclick = () => {
+            // Update main image
+            document.getElementById('mainImage').src = imagePath;
+            // Update active thumbnail
+            document.querySelectorAll('.modal-thumbnail').forEach(t => t.classList.remove('active'));
+            thumbDiv.classList.add('active');
+        };
+        const thumbImg = document.createElement('img');
+        thumbImg.src = imagePath || 'assets/images/empty.png';
+        thumbImg.alt = `Product thumbnail ${index + 1}`;
+        thumbDiv.appendChild(thumbImg);
+        thumbGallery.appendChild(thumbDiv);
+    });
     
     // Show modal
     const modal = document.getElementById('productModal');

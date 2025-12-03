@@ -39,7 +39,7 @@ include 'includes/header_marketplace.php';
       <img src="assets/images/empty.png" alt="Empty cart" class="empty-icon">
       <h2>Your cart is empty</h2>
       <p>Add some cameras to your cart to get started!</p>
-      <button onclick="window.location.href='marketplace.php'" class="btn-primary">Browse Marketplace</button>
+      <button onclick="window.location.href='/galleriakamera/buyandsell/marketplace.php'" class="btn-primary">Browse Marketplace</button>
     </div>
   </div>
 </div>
