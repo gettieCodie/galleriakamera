@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadKPIs();
     loadSellingItems();
     loadWishlist();
+    initializeStatusTabs();
 
     initializeSellItemModal();
 });
@@ -216,16 +217,23 @@ function loadWishlist() {
 
             // Render items
             container.innerHTML = data.map(item => `
-                <div class="wishlist-card">
+                <div class="wishlist-card" style="cursor: pointer;" onclick="wishlistCardClick({listing_id: ${item.listing_id}, brand: '${item.brand.replace(/'/g, "\\'")}', model: '${item.model.replace(/'/g, "\\'")}', megapixels: ${item.megapixels}, sensor: '${item.sensor.replace(/'/g, "\\'")}', selling_price: ${item.selling_price}, original_price: ${item.original_price || 0}, image_path: '${item.image_path}', description: '${(item.description || '').replace(/'/g, "\\'")}'})">
                     <img 
                         src="${item.image_path ? item.image_path : 'assets/images/empty.png'}" 
-                        class="wishlist-image"
+                        class="wishlist-card-image"
                         onerror="this.src='assets/images/empty.png'"
                     >
-                    <div class="wishlist-info">
-                        <h4>${item.brand} ${item.model}</h4>
-                        <p>${item.megapixels}MP • ${item.sensor}</p>
-                        <p class="wishlist-price">₱${parseFloat(item.selling_price).toLocaleString()}</p>
+                    <div class="wishlist-card-content">
+                        <h4 class="wishlist-card-title">${item.brand} ${item.model}</h4>
+                        <p class="wishlist-card-specs">${item.megapixels}MP • ${item.sensor}</p>
+                        <div class="wishlist-card-price">
+                            <span class="wishlist-card-price-current">₱${parseFloat(item.selling_price).toLocaleString()}</span>
+                            ${item.original_price ? `<span class="wishlist-card-price-original">₱${parseFloat(item.original_price).toLocaleString()}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="wishlist-card-actions">
+                        <button class="wishlist-btn wishlist-btn-primary" onclick="event.stopPropagation(); addToCartWishlist(${item.listing_id})">Add to Cart</button>
+                        <button class="wishlist-btn wishlist-btn-secondary" onclick="event.stopPropagation(); removeWishlistItem(${item.listing_id})">Remove</button>
                     </div>
                 </div>
             `).join('');
@@ -249,9 +257,15 @@ function loadReviews() {
 function initializeSellItemModal() {
     const modal = document.getElementById('sellItemModal');
     const sellBtn = document.getElementById('sellItemBtn');
-    const closeBtn = document.querySelector('.close')[0];
+    const closeBtn = document.querySelector('.close');
     const cancelBtn = document.getElementById('cancelSellBtn');
     const form = document.getElementById('sellItemForm');
+
+    // Check if all elements exist
+    if (!modal || !sellBtn || !closeBtn || !cancelBtn || !form) {
+        console.error('Modal elements not found');
+        return;
+    }
 
     // Open modal
     sellBtn.addEventListener('click', () => {
@@ -351,4 +365,71 @@ function submitSellItemForm() {
     
     // In real implementation, refresh the selling items list
     // loadSellingItems();
+}
+
+// Wishlist card click handler - opens product modal
+function wishlistCardClick(product) {
+    console.log('Wishlist card clicked:', product);
+    if (typeof openProductModal === 'function') {
+        openProductModal(product);
+    } else {
+        console.error('openProductModal function not available');
+    }
+}
+
+// Add to cart from wishlist
+async function addToCartWishlist(listingId) {
+    const formData = new FormData();
+    formData.append("listing_id", listingId);
+
+    try {
+        const res = await fetch("core/add_cart.php", {
+            method: "POST",
+            body: formData,
+            credentials: "same-origin"
+        });
+
+        const data = await res.json();
+
+        if (data.status === "ok") {
+            alert("Added to cart! 🛒");
+            loadKPIs();
+        } else {
+            alert(data.msg || "Failed to add to cart");
+        }
+    } catch (error) {
+        console.error("Error adding to cart:", error);
+        alert("Error adding to cart");
+    }
+}
+
+// Remove from wishlist
+async function removeWishlistItem(listingId) {
+    if (!confirm("Remove this item from your wishlist?")) {
+        return;
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append("listing_id", listingId);
+        
+        const res = await fetch("core/delete_wishlist.php", {
+            method: "POST",
+            body: formData
+        });
+        
+        const data = await res.json();
+        console.log("Remove response:", data);
+        
+        if (data.status === "ok") {
+            alert("Removed from wishlist");
+            loadWishlist();
+            loadKPIs();
+        } else {
+            alert("Failed to remove from wishlist");
+        }
+    } catch (error) {
+        console.error("Error removing from wishlist:", error);
+        alert("Error removing item");
+    }
 }

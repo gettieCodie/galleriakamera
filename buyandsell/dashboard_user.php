@@ -8,6 +8,7 @@ if(!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 include 'includes/header_dashboard_user.php';
+include 'includes/product_modal.php';
 ?>
 
 <div class="dashboard-wrapper">
