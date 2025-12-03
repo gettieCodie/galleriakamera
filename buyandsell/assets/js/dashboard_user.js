@@ -132,10 +132,15 @@ function updatePurchaseCount(count) {
 // ========================================
 
 function loadKPIs() {
-    // Load total listed items
-    // Load pending reviews
-    // Load wishlist count
     console.log('Loading KPIs...');
+
+    // ---- Load Wishlist Count ----
+    fetch('core/count_wishlist.php')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('wishlist-count').textContent = data.count || 0;
+        })
+        .catch(err => console.error('Wishlist count error:', err));
 }
 
 function loadSellingItems() {
