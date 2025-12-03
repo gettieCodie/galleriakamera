@@ -1,25 +1,208 @@
 // User Dashboard JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    initializeDashboard();
+    console.log("Dashboard loaded");
+
+    // initializeDashboard();
+    loadPurchases();
+    loadKPIs();
+    loadSellingItems();
+    loadWishlist();
+
+    initializeSellItemModal();
 });
 
-function initializeDashboard() {
-    console.log("Dashboard initializing...");
-    // Initialize modal functionality
-    initializeSellItemModal();
+// function initializeDashboard() {
+//     console.log("Dashboard initializing...");
+//     // Initialize modal functionality
+//     initializeSellItemModal();
     
-    // Initialize tab functionality
-    initializeStatusTabs();
+//     // Initialize tab functionality
+//     initializeStatusTabs();
     
-    // Load mock data for demonstration
-    loadMockData();
+//     // Load mock data for demonstration
+//     loadMockData();
+// }
+
+function loadPurchases() {
+    console.log('Loading purchases...');
+    
+    fetch('core/get_purchases.php') // Use relative path from current location
+        .then(res => {
+            console.log('Response status:', res.status);
+            return res.json();
+        })
+        .then(data => {
+            console.log('Purchases data:', data);
+            
+            if (data.status === 'success') {
+                displayPurchases(data.orders);
+                updatePurchaseCount(data.orders.length);
+            } else {
+                console.error('Error loading purchases:', data.message);
+                showEmptyPurchases();
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            showEmptyPurchases();
+        });
+}
+
+function displayPurchases(orders) {
+    const purchasesList = document.getElementById('purchases-list');
+    
+    if (!purchasesList) {
+        console.error('purchases-list element not found');
+        return;
+    }
+    
+    if (orders.length === 0) {
+        showEmptyPurchases();
+        return;
+    }
+    
+    purchasesList.innerHTML = orders.map(order => `
+        <div class="purchase-card" onclick="viewReceipt(${order.order_id})">
+            <div class="purchase-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <div class="purchase-info">
+                <h4 class="purchase-title">Order #${order.order_id}</h4>
+                <div class="purchase-meta">
+                    <span class="purchase-date">
+                        <i class="far fa-calendar"></i>
+                        ${formatDate(order.date)}
+                    </span>
+                    <span class="purchase-amount">
+                        <i class="fas fa-peso-sign"></i>
+                        ₱${parseFloat(order.total).toLocaleString('en-PH', {minimumFractionDigits: 2})}
+                    </span>
+                    <span class="purchase-items">
+                        ${order.item_count} ${order.item_count === 1 ? 'item' : 'items'}
+                    </span>
+                </div>
+                <div class="purchase-status">
+                    <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
+                    <span class="payment-method">${order.payment_method}</span>
+                </div>
+            </div>
+            <div class="purchase-arrow">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+        </div>
+    `).join('');
+}
+
+function showEmptyPurchases() {
+    const purchasesList = document.getElementById('purchases-list');
+    if (purchasesList) {
+        purchasesList.innerHTML = `
+            <div class="empty-state">
+                <img src="assets/images/empty.png" alt="Empty" class="empty-icon">
+                <h3>No purchases yet</h3>
+                <p>Your purchase history will appear here</p>
+            </div>
+        `;
+    }
+}
+
+function viewReceipt(orderID) {
+    console.log('Viewing receipt for order:', orderID);
+    window.location.href = `receipt.php?order_id=${orderID}`;
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+    });
+}
+
+function updatePurchaseCount(count) {
+    const purchaseCountElement = document.getElementById('total-purchases');
+    if (purchaseCountElement) {
+        purchaseCountElement.textContent = count;
+    }
+}
+
+// ========================================
+// KPI SECTION (Placeholder)
+// ========================================
+
+function loadKPIs() {
+    // Load total listed items
+    // Load pending reviews
+    // Load wishlist count
+    console.log('Loading KPIs...');
+}
+
+function loadSellingItems() {
+    console.log('Loading selling items...');
+    const container = document.getElementById('selling-items-list');
+    
+    // Mock data - replace with actual API call later
+    const mockItems = [
+        {
+            id: 1,
+            image: 'assets/images/camera1.jpg',
+            title: 'Sony A7 III',
+            specs: '24MP • Full Frame',
+            price: '₱45,000',
+            status: 'pending',
+            statusText: 'Under Review'
+        },
+        {
+            id: 2,
+            image: 'assets/images/camera2.jpg',
+            title: 'Canon EOS R5',
+            specs: '45MP • Full Frame',
+            price: '₱120,000',
+            status: 'approved',
+            statusText: 'Listed'
+        },
+        {
+            id: 3,
+            image: 'assets/images/camera3.jpg',
+            title: 'Nikon Z6',
+            specs: '24MP • Full Frame',
+            price: '₱65,000',
+            status: 'sold',
+            statusText: 'Sold'
+        }
+    ];
+
+    if (mockItems.length > 0) {
+        container.innerHTML = mockItems.map(item => `
+            <div class="item-card" data-status="${item.status}">
+                <img src="${item.image}" alt="${item.title}" class="item-image" onerror="this.src='assets/images/empty.png'">
+                <div class="item-details">
+                    <h4 class="item-title">${item.title}</h4>
+                    <p class="item-specs">${item.specs}</p>
+                    <p class="item-price">${item.price}</p>
+                </div>
+                <span class="item-status status-${item.status}">${item.statusText}</span>
+            </div>
+        `).join('');
+    }
+}
+
+function loadWishlist() {
+    const container = document.getElementById('wishlist-items');
+    // Similar structure to marketplace product cards
+}
+
+function loadReviews() {
+    const container = document.getElementById('reviews-list');
+    // Mock reviews data
 }
 
 // Modal functionality
 function initializeSellItemModal() {
     const modal = document.getElementById('sellItemModal');
     const sellBtn = document.getElementById('sellItemBtn');
-    const closeBtn = document.querySelector('.close');
+    const closeBtn = document.querySelector('.close')[0];
     const cancelBtn = document.getElementById('cancelSellBtn');
     const form = document.getElementById('sellItemForm');
 
@@ -71,7 +254,7 @@ function initializeStatusTabs() {
 }
 
 // Mock data for demonstration
-function loadMockData() {
+function loadData() {
     // Mock KPI data
     document.getElementById('total-listed').textContent = '3';
     document.getElementById('pending-review').textContent = '1';
@@ -79,80 +262,16 @@ function loadMockData() {
     document.getElementById('wishlist-count').textContent = '4';
 
     // Mock selling items
-    loadMockSellingItems();
+    loadSellingItems();
     
     // Mock purchases
-    loadMockPurchases();
+    loadPurchases();
     
     // Mock wishlist
-    loadMockWishlist();
+    loadWishlist();
     
     // Mock reviews
-    loadMockReviews();
-}
-
-function loadMockSellingItems() {
-    const container = document.getElementById('selling-items-list');
-    
-    // Mock data - replace with actual API call later
-    const mockItems = [
-        {
-            id: 1,
-            image: 'assets/images/camera1.jpg',
-            title: 'Sony A7 III',
-            specs: '24MP • Full Frame',
-            price: '₱45,000',
-            status: 'pending',
-            statusText: 'Under Review'
-        },
-        {
-            id: 2,
-            image: 'assets/images/camera2.jpg',
-            title: 'Canon EOS R5',
-            specs: '45MP • Full Frame',
-            price: '₱120,000',
-            status: 'approved',
-            statusText: 'Listed'
-        },
-        {
-            id: 3,
-            image: 'assets/images/camera3.jpg',
-            title: 'Nikon Z6',
-            specs: '24MP • Full Frame',
-            price: '₱65,000',
-            status: 'sold',
-            statusText: 'Sold'
-        }
-    ];
-
-    if (mockItems.length > 0) {
-        container.innerHTML = mockItems.map(item => `
-            <div class="item-card" data-status="${item.status}">
-                <img src="${item.image}" alt="${item.title}" class="item-image" onerror="this.src='assets/images/empty-box.png'">
-                <div class="item-details">
-                    <h4 class="item-title">${item.title}</h4>
-                    <p class="item-specs">${item.specs}</p>
-                    <p class="item-price">${item.price}</p>
-                </div>
-                <span class="item-status status-${item.status}">${item.statusText}</span>
-            </div>
-        `).join('');
-    }
-}
-
-function loadMockPurchases() {
-    const container = document.getElementById('purchases-list');
-    // Similar structure to selling items
-}
-
-function loadMockWishlist() {
-    const container = document.getElementById('wishlist-items');
-    // Similar structure to marketplace product cards
-}
-
-function loadMockReviews() {
-    const container = document.getElementById('reviews-list');
-    // Mock reviews data
+    loadReviews();
 }
 
 // Filter selling items by status
