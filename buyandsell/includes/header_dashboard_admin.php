@@ -26,10 +26,6 @@
             <!-- Navigation Links (right side) -->
             <nav class="nav-links">
                 <ul>
-                    <li><a href="../marketplace.php" class="dashboard-link">
-                        <img src="../assets/images/marketplace.png" alt="Dashboard Icon">
-                        Browse Marketplace
-                    </a></li>
                     <li><a href="../index.php" class="logout-btn"><img src="../assets/images/logout.png" alt="Logout Icon">   Logout</a></li>
                 </ul>
             </nav>

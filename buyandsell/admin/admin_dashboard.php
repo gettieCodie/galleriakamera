@@ -33,6 +33,238 @@ try {
 } catch (Exception $e) {
     error_log("Error fetching listings: " . $e->getMessage());
 }
+
+// Fetch KPI metrics
+$kpi_pending_review = 0;
+$kpi_pending_orders = 0;
+$kpi_total_revenue = 0;
+$kpi_total_profit = 0;
+
+// Trend data
+$pending_review_trend = 0;
+$pending_orders_trend = 0;
+$revenue_trend_percent = 0;
+$profit_trend_percent = 0;
+
+try {
+    // Pending Review count (from user_listings with status = 'pending')
+    $sql = "SELECT COUNT(*) as count FROM user_listings WHERE status = 'pending'";
+    $result = $conn->query($sql);
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $kpi_pending_review = $row['count'];
+    }
+    
+    // Pending Review trend (compare with yesterday)
+    $sql = "SELECT COUNT(*) as count FROM user_listings WHERE status = 'pending' AND DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    $result = $conn->query($sql);
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $yesterday_pending_review = $row['count'];
+        $pending_review_trend = $kpi_pending_review - $yesterday_pending_review;
+    }
+    
+    // Pending Orders count (orders with status = 'pending')
+    $sql = "SELECT COUNT(*) as count FROM orders WHERE Status = 'pending'";
+    $result = $conn->query($sql);
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $kpi_pending_orders = $row['count'];
+    }
+    
+    // Pending Orders trend (compare with yesterday)
+    $sql = "SELECT COUNT(*) as count FROM orders WHERE Status = 'pending' AND DATE(OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    $result = $conn->query($sql);
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $yesterday_pending_orders = $row['count'];
+        $pending_orders_trend = $kpi_pending_orders - $yesterday_pending_orders;
+    }
+    
+    // Total Revenue (sum of all completed orders)
+    $sql = "SELECT SUM(TotalAmount) as total FROM orders WHERE Status = 'completed'";
+    $result = $conn->query($sql);
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $kpi_total_revenue = $row['total'] ? (float)$row['total'] : 0;
+    }
+    
+    // Revenue trend (compare with yesterday)
+    $sql = "SELECT SUM(TotalAmount) as total FROM orders WHERE Status = 'completed' AND DATE(OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    $result = $conn->query($sql);
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $yesterday_revenue = $row['total'] ? (float)$row['total'] : 0;
+        if ($yesterday_revenue > 0) {
+            $revenue_trend_percent = (($kpi_total_revenue - $yesterday_revenue) / $yesterday_revenue) * 100;
+        }
+    }
+    
+    // Total Profit (sum of selling_price - original_price for completed orders)
+    // We need to calculate based on the marketplace listings that have been sold
+    $sql = "SELECT SUM(l.selling_price - l.original_price) as profit
+            FROM listings l
+            JOIN orderitems oi ON CONCAT(l.brand, ' ', l.model) = oi.ProductName
+            JOIN orders o ON oi.OrderID = o.OrderID
+            WHERE o.Status = 'completed'";
+    $result = $conn->query($sql);
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $kpi_total_profit = $row['profit'] ? (float)$row['profit'] : 0;
+    }
+    
+    // Profit trend (compare with yesterday)
+    $sql = "SELECT SUM(l.selling_price - l.original_price) as profit
+            FROM listings l
+            JOIN orderitems oi ON CONCAT(l.brand, ' ', l.model) = oi.ProductName
+            JOIN orders o ON oi.OrderID = o.OrderID
+            WHERE o.Status = 'completed' AND DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    $result = $conn->query($sql);
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $yesterday_profit = $row['profit'] ? (float)$row['profit'] : 0;
+        if ($yesterday_profit > 0) {
+            $profit_trend_percent = (($kpi_total_profit - $yesterday_profit) / $yesterday_profit) * 100;
+        }
+    }
+} catch (Exception $e) {
+    error_log("Error fetching KPI metrics: " . $e->getMessage());
+}
+
+// Fetch top requested cameras based on wishlist
+$top_requested = [];
+try {
+    $sql = "SELECT 
+        l.listing_id,
+        l.brand,
+        l.model,
+        COUNT(w.WishlistID) as wishlist_count
+    FROM listings l
+    LEFT JOIN wishlist w ON l.listing_id = w.ListingID
+    GROUP BY l.listing_id
+    ORDER BY wishlist_count DESC
+    LIMIT 4";
+    
+    $result = $conn->query($sql);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $top_requested[] = $row;
+        }
+    }
+} catch (Exception $e) {
+    error_log("Error fetching top requested: " . $e->getMessage());
+}
+
+// Fetch pending customer submissions for review
+$pending_items = [];
+try {
+    // First, test basic connection
+    $test_sql = "SELECT COUNT(*) as count FROM user_listings WHERE status = 'pending'";
+    $test_result = $conn->query($test_sql);
+    if ($test_result) {
+        $test_row = $test_result->fetch_assoc();
+        error_log("Total pending count: " . $test_row['count']);
+    }
+    
+    $sql = "SELECT 
+        ul.user_listing_id,
+        ul.brand,
+        ul.model,
+        ul.condition,
+        ul.megapixels,
+        ul.sensor,
+        ul.original_price,
+        ul.asking_price,
+        ul.status,
+        ul.created_at,
+        ul.inclusions,
+        ul.known_issues,
+        c.FullName,
+        c.Email,
+        (SELECT image_path FROM user_listing_images WHERE user_listing_id = ul.user_listing_id LIMIT 1) as image_path
+    FROM user_listings ul
+    LEFT JOIN customers c ON ul.CustomerID = c.CustomerID
+    WHERE ul.status = 'pending'
+    ORDER BY ul.created_at DESC";
+    
+    error_log("Executing SQL: " . $sql);
+    
+    $result = $conn->query($sql);
+    if (!$result) {
+        error_log("Query error: " . $conn->error);
+    } else {
+        error_log("Query successful, rows: " . $result->num_rows);
+        
+        while ($row = $result->fetch_assoc()) {
+            error_log("Found pending item: " . json_encode($row));
+            $pending_items[] = $row;
+        }
+    }
+    
+    error_log("Total pending items fetched: " . count($pending_items));
+    
+} catch (Exception $e) {
+    error_log("Exception: " . $e->getMessage());
+}
+
+// Fetch approved (purchased) items from user_listings
+$purchased_items = [];
+try {
+    $sql = "SELECT 
+        ul.user_listing_id,
+        ul.brand,
+        ul.model,
+        ul.condition,
+        ul.megapixels,
+        ul.sensor,
+        ul.original_price,
+        ul.asking_price,
+        ul.status,
+        ul.created_at,
+        ul.inclusions,
+        ul.known_issues,
+        c.FullName,
+        c.Email,
+        (SELECT image_path FROM user_listing_images WHERE user_listing_id = ul.user_listing_id LIMIT 1) as image_path
+    FROM user_listings ul
+    LEFT JOIN customers c ON ul.CustomerID = c.CustomerID
+    WHERE ul.status = 'approved'
+    ORDER BY ul.created_at DESC";
+    
+    $result = $conn->query($sql);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $purchased_items[] = $row;
+        }
+    }
+} catch (Exception $e) {
+    error_log("Error fetching purchased items: " . $e->getMessage());
+}
+
+// Fetch listed items (from marketplace listings table)
+$listed_items = [];
+try {
+    $sql = "SELECT 
+        l.listing_id,
+        l.brand,
+        l.model,
+        l.selling_price,
+        l.original_price,
+        l.created_at,
+        (SELECT image_path FROM listing_images WHERE listing_id = l.listing_id LIMIT 1) as image_path,
+        DATEDIFF(NOW(), l.created_at) as days_listed
+    FROM listings l
+    ORDER BY l.created_at DESC";
+    
+    $result = $conn->query($sql);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $listed_items[] = $row;
+        }
+    }
+} catch (Exception $e) {
+    error_log("Error fetching listed items: " . $e->getMessage());
+}
 ?>
 
 <div class="admin-dashboard-wrapper">
@@ -65,9 +297,11 @@ try {
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="kpi-content">
-                            <h3 class="kpi-value">12</h3>
+                            <h3 class="kpi-value"><?php echo $kpi_pending_review; ?></h3>
                             <p class="kpi-label">Pending Review</p>
-                            <div class="kpi-trend positive">+2 from yesterday</div>
+                            <div class="kpi-trend <?php echo $pending_review_trend >= 0 ? 'positive' : 'negative'; ?>">
+                                <?php echo ($pending_review_trend >= 0 ? '+' : '') . $pending_review_trend; ?> from yesterday
+                            </div>
                         </div>
                     </div>
 
@@ -76,9 +310,11 @@ try {
                             <i class="fas fa-shopping-cart"></i>
                         </div>
                         <div class="kpi-content">
-                            <h3 class="kpi-value">8</h3>
+                            <h3 class="kpi-value"><?php echo $kpi_pending_orders; ?></h3>
                             <p class="kpi-label">Pending Orders</p>
-                            <div class="kpi-trend negative">-1 from yesterday</div>
+                            <div class="kpi-trend <?php echo $pending_orders_trend >= 0 ? 'positive' : 'negative'; ?>">
+                                <?php echo ($pending_orders_trend >= 0 ? '+' : '') . $pending_orders_trend; ?> from yesterday
+                            </div>
                         </div>
                     </div>
 
@@ -87,9 +323,11 @@ try {
                             <i class="fas fa-money-bill-wave"></i>
                         </div>
                         <div class="kpi-content">
-                            <h3 class="kpi-value">₱284,500</h3>
+                            <h3 class="kpi-value">₱<?php echo number_format($kpi_total_revenue, 2); ?></h3>
                             <p class="kpi-label">Total Revenue</p>
-                            <div class="kpi-trend positive">+12.5%</div>
+                            <div class="kpi-trend <?php echo $revenue_trend_percent >= 0 ? 'positive' : 'negative'; ?>">
+                                <?php echo ($revenue_trend_percent >= 0 ? '+' : '') . number_format($revenue_trend_percent, 1); ?>%
+                            </div>
                         </div>
                     </div>
 
@@ -98,9 +336,11 @@ try {
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <div class="kpi-content">
-                            <h3 class="kpi-value">₱89,200</h3>
+                            <h3 class="kpi-value">₱<?php echo number_format($kpi_total_profit, 2); ?></h3>
                             <p class="kpi-label">Total Profit</p>
-                            <div class="kpi-trend positive">+8.3%</div>
+                            <div class="kpi-trend <?php echo $profit_trend_percent >= 0 ? 'positive' : 'negative'; ?>">
+                                <?php echo ($profit_trend_percent >= 0 ? '+' : '') . number_format($profit_trend_percent, 1); ?>%
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -136,34 +376,38 @@ try {
                             <p class="card-subtitle">Priority to source</p>
                         </div>
                         <div class="requested-list">
-                            <div class="requested-item">
-                                <div class="camera-info">
-                                    <h4>Sony A7 IV</h4>
-                                    <p>15 customer requests</p>
+                            <?php if (!empty($top_requested)): ?>
+                                <?php foreach ($top_requested as $camera): ?>
+                                    <?php
+                                        // Determine priority based on wishlist count
+                                        $priority = 'low';
+                                        $priority_class = 'low';
+                                        if ($camera['wishlist_count'] >= 10) {
+                                            $priority = 'High';
+                                            $priority_class = 'high';
+                                        } elseif ($camera['wishlist_count'] >= 5) {
+                                            $priority = 'Medium';
+                                            $priority_class = 'medium';
+                                        } else {
+                                            $priority = 'Low';
+                                            $priority_class = 'low';
+                                        }
+                                    ?>
+                                    <div class="requested-item">
+                                        <div class="camera-info">
+                                            <h4><?php echo htmlspecialchars($camera['brand'] . ' ' . $camera['model']); ?></h4>
+                                            <p><?php echo $camera['wishlist_count']; ?> customer request<?php echo $camera['wishlist_count'] !== '1' ? 's' : ''; ?></p>
+                                        </div>
+                                        <span class="priority <?php echo $priority_class; ?>"><?php echo $priority; ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="requested-item">
+                                    <div class="camera-info">
+                                        <p>No wishlist data available</p>
+                                    </div>
                                 </div>
-                                <span class="priority high">High</span>
-                            </div>
-                            <div class="requested-item">
-                                <div class="camera-info">
-                                    <h4>Canon R5</h4>
-                                    <p>12 customer requests</p>
-                                </div>
-                                <span class="priority high">High</span>
-                            </div>
-                            <div class="requested-item">
-                                <div class="camera-info">
-                                    <h4>Fujifilm X-T5</h4>
-                                    <p>8 customer requests</p>
-                                </div>
-                                <span class="priority medium">Medium</span>
-                            </div>
-                            <div class="requested-item">
-                                <div class="camera-info">
-                                    <h4>Nikon Z6 II</h4>
-                                    <p>6 customer requests</p>
-                                </div>
-                                <span class="priority medium">Medium</span>
-                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -275,57 +519,113 @@ try {
                     
                     <!-- Pending Purchases Content -->
                     <div class="purchase-content active" data-purchase-content="pending">
-                        <!-- Pending Item 1 -->
-                        <div class="pending-item">
-                            <div class="item-header">
-                                <h4>Fujifilm X-T4</h4>
-                                <span class="condition excellent">Excellent</span>
-                            </div>
-                            <div class="item-details">
-                                <p class="specs">26MP APS-C, IBIS, excellent condition with box</p>
-                                <div class="prices">
-                                    <span class="original">Original: ₱85,000</span>
-                                    <span class="asking">Asking: ₱58,000</span>
+                        <!-- Debug info -->
+                        <script>
+                            console.log('Pending items count: <?php echo count($pending_items); ?>');
+                            console.log('Pending items data: <?php echo json_encode($pending_items); ?>');
+                        </script>
+                        <?php if (!empty($pending_items)): ?>
+                            <?php foreach ($pending_items as $item): ?>
+                                <div class="pending-item" onclick="openPendingModal(<?php echo htmlspecialchars(json_encode($item)); ?>)" style="cursor: pointer;">
+                                    <img src="<?php echo $item['image_path'] ? (strpos($item['image_path'], 'uploads/') === 0 ? '../' . $item['image_path'] : $item['image_path']) : '../assets/images/empty.png'; ?>" alt="<?php echo htmlspecialchars($item['brand'] . ' ' . $item['model']); ?>" class="camera-thumb" onerror="this.src='../assets/images/empty.png'">
+                                    <div class="item-header">
+                                        <h4><?php echo htmlspecialchars($item['brand'] . ' ' . $item['model']); ?></h4>
+                                        <span class="condition excellent"><?php echo ucfirst($item['condition']); ?></span>
+                                    </div>
+                                    <div class="item-details">
+                                        <p class="specs"><?php echo $item['megapixels']; ?>MP • <?php echo htmlspecialchars($item['sensor']); ?></p>
+                                        <?php if ($item['inclusions']): ?>
+                                            <p class="specs"><strong>Includes:</strong> <?php echo htmlspecialchars($item['inclusions']); ?></p>
+                                        <?php endif; ?>
+                                        <?php if ($item['known_issues']): ?>
+                                            <p class="specs"><strong>Issues:</strong> <?php echo htmlspecialchars($item['known_issues']); ?></p>
+                                        <?php endif; ?>
+                                        <div class="prices">
+                                            <span class="original">Original: ₱<?php echo number_format($item['original_price'], 2); ?></span>
+                                            <span class="asking">Asking: ₱<?php echo number_format($item['asking_price'], 2); ?></span>
+                                        </div>
+                                        <div class="seller-info">
+                                            <strong>Seller:</strong> <?php echo htmlspecialchars($item['FullName']); ?><br>
+                                            <strong>Email:</strong> <?php echo htmlspecialchars($item['Email']); ?>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="seller-info">
-                                    <strong>Seller:</strong> John Doe
-                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <p>No pending items for review</p>
                             </div>
-                            <button class="btn-review-offer" data-item="1">Review & Make Offer</button>
-                        </div>
-                        
-                        <!-- Pending Item 2 -->
-                        <div class="pending-item">
-                            <div class="item-header">
-                                <h4>Canon EOS R6</h4>
-                                <span class="condition good">Good</span>
-                            </div>
-                            <div class="item-details">
-                                <p class="specs">20MP Full Frame, like new with accessories</p>
-                                <div class="prices">
-                                    <span class="original">Original: ₱120,000</span>
-                                    <span class="asking">Asking: ₱75,000</span>
-                                </div>
-                                <div class="seller-info">
-                                    <strong>Seller:</strong> Jane Smith
-                                </div>
-                            </div>
-                            <button class="btn-review-offer" data-item="2">Review & Make Offer</button>
-                        </div>
+                        <?php endif; ?>
                     </div>
                     
                     <!-- Purchased Content -->
                     <div class="purchase-content" data-purchase-content="purchased">
-                        <div class="empty-state">
-                            <p>No purchased items yet</p>
-                        </div>
+                        <?php if (!empty($purchased_items)): ?>
+                            <?php foreach ($purchased_items as $item): ?>
+                                <div class="pending-item">
+                                    <img src="<?php echo $item['image_path'] ? (strpos($item['image_path'], 'uploads/') === 0 ? '../' . $item['image_path'] : $item['image_path']) : '../assets/images/empty.png'; ?>" alt="<?php echo htmlspecialchars($item['brand'] . ' ' . $item['model']); ?>" class="camera-thumb" onerror="this.src='../assets/images/empty.png'">
+                                    <div class="item-header">
+                                        <h4><?php echo htmlspecialchars($item['brand'] . ' ' . $item['model']); ?></h4>
+                                        <span class="condition excellent"><?php echo ucfirst($item['condition']); ?></span>
+                                    </div>
+                                    <div class="item-details">
+                                        <p class="specs"><?php echo $item['megapixels']; ?>MP • <?php echo htmlspecialchars($item['sensor']); ?></p>
+                                        <?php if ($item['inclusions']): ?>
+                                            <p class="specs"><strong>Includes:</strong> <?php echo htmlspecialchars($item['inclusions']); ?></p>
+                                        <?php endif; ?>
+                                        <?php if ($item['known_issues']): ?>
+                                            <p class="specs"><strong>Issues:</strong> <?php echo htmlspecialchars($item['known_issues']); ?></p>
+                                        <?php endif; ?>
+                                        <div class="prices">
+                                            <span class="original">Original: ₱<?php echo number_format($item['original_price'], 2); ?></span>
+                                            <span class="asking">Asking: ₱<?php echo number_format($item['asking_price'], 2); ?></span>
+                                        </div>
+                                        <div class="seller-info">
+                                            <strong>Seller:</strong> <?php echo htmlspecialchars($item['FullName']); ?><br>
+                                            <strong>Email:</strong> <?php echo htmlspecialchars($item['Email']); ?>
+                                        </div>
+                                    </div>
+                                    <button class="btn-action btn-success" onclick="addToListings(<?php echo htmlspecialchars(json_encode($item)); ?>)">Add to Listings</button>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <p>No purchased items yet</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     
                     <!-- Listed Content -->
                     <div class="purchase-content" data-purchase-content="listed">
-                        <div class="empty-state">
-                            <p>No listed items from purchases yet</p>
-                        </div>
+                        <?php if (!empty($listed_items)): ?>
+                            <div class="inventory-table">
+                                <div class="table-header">
+                                    <div class="col">Camera</div>
+                                    <div class="col">Original Price</div>
+                                    <div class="col">Selling Price</div>
+                                    <div class="col">Days Listed</div>
+                                    <div class="col">Status</div>
+                                </div>
+                                <div class="table-body">
+                                    <?php foreach ($listed_items as $item): ?>
+                                        <div class="table-row">
+                                            <div class="col">
+                                                <img src="<?php echo $item['image_path'] ? (strpos($item['image_path'], 'uploads/') === 0 ? '../' . $item['image_path'] : $item['image_path']) : '../assets/images/empty.png'; ?>" alt="<?php echo htmlspecialchars($item['brand'] . ' ' . $item['model']); ?>" class="camera-thumb" onerror="this.src='../assets/images/empty.png'">
+                                                <?php echo htmlspecialchars($item['brand'] . ' ' . $item['model']); ?>
+                                            </div>
+                                            <div class="col">₱<?php echo number_format($item['original_price'], 2); ?></div>
+                                            <div class="col price">₱<?php echo number_format($item['selling_price'], 2); ?></div>
+                                            <div class="col"><?php echo (int)$item['days_listed']; ?> day<?php echo $item['days_listed'] !== '1' ? 's' : ''; ?></div>
+                                            <div class="col"><span class="status in-stock">Listed</span></div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <p>No listed items from purchases yet</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -602,8 +902,8 @@ try {
             </div>
             
             <div class="modal-actions">
-                <button class="btn-reject">Reject</button>
-                <button class="btn-approve">Approve & Purchase</button>
+                <button class="btn-reject" onclick="rejectCurrentItem()">Reject</button>
+                <button class="btn-approve" onclick="approveCurrentItem()">Approve & Purchase</button>
             </div>
         </div>
     </div>
@@ -622,6 +922,63 @@ try {
 .btn-delete:hover {
     background-color: #e63321 !important;
 }
+
+.btn-success {
+    background-color: #34c759 !important;
+    color: white !important;
+    margin-left: 5px;
+}
+.btn-success:hover {
+    background-color: #30b050 !important;
+}
+
+/* Review Offer Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    max-width: 600px;
+    width: 90%;
+}
+
+.modal-content.large {
+    max-width: 800px;
+}
+
+.modal-content .close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+}
+
+.modal-content .close:hover {
+    color: #000;
+}
+
+/* Offer Modal end of css */
 
 /* Delete Confirmation Modal */
 .delete-modal {
