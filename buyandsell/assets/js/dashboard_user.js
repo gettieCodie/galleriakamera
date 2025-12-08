@@ -79,7 +79,7 @@ function displayPurchases(orders) {
                         ₱${parseFloat(order.total).toLocaleString('en-PH', {minimumFractionDigits: 2})}
                     </span>
                     <span class="purchase-items">
-                        ${order.item_count} ${order.item_count === 1 ? 'item' : 'items'}
+                        ${order.items_count} ${order.items_count === 1 ? 'item' : 'items'}
                     </span>
                 </div>
                 <div class="purchase-status">
@@ -135,6 +135,17 @@ function updatePurchaseCount(count) {
 function loadKPIs() {
     console.log('Loading KPIs...');
 
+    // Load pending review and total listed counts
+    fetch('core/get_kpi_stats.php')
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('pending-review').textContent = data.pending_review || 0;
+                document.getElementById('total-listed').textContent = data.total_listed || 0;
+            }
+        })
+        .catch(err => console.error('KPI stats error:', err));
+
     // ---- Load Wishlist Count ----
     fetch('core/count_wishlist.php')
         .then(res => res.json())
@@ -148,50 +159,42 @@ function loadSellingItems() {
     console.log('Loading selling items...');
     const container = document.getElementById('selling-items-list');
     
-    // Mock data - replace with actual API call later
-    const mockItems = [
-        {
-            id: 1,
-            image: 'assets/images/camera1.jpg',
-            title: 'Sony A7 III',
-            specs: '24MP • Full Frame',
-            price: '₱45,000',
-            status: 'pending',
-            statusText: 'Under Review'
-        },
-        {
-            id: 2,
-            image: 'assets/images/camera2.jpg',
-            title: 'Canon EOS R5',
-            specs: '45MP • Full Frame',
-            price: '₱120,000',
-            status: 'approved',
-            statusText: 'Listed'
-        },
-        {
-            id: 3,
-            image: 'assets/images/camera3.jpg',
-            title: 'Nikon Z6',
-            specs: '24MP • Full Frame',
-            price: '₱65,000',
-            status: 'sold',
-            statusText: 'Sold'
-        }
-    ];
-
-    if (mockItems.length > 0) {
-        container.innerHTML = mockItems.map(item => `
-            <div class="item-card" data-status="${item.status}">
-                <img src="${item.image}" alt="${item.title}" class="item-image" onerror="this.src='assets/images/empty.png'">
-                <div class="item-details">
-                    <h4 class="item-title">${item.title}</h4>
-                    <p class="item-specs">${item.specs}</p>
-                    <p class="item-price">${item.price}</p>
+    fetch('core/get_user_listings.php')
+        .then(res => res.json())
+        .then(data => {
+            console.log('Selling items data:', data);
+            
+            if (!Array.isArray(data) || data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="assets/images/empty.png" alt="No listings" class="empty-icon">
+                        <h3>No items listed yet</h3>
+                        <p>Start selling your cameras by clicking "Sell an Item"</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = data.map(item => `
+                <div class="item-card" data-status="${item.status.toLowerCase()}">
+                    <img src="${item.image_path || 'assets/images/empty.png'}" alt="${item.brand} ${item.model}" class="item-image" onerror="this.src='assets/images/empty.png'">
+                    <div class="item-details">
+                        <h4 class="item-title">${item.brand} ${item.model}</h4>
+                        <p class="item-specs">${item.megapixels}MP • ${item.sensor}</p>
+                        <p class="item-price">₱${parseFloat(item.asking_price).toLocaleString('en-PH', {minimumFractionDigits: 2})}</p>
+                    </div>
+                    <span class="item-status status-${item.status.toLowerCase()}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
                 </div>
-                <span class="item-status status-${item.status}">${item.statusText}</span>
-            </div>
-        `).join('');
-    }
+            `).join('');
+        })
+        .catch(error => {
+            console.error('Error loading selling items:', error);
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>Error loading items</h3>
+                </div>
+            `;
+        });
 }
 
 function loadWishlist() {
@@ -314,27 +317,6 @@ function initializeStatusTabs() {
     });
 }
 
-// Mock data for demonstration
-function loadData() {
-    // Mock KPI data
-    document.getElementById('total-listed').textContent = '3';
-    document.getElementById('pending-review').textContent = '1';
-    document.getElementById('total-purchases').textContent = '2';
-    document.getElementById('wishlist-count').textContent = '4';
-
-    // Mock selling items
-    loadSellingItems();
-    
-    // Mock purchases
-    loadPurchases();
-    
-    // Mock wishlist
-    loadWishlist();
-    
-    // Mock reviews
-    loadReviews();
-}
-
 // Filter selling items by status
 function filterSellingItems(status) {
     const items = document.querySelectorAll('.item-card');
@@ -353,18 +335,40 @@ function submitSellItemForm() {
     const form = document.getElementById('sellItemForm');
     const formData = new FormData(form);
     
-    // Here you would send to backend
-    console.log('Form data:', Object.fromEntries(formData));
+    // Disable submit button to prevent double submission
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
     
-    // Show success message
-    alert('Your camera has been submitted for review!');
-    
-    // Close modal and reset form
-    document.getElementById('sellItemModal').style.display = 'none';
-    form.reset();
-    
-    // In real implementation, refresh the selling items list
-    // loadSellingItems();
+    fetch('core/submit_listing.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Your camera has been submitted for review!');
+            document.getElementById('sellItemModal').style.display = 'none';
+            form.reset();
+            loadSellingItems();
+            loadKPIs();
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit for Review';
+        } else {
+            alert('Error: ' + (data.message || 'Failed to submit'));
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit for Review';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error submitting form: ' + error.message);
+        // Reset button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit for Review';
+    });
 }
 
 // Wishlist card click handler - opens product modal

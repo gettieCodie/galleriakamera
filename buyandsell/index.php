@@ -344,7 +344,7 @@ include 'includes/header_user.php';
                             <span class="rating-value">4.9</span>
                         </div>
                         <p class="testimonial-text">
-                            "This service has completely transformed how I manage my projects. The intuitive interface and powerful features save me hours every week."
+                           "Love ko yung interface, simple pero ang ganda. Nakakatulong siya para mabilis i-compare yung mga available na cameras.”
                         </p>
                         <div class="author">
                             <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="Sarah Johnson" class="author-avatar">
@@ -365,7 +365,7 @@ include 'includes/header_user.php';
                             <span class="rating-value">4.8</span>
                         </div>
                         <p class="testimonial-text">
-                            "I've tried many similar tools, but this one stands out for its simplicity and effectiveness. The customer support is exceptional too."
+                           “Nagulat ako gaano ka-hassle-free gamitin. Mas napadali yung pag-check ng options kumpara sa social media.”
                         </p>
                         <div class="author">
                             <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="Michael Chen" class="author-avatar">
@@ -386,7 +386,7 @@ include 'includes/header_user.php';
                             <span class="rating-value">5.0</span>
                         </div>
                         <p class="testimonial-text">
-                            "As a small business owner, this tool has been a game-changer. It's helped us streamline operations and improve team collaboration significantly."
+                            “Smooth ang browsing experience. Ang bilis makita ng details kaya mas madali mag-decide kung ano bibilhin.”
                         </p>
                         <div class="author">
                             <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="Jessica Williams" class="author-avatar">
@@ -407,7 +407,7 @@ include 'includes/header_user.php';
                             <span class="rating-value">4.7</span>
                         </div>
                         <p class="testimonial-text">
-                            "The analytics features provide insights I didn't even know I needed. It's helped our team make data-driven decisions with confidence."
+                           "Sobrang dali gamitin ng Galleria Kamera. Ang linis ng layout kaya mabilis makahanap ng camera na swak sa budget."
                         </p>
                         <div class="author">
                             <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="David Rodriguez" class="author-avatar">
@@ -428,7 +428,7 @@ include 'includes/header_user.php';
                             <span class="rating-value">4.9</span>
                         </div>
                         <p class="testimonial-text">
-                            "Implementation was seamless and the learning curve was minimal. Our team was productive within days of switching to this platform."
+                            "Ang organized ng listings! Hindi na ako nalito pumili ng second-hand gear, super helpful ng platform."
                         </p>
                         <div class="author">
                             <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="Amanda Thompson" class="author-avatar">

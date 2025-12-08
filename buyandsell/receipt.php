@@ -122,13 +122,13 @@ function displayReceipt(order) {
                     </tr>
                 </thead>
                 <tbody>
-                    ${order.items.map(item => `
+                    ${order.items.filter(item => item.name && item.price && item.qty).map(item => `
                         <tr>
-                            <td>${item.name}</td>
+                            <td>${item.name || 'N/A'}</td>
                             <td>${item.variant || 'N/A'}</td>
-                            <td class="text-right">₱${item.price.toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
-                            <td class="text-right">${item.qty}</td>
-                            <td class="text-right">₱${(item.price * item.qty).toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
+                            <td class="text-right">₱${(item.price || 0).toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
+                            <td class="text-right">${item.qty || 0}</td>
+                            <td class="text-right">₱${((item.price || 0) * (item.qty || 0)).toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -139,6 +139,10 @@ function displayReceipt(order) {
             <div class="summary-row">
                 <span>Subtotal:</span>
                 <span>₱${subtotal.toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+            </div>
+            <div class="summary-row">
+                <span>VAT (12%):</span>
+                <span>₱${(subtotal * 0.12).toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
             </div>
             <div class="summary-row">
                 <span>Delivery:</span>

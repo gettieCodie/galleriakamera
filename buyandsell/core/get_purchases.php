@@ -18,13 +18,19 @@ try {
                     o.TotalAmount,
                     o.PaymentMethod,
                     o.Status,
+<<<<<<< HEAD
                     c.FullName,
                     COUNT(oi.OrderItemID) as ItemCount
+=======
+                    s.FirstName,
+                    s.LastName,
+                    COUNT(DISTINCT oi.OrderItemID) as ItemCount
+>>>>>>> 221ca9adc21723cf92af9bb9c7f65c0432423ea8
                   FROM orders o
                   LEFT JOIN Customers c ON o.CustomerID = c.CustomerID
                   LEFT JOIN orderitems oi ON o.OrderID = oi.OrderID
                   WHERE o.CustomerID = ?
-                  GROUP BY o.OrderID
+                  GROUP BY o.OrderID, s.FirstName, s.LastName, o.OrderDate, o.TotalAmount, o.PaymentMethod, o.Status
                   ORDER BY o.OrderDate DESC";
     
     $stmtOrders = $conn->prepare($sqlOrders);

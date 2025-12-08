@@ -76,7 +76,7 @@
 .btn-checkout {
     width: 100%;
     padding: 0.875rem;
-    background-color: #10b981;
+    background-color: #111;
     color: white;
     border: none;
     border-radius: 0.5rem;
@@ -88,7 +88,7 @@
 }
 
 .btn-checkout:hover {
-    background-color: #059669;
+    background-color: #404040;
 }
 
 /* Remove Confirmation Modal */

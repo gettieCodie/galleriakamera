@@ -62,7 +62,7 @@ $delivery = 0.00;
 $total = $subtotal + $vat + $delivery;
 ?>
 
-<div class="order-summary">
+<div class="order-summary" data-total="<?php echo number_format($total, 2, '.', ''); ?>">
     <h2>Order Summary</h2>
     
     <div class="cart-info">
