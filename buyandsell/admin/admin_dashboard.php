@@ -1193,20 +1193,7 @@ async function updateOrderStatus(orderId, newStatus, selectElement) {
 }
 
 async function viewOrderDetails(orderId) {
-    try {
-        const response = await fetch(`../core/get_admin_orders.php`);
-        const data = await response.json();
-        
-        if (data.status === 'ok') {
-            const order = data.orders.find(o => o.order_id === orderId);
-            if (order) {
-                displayOrderDetailsModal(order);
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching order details:', error);
-        alert('Error loading order details');
-    }
+    window.location.href = `../receipt.php?order_id=${orderId}&source=admin`;
 }
 
 function displayOrderDetailsModal(order) {
