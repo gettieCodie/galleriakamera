@@ -214,3 +214,156 @@ function showItemDetails(itemId) {
     alert(`Showing details for item ${itemId}`);
     // You can implement a modal or expandable row here
 }
+
+// Approve item submission
+function approveItem(listingId) {
+    if (confirm('Are you sure you want to approve this item?')) {
+        fetch('approve_reject_item.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'action=approve&listing_id=' + listingId
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('HTTP error status: ' + res.status);
+            }
+            return res.text();
+        })
+        .then(text => {
+            try {
+                const data = JSON.parse(text);
+                if (data.status === 'success') {
+                    alert('Item approved successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {
+                console.error('Failed to parse response:', text);
+                alert('Error: Invalid response from server. Check console for details.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error approving item: ' + error.message);
+        });
+    }
+}
+
+// Reject item submission
+function rejectItem(listingId) {
+    if (confirm('Are you sure you want to reject this item?')) {
+        fetch('approve_reject_item.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'action=reject&listing_id=' + listingId
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('HTTP error status: ' + res.status);
+            }
+            return res.text();
+        })
+        .then(text => {
+            try {
+                const data = JSON.parse(text);
+                if (data.status === 'success') {
+                    alert('Item rejected successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {
+                console.error('Failed to parse response:', text);
+                alert('Error: Invalid response from server. Check console for details.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error rejecting item: ' + error.message);
+        });
+    }
+}
+
+// Store current item ID for modal actions
+let currentModalItemId = null;
+
+// Open pending item modal with item data
+function openPendingModal(itemData) {
+    const modal = document.getElementById('reviewOfferModal');
+    if (modal) {
+        // Store the item ID for approve/reject actions
+        currentModalItemId = itemData.user_listing_id;
+        
+        // Update modal with item data
+        document.getElementById('modalCameraName').textContent = itemData.brand + ' ' + itemData.model;
+        
+        // Update price information
+        const priceInfo = modal.querySelector('.price-info');
+        if (priceInfo) {
+            const rows = priceInfo.querySelectorAll('.price-row');
+            if (rows[0]) rows[0].querySelector('.price-value').textContent = '₱' + parseFloat(itemData.original_price).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            if (rows[1]) rows[1].querySelector('.price-value').textContent = '₱' + parseFloat(itemData.asking_price).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            if (rows[2]) rows[2].querySelector('.seller-name').textContent = itemData.FullName;
+        }
+        
+        // Update purchase offer with asking price
+        const purchaseOffer = modal.querySelector('#purchaseOffer');
+        if (purchaseOffer) {
+            purchaseOffer.value = parseFloat(itemData.asking_price) || 0;
+        }
+        
+        // Trigger calculations
+        setTimeout(() => {
+            const event = new Event('input', { bubbles: true });
+            if (purchaseOffer) purchaseOffer.dispatchEvent(event);
+        }, 100);
+        
+        // Show modal
+        modal.style.display = 'flex';
+    }
+}
+
+// Add approved item to marketplace listings
+function addToListings(itemData) {
+    const brand = itemData.brand;
+    const model = itemData.model;
+    const originalPrice = parseFloat(itemData.original_price);
+    const sellingPrice = parseFloat(itemData.asking_price);
+    const condition = itemData.condition;
+    const megapixels = itemData.megapixels;
+    const sensor = itemData.sensor;
+    const inclusions = itemData.inclusions;
+    const knownIssues = itemData.known_issues;
+    
+    // Store data in localStorage for the add listing modal
+    localStorage.setItem('pendingItemData', JSON.stringify({
+        brand: brand,
+        model: model,
+        original_price: originalPrice,
+        selling_price: sellingPrice,
+        condition: condition,
+        megapixels: megapixels,
+        sensor: sensor,
+        inclusions: inclusions,
+        known_issues: knownIssues
+    }));
+    
+    // Switch to Overview tab
+    switchToTab('overview');
+    
+    // Show the add listing modal (you'll need to adjust based on your modal ID)
+    setTimeout(() => {
+        const modal = document.getElementById('addListingModal') || document.getElementById('sellItemModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            // You could also populate the form with the stored data here
+        } else {
+            alert('Add listing modal not found. Please use the "Add New Listing" button to add this camera.');
+        }
+    }, 300);
+}
