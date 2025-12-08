@@ -66,7 +66,11 @@ async function loadCart() {
                             <span class="original-price">${originalPrice}</span>
                         </div>
                         <div class="savings">You save ${savings}</div>
-                        ${quantity > 1 ? `<div class="quantity-info">Quantity: ${quantity}</div>` : ''}
+                        <div class="quantity-control">
+                            <button class="qty-btn qty-minus" data-listing-id="${product.listing_id}">−</button>
+                            <input type="number" class="qty-input" value="${quantity}" min="1" data-listing-id="${product.listing_id}" readonly>
+                            <button class="qty-btn qty-plus" data-listing-id="${product.listing_id}">+</button>
+                        </div>
                     </div>
                     <div class="card-actions">
                         <button class="btn-remove" data-listing-id="${product.listing_id}">
@@ -79,6 +83,25 @@ async function loadCart() {
                 
                 const removeBtn = card.querySelector('.btn-remove');
                 removeBtn.addEventListener('click', () => removeFromCart(product.listing_id));
+                
+                // Quantity control buttons
+                const minusBtn = card.querySelector('.qty-minus');
+                const plusBtn = card.querySelector('.qty-plus');
+                const qtyInput = card.querySelector('.qty-input');
+                
+                minusBtn.addEventListener('click', () => {
+                    const currentQty = parseInt(qtyInput.value) || 1;
+                    if (currentQty > 1) {
+                        const newQty = currentQty - 1;
+                        updateCartQuantity(product.listing_id, newQty);
+                    }
+                });
+                
+                plusBtn.addEventListener('click', () => {
+                    const currentQty = parseInt(qtyInput.value) || 1;
+                    const newQty = currentQty + 1;
+                    updateCartQuantity(product.listing_id, newQty);
+                });
             });
             
             const subtotalFormatted = subtotal.toLocaleString('en-PH', {
@@ -202,6 +225,33 @@ async function updateCartBadge() {
         }
     } catch (error) {
         console.error("Error updating cart badge:", error);
+    }
+}
+
+// Update quantity in cart
+async function updateCartQuantity(listingId, newQuantity) {
+    try {
+        const formData = new FormData();
+        formData.append('listing_id', listingId);
+        formData.append('quantity', newQuantity);
+        
+        const res = await fetch('core/update_cart_quantity.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await res.json();
+        
+        if (data.status === 'ok') {
+            console.log('Quantity updated successfully');
+            loadCart();
+            updateCartBadge();
+        } else {
+            alert('Failed to update quantity: ' + (data.message || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error updating quantity:', error);
+        alert('Error updating quantity');
     }
 }
 

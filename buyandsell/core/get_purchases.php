@@ -18,11 +18,10 @@ try {
                     o.TotalAmount,
                     o.PaymentMethod,
                     o.Status,
-                    s.FirstName,
-                    s.LastName,
+                    c.FullName,
                     COUNT(oi.OrderItemID) as ItemCount
                   FROM orders o
-                  LEFT JOIN shippingaddress s ON o.OrderID = s.OrderID
+                  LEFT JOIN Customers c ON o.CustomerID = c.CustomerID
                   LEFT JOIN orderitems oi ON o.OrderID = oi.OrderID
                   WHERE o.CustomerID = ?
                   GROUP BY o.OrderID
@@ -49,7 +48,7 @@ try {
             'total' => $row['TotalAmount'],
             'payment_method' => $row['PaymentMethod'],
             'status' => $row['Status'] ?? 'Pending',
-            'customer_name' => $row['FirstName'] . ' ' . $row['LastName'],
+            'customer_name' => $row['FullName'],
             'items_count' => $row['ItemCount']
         ];
     }

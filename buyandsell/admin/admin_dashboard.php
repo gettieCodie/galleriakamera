@@ -341,41 +341,28 @@ try {
                         <div class="table-header">
                             <div class="col">Order ID</div>
                             <div class="col">Customer</div>
-                            <div class="col">Camera</div>
-                            <div class="col">Amount</div>
+                            <div class="col">Items</div>
+                            <div class="col">Total Amount</div>
                             <div class="col">Order Date</div>
                             <div class="col">Status</div>
                             <div class="col">Actions</div>
                         </div>
-                        <div class="table-body">
-                            <!-- Order 1 -->
-                            <div class="table-row">
-                                <div class="col">#ORD-001</div>
-                                <div class="col">Michael Brown</div>
-                                <div class="col">Sony A7 III</div>
-                                <div class="col price">₱45,000</div>
-                                <div class="col">2024-01-15</div>
-                                <div class="col"><span class="status pending">Pending</span></div>
-                                <div class="col">
-                                    <div class="order-actions">
-                                        <button class="btn-update" data-order="1" data-action="ship">Mark as Shipped</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Order 2 -->
-                            <div class="table-row">
-                                <div class="col">#ORD-002</div>
-                                <div class="col">Sarah Johnson</div>
-                                <div class="col">Canon R5</div>
-                                <div class="col price">₱120,000</div>
-                                <div class="col">2024-01-14</div>
-                                <div class="col"><span class="status shipped">Shipped</span></div>
-                                <div class="col">
-                                    <div class="order-actions">
-                                        <button class="btn-update" data-order="2" data-action="deliver">Mark as Delivered</button>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="table-body" id="orders-table-body">
+                            <div class="loading-message">Loading orders...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Details Modal -->
+                <div id="orderDetailsModal" class="admin-modal" style="display: none;">
+                    <div class="modal-overlay" onclick="closeOrderModal()"></div>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Order Details</h2>
+                            <button class="modal-close" onclick="closeOrderModal()">✕</button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="orderDetailsContent"></div>
                         </div>
                     </div>
                 </div>
@@ -765,6 +752,185 @@ window.onclick = function(event) {
         modal.style.display = 'none';
     }
 }
+
+// ========== CUSTOMER ORDERS FUNCTIONALITY ==========
+
+// Load orders when page loads or when tab is clicked
+document.addEventListener('DOMContentLoaded', function() {
+    loadCustomerOrders();
+});
+
+// Reload orders when Customer Orders tab is clicked
+document.addEventListener('click', function(e) {
+    if (e.target.matches('[data-tab="customer-orders"]')) {
+        setTimeout(loadCustomerOrders, 100);
+    }
+});
+
+async function loadCustomerOrders() {
+    try {
+        const response = await fetch('../core/get_admin_orders.php');
+        const data = await response.json();
+        
+        if (data.status === 'ok') {
+            displayOrders(data.orders);
+        } else {
+            displayOrdersError(data.message || 'Failed to load orders');
+        }
+    } catch (error) {
+        console.error('Error loading orders:', error);
+        displayOrdersError('Error loading orders');
+    }
+}
+
+function displayOrders(orders) {
+    const tableBody = document.getElementById('orders-table-body');
+    
+    if (orders.length === 0) {
+        tableBody.innerHTML = '<div class="empty-message">No orders found</div>';
+        return;
+    }
+    
+    tableBody.innerHTML = orders.map(order => `
+        <div class="table-row">
+            <div class="col"><strong>#${order.order_id}</strong></div>
+            <div class="col">
+                <div>${order.customer_name}</div>
+                <small>${order.customer_email}</small>
+            </div>
+            <div class="col">
+                <div>${order.item_count} item(s)</div>
+                <small>${order.total_items} camera(s)</small>
+            </div>
+            <div class="col price"><strong>₱${parseFloat(order.total).toLocaleString('en-PH', {minimumFractionDigits: 2})}</strong></div>
+            <div class="col">
+                <small>${new Date(order.order_date).toLocaleDateString('en-PH')}</small>
+            </div>
+            <div class="col">
+                <select class="status-select status-${order.status.toLowerCase()}" 
+                    onchange="updateOrderStatus(${order.order_id}, this.value, this)"
+                    data-current="${order.status}">
+                    <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="Processing" ${order.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                    <option value="Shipped" ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                    <option value="Completed" ${order.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                    <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+            </div>
+            <div class="col">
+                <button class="btn-view" onclick="viewOrderDetails(${order.order_id})">View Details</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function displayOrdersError(message) {
+    const tableBody = document.getElementById('orders-table-body');
+    tableBody.innerHTML = `<div class="error-message">${message}</div>`;
+}
+
+async function updateOrderStatus(orderId, newStatus, selectElement) {
+    try {
+        const formData = new FormData();
+        formData.append('order_id', orderId);
+        formData.append('status', newStatus);
+        
+        const response = await fetch('../core/update_order_status.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'ok') {
+            // Update visual feedback
+            selectElement.className = `status-select status-${newStatus.toLowerCase()}`;
+            selectElement.setAttribute('data-current', newStatus);
+            alert('Order status updated successfully');
+            loadCustomerOrders();
+        } else {
+            alert('Failed to update status: ' + (data.message || 'Unknown error'));
+            selectElement.value = selectElement.getAttribute('data-current');
+        }
+    } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Error updating status');
+        selectElement.value = selectElement.getAttribute('data-current');
+    }
+}
+
+async function viewOrderDetails(orderId) {
+    try {
+        const response = await fetch(`../core/get_admin_orders.php`);
+        const data = await response.json();
+        
+        if (data.status === 'ok') {
+            const order = data.orders.find(o => o.order_id === orderId);
+            if (order) {
+                displayOrderDetailsModal(order);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        alert('Error loading order details');
+    }
+}
+
+function displayOrderDetailsModal(order) {
+    const modal = document.getElementById('orderDetailsModal');
+    const content = document.getElementById('orderDetailsContent');
+    
+    content.innerHTML = `
+        <div class="order-details-grid">
+            <div class="detail-section">
+                <h3>Order Information</h3>
+                <p><strong>Order ID:</strong> #${order.order_id}</p>
+                <p><strong>Order Date:</strong> ${new Date(order.order_date).toLocaleDateString('en-PH', {year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'})}</p>
+                <p><strong>Status:</strong> <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span></p>
+                <p><strong>Total Amount:</strong> ₱${parseFloat(order.total).toLocaleString('en-PH', {minimumFractionDigits: 2})}</p>
+            </div>
+            
+            <div class="detail-section">
+                <h3>Customer Information</h3>
+                <p><strong>Name:</strong> ${order.customer_name}</p>
+                <p><strong>Email:</strong> ${order.customer_email}</p>
+            </div>
+            
+            <div class="detail-section">
+                <h3>Shipping Address</h3>
+                <p><strong>Address:</strong> ${order.StreetAddress || 'N/A'}</p>
+                <p><strong>City:</strong> ${order.City || 'N/A'}</p>
+                <p><strong>State:</strong> ${order.State || 'N/A'}</p>
+                <p><strong>Zip Code:</strong> ${order.ZipCode || 'N/A'}</p>
+            </div>
+            
+            <div class="detail-section full-width">
+                <h3>Items Ordered</h3>
+                <p><strong>Cameras:</strong> ${order.cameras || 'N/A'}</p>
+                <p><strong>Total Items:</strong> ${order.total_items}</p>
+                <p><strong>Number of Different Cameras:</strong> ${order.item_count}</p>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+}
+
+function closeOrderModal() {
+    const modal = document.getElementById('orderDetailsModal');
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('orderDetailsModal');
+    if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+        closeOrderModal();
+    }
+});
+
 </script>
 
 <?php include 'includes/footer.php'; ?>
