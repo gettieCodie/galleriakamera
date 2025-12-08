@@ -90,7 +90,7 @@ include 'includes/product_modal.php';
                 <div class="items-list" id="selling-items-list">
                     <!-- Items will be loaded here by JavaScript -->
                     <div class="empty-state">
-                        <img src="assets/images/empty-listings.png" alt="No listings" class="empty-icon">
+                        <img src="assets/images/empty.png" alt="No listings" class="empty-icon">
                         <h3>No items listed yet</h3>
                         <p>Start selling your cameras by clicking "Sell an Item"</p>
                     </div>
