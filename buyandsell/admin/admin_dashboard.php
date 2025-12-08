@@ -675,8 +675,8 @@ try {
                     <!-- Monthly Orders & Items Sold -->
                     <div class="analytics-card">
                         <div class="card-header">
-                            <h3>Monthly Orders & Items Sold</h3>
-                            <p>Sales volume trends</p>
+                            <h3>Order Status Distribution</h3>
+                            <p>Breakdown by status</p>
                         </div>
                         <div class="chart-placeholder">
                             <div class="mini-chart">
@@ -689,20 +689,20 @@ try {
                     <div class="analytics-card">
                         <div class="card-header">
                             <h3>Weekly Activity</h3>
-                            <p>Views, searches, and orders by day</p>
+                            <p>Last 7 days (Completed Orders)</p>
                         </div>
                         <div class="activity-stats">
                             <div class="stat-item">
-                                <span class="stat-value">1,245</span>
-                                <span class="stat-label">Views</span>
+                                <span class="stat-value">3</span>
+                                <span class="stat-label">Items Sold</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-value">356</span>
-                                <span class="stat-label">Searches</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-value">28</span>
+                                <span class="stat-value">2</span>
                                 <span class="stat-label">Orders</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">1.5</span>
+                                <span class="stat-label">Avg Items/Order</span>
                             </div>
                         </div>
                     </div>
@@ -727,6 +727,19 @@ try {
                                 <span class="rank">3</span>
                                 <span class="name">Fujifilm X-T4</span>
                                 <span class="count">8 sold</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method Distribution -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Payment Methods</h3>
+                            <p>Completed Orders</p>
+                        </div>
+                        <div class="chart-placeholder compact">
+                            <div class="chart-dummy" id="payment-method-chart">
+                                <div style="padding: 40px 0; text-align: center; color: #999;">Loading chart...</div>
                             </div>
                         </div>
                     </div>
@@ -768,42 +781,16 @@ try {
                         </div>
                     </div>
 
-                    <!-- Top Viewed Cameras -->
-                    <div class="analytics-card">
+                    <!-- Monthly Items Sold -->
+                    <div class="analytics-card large">
                         <div class="card-header">
-                            <h3>Top Viewed Cameras</h3>
+                            <h3>Monthly Items Sold</h3>
+                            <p>Items sold trend over time</p>
                         </div>
-                        <div class="top-list">
-                            <div class="top-item">
-                                <span class="rank">1</span>
-                                <span class="name">Sony A7 IV</span>
-                                <span class="count">2,456 views</span>
+                        <div class="chart-placeholder">
+                            <div class="chart-dummy" id="monthly-items-chart">
+                                <div style="padding: 40px 0; text-align: center; color: #999;">Loading chart...</div>
                             </div>
-                            <div class="top-item">
-                                <span class="rank">2</span>
-                                <span class="name">Canon R6 Mark II</span>
-                                <span class="count">1,890 views</span>
-                            </div>
-                            <div class="top-item">
-                                <span class="rank">3</span>
-                                <span class="name">Nikon Z8</span>
-                                <span class="count">1,567 views</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Top Search Terms -->
-                    <div class="analytics-card">
-                        <div class="card-header">
-                            <h3>Top Search Terms</h3>
-                        </div>
-                        <div class="search-terms">
-                            <span class="search-tag">mirrorless camera</span>
-                            <span class="search-tag">full frame</span>
-                            <span class="search-tag">sony a7</span>
-                            <span class="search-tag">used camera</span>
-                            <span class="search-tag">canon r5</span>
-                            <span class="search-tag">vlogging camera</span>
                         </div>
                     </div>
                 </div>

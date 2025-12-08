@@ -592,7 +592,7 @@
 }
 
 .chart-placeholder {
-    height: 200px;
+    height: 250px;
     background: #f8f9fa;
     border-radius: 8px;
     display: flex;
@@ -602,6 +602,10 @@
     margin-top: 16px;
 }
 
+.chart-placeholder.compact {
+    height: 180px;
+}
+
 .chart-dummy {
     width: 100%;
     height: 100%;
@@ -609,6 +613,7 @@
     align-items: end;
     gap: 8px;
     padding: 20px;
+    justify-content: space-around;
 }
 
 .chart-bars {
@@ -630,6 +635,7 @@
     display: flex;
     justify-content: space-around;
     margin-top: 20px;
+    padding: 10px 0;
 }
 
 .stat-item {
@@ -638,30 +644,30 @@
 
 .stat-value {
     display: block;
-    font-size: 24px;
+    font-size: 32px;
     font-weight: 700;
     color: #111;
 }
 
 .stat-label {
     display: block;
-    font-size: 12px;
+    font-size: 14px;
     color: #666;
-    margin-top: 4px;
+    margin-top: 8px;
 }
 
 .top-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 16px;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .top-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 8px;
+    padding: 6px;
     border-radius: 6px;
     background: #f8f9fa;
 }
