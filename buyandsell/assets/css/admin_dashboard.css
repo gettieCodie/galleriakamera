@@ -89,22 +89,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #eeeeee8f;
+    color: #111;
     font-size: 24px;
 }
 
-.kpi-card:nth-child(2) .kpi-icon {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
 
-.kpi-card:nth-child(3) .kpi-icon {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.kpi-card:nth-child(4) .kpi-icon {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
 
 .kpi-content {
     flex: 1;

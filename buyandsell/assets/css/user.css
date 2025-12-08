@@ -24,14 +24,15 @@
 
 /* Section Styling */
 .dashboard-section {
-    margin-bottom: 60px;
+    margin-bottom: 30px;
 }
 
 .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    gap: 20px;
 }
 
 .section-title {
@@ -39,13 +40,37 @@
     font-weight: 600;
     color: #111;
     margin: 0;
-    margin-top: 50px;
+    margin-bottom: 0;
 }
 
 .section-subtitle {
     font-size: 14px;
     color: #929191;
-    margin-bottom: 20px;
+    margin: 0;
+}
+
+.selling-section {
+    margin-bottom: 24px;
+}
+
+.selling-section .section-title {
+    margin-bottom: 2px;
+}
+
+.selling-section .section-subtitle {
+    margin-bottom: 12px;
+}
+
+.purchases-section {
+    margin-bottom: 24px;
+}
+
+.purchases-section .section-title {
+    margin-bottom: 2px;
+}
+
+.purchases-section .section-subtitle {
+    margin-bottom: 12px;
 }
 
 /* KPI Cards (Keep your existing KPI styles) */
@@ -61,6 +86,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
+    margin-top: 30px;
     margin-bottom: 40px;
 }
 
@@ -263,10 +289,12 @@
     background: #111;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
 }
 
 .btn-secondary {
@@ -281,7 +309,27 @@
 
 /* Wishlist Section Styling */
 .wishlist-section {
-    margin-bottom: 60px;
+    margin-bottom: 24px;
+}
+
+.wishlist-section .section-title {
+    margin-bottom: 2px;
+}
+
+.wishlist-section .section-subtitle {
+    margin-bottom: 12px;
+}
+
+.reviews-section {
+    margin-bottom: 24px;
+}
+
+.reviews-section .section-title {
+    margin-bottom: 2px;
+}
+
+.reviews-section .section-subtitle {
+    margin-bottom: 12px;
 }
 
 .wishlist-grid {

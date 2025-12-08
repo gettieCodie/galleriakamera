@@ -40,7 +40,7 @@ try {
 
         <!-- Back Button -->
         <div style="margin-bottom: 20px;">
-            <button class="btn-view-all" onclick="window.location.href='admin_dashboard.php'" style="background: #667eea; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">
+            <button class="btn-view-all back-btn-dashboard" onclick="window.location.href='admin_dashboard.php'">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </button>
         </div>
@@ -94,6 +94,22 @@ try {
 </div>
 
 <style>
+.back-btn-dashboard {
+    background: transparent;
+    color: #111;
+    padding: 10px 20px;
+    border: 1px solid #111;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-btn-dashboard:hover {
+    background: #111;
+    color: white;
+}
+
 .btn-delete {
     background-color: #ff3b30 !important;
     color: white !important;
