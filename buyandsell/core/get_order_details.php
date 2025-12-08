@@ -36,7 +36,8 @@ try {
                     s.PostalCode
                  FROM orders o
                  LEFT JOIN shippingaddress s ON o.OrderID = s.OrderID
-                 WHERE o.OrderID = ? AND o.CustomerID = ?";
+                 WHERE o.OrderID = ? AND o.CustomerID = ?
+                 LIMIT 1";
     
     $stmtOrder = $conn->prepare($sqlOrder);
     if (!$stmtOrder) {

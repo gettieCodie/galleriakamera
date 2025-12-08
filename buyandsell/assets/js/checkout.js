@@ -42,7 +42,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Helper function: save order + shipping to backend ---
     function saveOrderAndShipping() {
-        if (isOrderProcessing) return Promise.resolve(false);
+        if (isOrderProcessing) {
+            console.log("Order is already processing, ignoring duplicate request");
+            return Promise.resolve(false);
+        }
         isOrderProcessing = true;
 
         const sameAsDelivery = document.getElementById("same-as-delivery").checked;
@@ -106,16 +109,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (ok && data.status === "success") {
                 console.log("Order & shipping details saved!");
                 console.log("Cart cleared - Order ID:", data.order_id);
+                isOrderProcessing = false;
                 return true;
             } else {
                 console.error("DB Error:", data.message);
                 alert("Error saving order: " + data.message);
+                isOrderProcessing = false;
                 return false;
             }
         })
         .catch(error => {
             console.error("Fetch error:", error);
             alert("Network error: " + error.message);
+            isOrderProcessing = false;
             return false;
         });
     }
@@ -223,31 +229,41 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmCodBtn.addEventListener('click', async function(e) {
         e.preventDefault();
         if (!agreeTermsCheckbox.checked) return alert('Please agree to the terms and conditions');
+        if (isOrderProcessing) return;
 
         confirmCodBtn.disabled = true;
         confirmCodBtn.textContent = 'Processing...';
         const success = await saveOrderAndShipping();
-        if (success) showSuccessNotification();
-        else { confirmCodBtn.disabled = false; confirmCodBtn.textContent = 'Confirm Order'; }
+        if (success) {
+            showSuccessNotification();
+        } else { 
+            confirmCodBtn.disabled = false; 
+            confirmCodBtn.textContent = 'Confirm Order'; 
+        }
     });
     
     confirmEwalletBtn.addEventListener('click', async function(e) {
         e.preventDefault();
         const ewalletSelected = document.querySelector('input[name="ewallet_provider"]:checked');
         if (!ewalletSelected) return alert("Please select an E-Wallet provider.");
+        if (isOrderProcessing) return;
 
         confirmEwalletBtn.disabled = true;
         confirmEwalletBtn.textContent = 'Processing...';
         const success = await saveOrderAndShipping();
-        if (success) showSuccessNotification();
-        else { confirmEwalletBtn.disabled = false; confirmEwalletBtn.textContent = 'Confirm Order'; }
+        if (success) {
+            showSuccessNotification();
+        } else { 
+            confirmEwalletBtn.disabled = false; 
+            confirmEwalletBtn.textContent = 'Confirm Order'; 
+        }
     });
     
     // Success Notification Handler
     closeNotificationBtn.addEventListener('click', function() {
         successNotification.style.display = 'none';
         // Redirect to dashboard to see the new order
-        window.location.href = '../marketplace.php';
+        window.location.href = '../receipt.php';
     });
     
     // Function to show success notification

@@ -193,5 +193,3 @@
         <p><strong>Email:</strong> <span id="card-customer-email"></span></p>
     </div>
 </div>
-
-<script src="../assets/js/checkout.js"></script>

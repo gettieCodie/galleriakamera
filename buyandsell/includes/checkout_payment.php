@@ -41,5 +41,3 @@
         <button type="button" id="confirm-ewallet" class="btn-primary" disabled>Confirm Payment</button>
     </div>
 </div>
-
-<script src="../assets/js/checkout.js"></script>

@@ -20,12 +20,12 @@ try {
                     o.Status,
                     s.FirstName,
                     s.LastName,
-                    COUNT(oi.OrderItemID) as ItemCount
+                    COUNT(DISTINCT oi.OrderItemID) as ItemCount
                   FROM orders o
                   LEFT JOIN shippingaddress s ON o.OrderID = s.OrderID
                   LEFT JOIN orderitems oi ON o.OrderID = oi.OrderID
                   WHERE o.CustomerID = ?
-                  GROUP BY o.OrderID
+                  GROUP BY o.OrderID, s.FirstName, s.LastName, o.OrderDate, o.TotalAmount, o.PaymentMethod, o.Status
                   ORDER BY o.OrderDate DESC";
     
     $stmtOrders = $conn->prepare($sqlOrders);

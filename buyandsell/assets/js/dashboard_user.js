@@ -79,7 +79,7 @@ function displayPurchases(orders) {
                         ₱${parseFloat(order.total).toLocaleString('en-PH', {minimumFractionDigits: 2})}
                     </span>
                     <span class="purchase-items">
-                        ${order.item_count} ${order.item_count === 1 ? 'item' : 'items'}
+                        ${order.items_count} ${order.items_count === 1 ? 'item' : 'items'}
                     </span>
                 </div>
                 <div class="purchase-status">
