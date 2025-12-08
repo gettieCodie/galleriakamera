@@ -10,6 +10,14 @@ if (!$order_id) {
     header("Location: dashboard_user.php");
     exit;
 }
+
+// Determine redirect URL based on source parameter
+$source = $_GET['source'] ?? 'user';
+if ($source === 'admin') {
+    $dashboard_url = 'admin/admin_dashboard.php';
+} else {
+    $dashboard_url = 'dashboard_user.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +30,7 @@ if (!$order_id) {
 </head>
 <body>
 
-<a href="dashboard_user.php" class="back-btn">
+<a href="<?php echo htmlspecialchars($dashboard_url); ?>" class="back-btn">
     <i class="fas fa-arrow-left"></i>
     Back to Dashboard
 </a>
@@ -115,7 +123,6 @@ function displayReceipt(order) {
                 <thead>
                     <tr>
                         <th>Product</th>
-                        <th>Variant</th>
                         <th class="text-right">Price</th>
                         <th class="text-right">Qty</th>
                         <th class="text-right">Total</th>
@@ -125,7 +132,6 @@ function displayReceipt(order) {
                     ${order.items.filter(item => item.name && item.price && item.qty).map(item => `
                         <tr>
                             <td>${item.name || 'N/A'}</td>
-                            <td>${item.variant || 'N/A'}</td>
                             <td class="text-right">₱${(item.price || 0).toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
                             <td class="text-right">${item.qty || 0}</td>
                             <td class="text-right">₱${((item.price || 0) * (item.qty || 0)).toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>

@@ -18,6 +18,9 @@ function initializeAdminDashboard() {
     
     // Initialize Quick Action buttons
     initializeQuickActions();
+    
+    // Load transactions
+    loadAdminTransactions();
 }
 
 // Quick Action Buttons Functionality
@@ -26,14 +29,12 @@ function initializeQuickActions() {
     const addListingBtn = document.querySelector('.action-btn.primary');
     if (addListingBtn) {
         addListingBtn.addEventListener('click', function() {
-            // Open your existing sell item modal or create a new one
-            const sellModal = document.getElementById('sellItemModal');
-            if (sellModal) {
-                sellModal.style.display = 'flex';
+            // Open the add listing modal
+            const listingModal = document.getElementById('listingModal');
+            if (listingModal) {
+                listingModal.style.display = 'flex';
             } else {
-                alert('Add New Listing feature would open here');
-                // Or redirect to listing page
-                // window.location.href = 'add_listing.php';
+                alert('Listing modal not found');
             }
         });
     }
@@ -215,6 +216,24 @@ function showItemDetails(itemId) {
     // You can implement a modal or expandable row here
 }
 
+// Approve item from modal
+function approveCurrentItem() {
+    if (currentModalItemId) {
+        approveItem(currentModalItemId);
+    } else {
+        alert('No item selected');
+    }
+}
+
+// Reject item from modal
+function rejectCurrentItem() {
+    if (currentModalItemId) {
+        rejectItem(currentModalItemId);
+    } else {
+        alert('No item selected');
+    }
+}
+
 // Approve item submission
 function approveItem(listingId) {
     if (confirm('Are you sure you want to approve this item?')) {
@@ -366,4 +385,229 @@ function addToListings(itemData) {
             alert('Add listing modal not found. Please use the "Add New Listing" button to add this camera.');
         }
     }, 300);
+}
+
+// ===== TRANSACTION HISTORY FUNCTIONS =====
+
+// Load and display transactions on page load
+async function loadAdminTransactions() {
+    try {
+        const response = await fetch('../core/get_admin_transactions.php');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            displayTransactions(data.transactions);
+        } else {
+            displayError('Failed to load transactions');
+        }
+    } catch (error) {
+        console.error('Error loading transactions:', error);
+        displayError('Error loading transactions');
+    }
+}
+
+// Display transactions in the table
+function displayTransactions(transactions) {
+    const tableBody = document.getElementById('transactions-table-body');
+    
+    if (!tableBody) {
+        console.error('Transactions table body not found');
+        return;
+    }
+    
+    if (transactions.length === 0) {
+        tableBody.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No transactions found.</div>';
+        return;
+    }
+    
+    let html = '';
+    
+    transactions.slice(0, 10).forEach(transaction => {
+        const statusClass = transaction.status.toLowerCase().replace(/\s+/g, '-');
+        const transactionDate = formatTransactionDate(transaction.date);
+        
+        html += `
+            <div class="table-row">
+                <div class="col">#${transaction.transaction_id}</div>
+                <div class="col"><span class="type ${transaction.type.toLowerCase()}">${transaction.type}</span></div>
+                <div class="col">${escapeHtml(transaction.camera_name)}</div>
+                <div class="col price">₱${formatCurrency(transaction.amount)}</div>
+                <div class="col">${transactionDate}</div>
+                <div class="col"><span class="status ${statusClass}">${transaction.status}</span></div>
+                <div class="col">
+                    <button class="btn-action view-more" onclick="viewTransactionDetails('${escapeHtml(transaction.transaction_id)}')">View Details</button>
+                </div>
+            </div>
+        `;
+    });
+    
+    tableBody.innerHTML = html;
+}
+
+// View transaction details - redirects to receipt page
+function viewTransactionDetails(transactionId) {
+    // Extract order ID from transaction ID (e.g., "#TXN-0001" -> "1")
+    const orderId = transactionId.replace('#TXN-', '').replace(/^0+/, '') || transactionId;
+    window.location.href = `../receipt.php?order_id=${orderId}&source=admin`;
+}
+
+// Load all transactions - switch to Customer Orders tab
+async function loadMoreTransactions() {
+    try {
+        // Switch to the Customer Orders tab
+        switchToTab('customer-orders');
+        
+        // Scroll to top of the tab
+        setTimeout(() => {
+            const customerOrdersTab = document.getElementById('customer-orders');
+            if (customerOrdersTab) {
+                customerOrdersTab.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 300);
+        
+    } catch (error) {
+        console.error('Error switching to Customer Orders:', error);
+        alert('Error switching to Customer Orders tab');
+    }
+}
+
+// Format currency
+function formatCurrency(amount) {
+    const num = parseFloat(amount);
+    return num.toLocaleString('en-PH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+// Format transaction date
+function formatTransactionDate(dateString) {
+    const date = new Date(dateString);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Display error message
+function displayError(message) {
+    const tableBody = document.getElementById('transactions-table-body');
+    if (tableBody) {
+        tableBody.innerHTML = `<div style="padding: 20px; text-align: center; color: #d32f2f;">${message}</div>`;
+    }
+}
+
+// ===== ANALYTICS FUNCTIONS =====
+
+// Load analytics when Analytics tab is clicked
+document.addEventListener('click', function(e) {
+    if (e.target.matches('[data-tab="analytics"]')) {
+        setTimeout(loadAnalytics, 100);
+    }
+});
+
+// Load and display analytics data
+async function loadAnalytics() {
+    try {
+        const response = await fetch('../core/get_analytics.php');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            displayAnalytics(data.analytics);
+        } else {
+            console.error('Failed to load analytics:', data.message);
+        }
+    } catch (error) {
+        console.error('Error loading analytics:', error);
+    }
+}
+
+// Display analytics data
+function displayAnalytics(analytics) {
+    // Update Monthly Revenue & Profit bars
+    const monthlyData = analytics.monthly_revenue_profit || [];
+    if (monthlyData.length > 0) {
+        const maxRevenue = Math.max(...monthlyData.map(m => m.revenue || 0));
+        const barsContainer = document.querySelector('.chart-bars');
+        if (barsContainer) {
+            barsContainer.innerHTML = monthlyData.map((data, idx) => {
+                const percentage = maxRevenue > 0 ? (data.revenue / maxRevenue) * 100 : 10;
+                const title = data.month ? `${data.month}: ₱${data.revenue.toLocaleString('en-PH', {minimumFractionDigits: 0})}` : 'No data';
+                return `<div class="bar" style="height: ${Math.max(percentage, 10)}%" title="${title}"></div>`;
+            }).join('');
+        }
+    }
+
+    // Update Weekly Activity stats
+    const weeklyActivity = analytics.weekly_activity || {};
+    const viewsStat = document.querySelector('.activity-stats .stat-item:nth-child(1) .stat-value');
+    const searchesStat = document.querySelector('.activity-stats .stat-item:nth-child(2) .stat-value');
+    const ordersStat = document.querySelector('.activity-stats .stat-item:nth-child(3) .stat-value');
+    
+    if (viewsStat) viewsStat.textContent = (weeklyActivity.views || 0).toLocaleString();
+    if (searchesStat) searchesStat.textContent = (weeklyActivity.searches || 0).toLocaleString();
+    if (ordersStat) ordersStat.textContent = (weeklyActivity.orders || 0).toLocaleString();
+
+    // Update Top Selling Cameras
+    const topCameras = analytics.top_selling_cameras || [];
+    const analyticsCards = document.querySelectorAll('.analytics-card');
+    if (analyticsCards.length > 2) {
+        const topList = analyticsCards[2].querySelector('.top-list');
+        if (topList) {
+            if (topCameras.length > 0) {
+                topList.innerHTML = topCameras.map((camera, idx) => `
+                    <div class="top-item">
+                        <span class="rank">${idx + 1}</span>
+                        <span class="name">${camera.name || 'N/A'}</span>
+                        <span class="count">${camera.sold} sold</span>
+                    </div>
+                `).join('');
+            } else {
+                topList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No sales data yet</div>';
+            }
+        }
+    }
+
+    // Update Inventory by Brand
+    const brandInventory = analytics.inventory_by_brand || [];
+    const brandStats = document.querySelector('.brand-stats');
+    if (brandStats) {
+        if (brandInventory.length > 0) {
+            brandStats.innerHTML = brandInventory.map(brand => `
+                <div class="brand-item">
+                    <span class="brand-name">${brand.brand || 'Other'}</span>
+                    <div class="brand-bar">
+                        <div class="brand-fill" style="width: ${brand.percentage}%"></div>
+                    </div>
+                    <span class="brand-count">${brand.percentage}%</span>
+                </div>
+            `).join('');
+        } else {
+            brandStats.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No inventory data</div>';
+        }
+    }
+
+    // Update Top Viewed Cameras
+    const topViewed = analytics.top_viewed_cameras || [];
+    if (analyticsCards.length > 4) {
+        const topViewedList = analyticsCards[4].querySelector('.top-list');
+        if (topViewedList) {
+            if (topViewed.length > 0) {
+                topViewedList.innerHTML = topViewed.map((camera, idx) => `
+                    <div class="top-item">
+                        <span class="rank">${idx + 1}</span>
+                        <span class="name">${camera.name || 'N/A'}</span>
+                        <span class="count">${camera.views} views</span>
+                    </div>
+                `).join('');
+            } else {
+                topViewedList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No listing data</div>';
+            }
+        }
+    }
 }

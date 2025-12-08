@@ -111,21 +111,12 @@
 // Admin Dashboard Modal Functionality
 function initializeListingModal() {
     const modal = document.getElementById('listingModal');
-    const btn = document.getElementById('openListingModal');
-    const span = document.getElementsByClassName('close')[0];
+    const span = document.querySelector('#listingModal .close');
     const cancel = document.getElementById('cancelBtn');
     const form = document.getElementById('cameraForm');
     const messageContainer = document.getElementById('messageContainer');
 
-    // Show modal
-    if (btn && modal) {
-        btn.addEventListener('click', function() {
-            modal.style.display = 'flex';
-            resetForm();
-        });
-    }
-
-    // Hide modal
+    // Hide modal - Close button (X)
     if (span) {
         span.addEventListener('click', function() {
             modal.style.display = 'none';
@@ -133,6 +124,7 @@ function initializeListingModal() {
         });
     }
 
+    // Hide modal - Cancel button
     if (cancel) {
         cancel.addEventListener('click', function() {
             modal.style.display = 'none';
@@ -179,14 +171,14 @@ function initializeListingModal() {
                 if (data.success) {
                     showMessage(data.message, 'success');
                     form.reset();
-                    // Optional: Redirect or refresh listings after success
+                    // Reload the page to show the new listing
                     setTimeout(() => {
                         modal.style.display = 'none';
                         resetForm();
-                        // You can add code here to refresh the listings display
-                    }, 2000);
+                        location.reload(); // Reload to show new listing
+                    }, 1500);
                 } else {
-                    showMessage(data.errors.join('<br>'), 'error');
+                    showMessage(data.errors ? data.errors.join('<br>') : 'An error occurred', 'error');
                 }
             })
             .catch(error => {

@@ -463,7 +463,7 @@ try {
                 <div class="transaction-section">
                     <div class="section-header">
                         <h3 class="section-title">Transaction History</h3>
-                        <button class="btn-view-all">View All Transactions</button>
+                        <button class="btn-view-all" onclick="loadMoreTransactions()">View All Transactions</button>
                     </div>
                     <div class="transaction-table">
                         <div class="table-header">
@@ -475,31 +475,8 @@ try {
                             <div class="col">Status</div>
                             <div class="col">Actions</div>
                         </div>
-                        <div class="table-body">
-                            <!-- Transaction 1 -->
-                            <div class="table-row">
-                                <div class="col">#TXN-001</div>
-                                <div class="col"><span class="type sold">Sold</span></div>
-                                <div class="col">Sony A7 III</div>
-                                <div class="col price">₱45,000</div>
-                                <div class="col">2024-01-15</div>
-                                <div class="col"><span class="status completed">Completed</span></div>
-                                <div class="col">
-                                    <button class="btn-action view-more" data-id="txn1">View Details</button>
-                                </div>
-                            </div>
-                            <!-- Transaction 2 -->
-                            <div class="table-row">
-                                <div class="col">#TXN-002</div>
-                                <div class="col"><span class="type purchased">Purchased</span></div>
-                                <div class="col">Canon R5</div>
-                                <div class="col price">₱85,000</div>
-                                <div class="col">2024-01-14</div>
-                                <div class="col"><span class="status completed">Completed</span></div>
-                                <div class="col">
-                                    <button class="btn-action view-more" data-id="txn2">View Details</button>
-                                </div>
-                            </div>
+                        <div class="table-body" id="transactions-table-body">
+                            <div style="padding: 20px; text-align: center; color: #666;">Loading transactions...</div>
                         </div>
                     </div>
                 </div>
@@ -585,7 +562,6 @@ try {
                                             <strong>Email:</strong> <?php echo htmlspecialchars($item['Email']); ?>
                                         </div>
                                     </div>
-                                    <button class="btn-action btn-success" onclick="addToListings(<?php echo htmlspecialchars(json_encode($item)); ?>)">Add to Listings</button>
                                 </div>
                             <?php endforeach; ?>
                         <?php else: ?>
@@ -1266,6 +1242,12 @@ function displayOrderDetailsModal(order) {
                 <p><strong>Cameras:</strong> ${order.cameras || 'N/A'}</p>
                 <p><strong>Total Items:</strong> ${order.total_items}</p>
                 <p><strong>Number of Different Cameras:</strong> ${order.item_count}</p>
+            </div>
+            
+            <div class="detail-section full-width" style="text-align: center; padding-top: 20px; border-top: 1px solid #ddd;">
+                <button class="btn-primary" onclick="window.location.href='../receipt.php?order_id=${order.order_id}&source=admin'" style="padding: 10px 20px; background: #372200; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    View Full Receipt
+                </button>
             </div>
         </div>
     `;
