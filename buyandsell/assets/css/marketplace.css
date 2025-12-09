@@ -10,25 +10,25 @@ body {
     font-family: 'DM Sans', sans-serif;
     background: #f8f5fa;
     color: #333;
-    padding-top: 120px; 
+    padding-top: 0;
 }
 
 /* Navigation Bar Styles ---------------------------------------------------------------------------------*/
 .navbar {
-    background-color: #372200; /* Dark brown background */
+    background-color: #ffffff;
     color: #222222;
-    padding: 15px 20px;
+    padding: 10px 20px;
     top: 0;
     z-index: 1000;
     border-bottom: 1px solid #e0e0e0;
     width: 100%;
-    position: fixed; /* Make navbar fixed */
-    top: 0; /* Stick to top */
+    position: fixed;
+    top: 0;
     left: 0;
-    z-index: 1000; /* Ensure it stays above other content */
-    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
-    backdrop-filter: blur(10px); /* This creates the blur effect */
-    -webkit-backdrop-filter: blur(10px); /* For Safari support */
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .navbar .container {
@@ -344,8 +344,10 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 160px;
+  margin-top: 20px;
   padding: 0 20px;
+  margin-bottom: 30px;
+  box-sizing: border-box;
 }
 
 /* Inner container (max width 1338px) */
@@ -447,22 +449,68 @@ body {
 
 /* Mobile adjustments */
 @media (max-width: 640px) {
-  .search-actions-wrapper {
+  body {
+    padding-top: 70px;
+  }
+  .navbar {
     padding: 10px 12px;
   }
-  .action-btn {
+  .search-actions-wrapper {
+    padding: 0 12px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  .search-actions-container {
+    gap: 12px;
+  }
+  .search-bar-container {
     padding: 8px 12px;
-    border-radius: 10px;
+    font-size: 14px;
+  }
+  .action-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .marketplace-wrapper {
+    padding: 0 12px;
+    margin-bottom: 40px;
+  }
+  .product-list {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+  }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) and (min-width: 641px) {
+  body {
+    padding-top: 75px;
+  }
+  .navbar {
+    padding: 12px 20px;
+  }
+  .search-actions-wrapper {
+    margin-top: 20px;
+    margin-bottom: 25px;
+  }
+  .marketplace-wrapper {
+    padding: 0 15px;
+    margin-bottom: 50px;
+  }
+  .product-list {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
   }
 }
 
 
 /* product cards -----------------------------------------------------------------------------------*/
 .marketplace-wrapper{
-    max-width: 1280px;      /* Maximum width */
-    margin: 60px auto 0;
-    padding: 0 20px;        /* Optional padding for smaller screens */
-    box-sizing: border-box; /* Include padding in width */
+    max-width: 1280px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    display: block;
 }
 .product-list {
   display: grid;

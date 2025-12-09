@@ -1,6 +1,7 @@
 <?php 
 session_start();
 include 'includes/header_marketplace.php'; 
+include 'includes/announcement.php';
 include 'includes/search_filter.php';
 include 'includes/product_modal.php';
 include 'gk-chat-service/chat-widget.php';
@@ -26,6 +27,8 @@ include 'gk-chat-service/chat-widget.php';
 <script src="assets/js/toast.js"></script>
 <script src="assets/js/marketplace.js"></script>
 <script src="assets/js/search.js" defer></script>
+<!-- Bootstrap JS for Carousel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 <!-- Price Filter Initialization -->
 <script>
@@ -48,3 +51,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<?php include 'includes/marketplace_footer.php'; ?>

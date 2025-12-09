@@ -93,47 +93,6 @@ body {
     text-decoration: underline;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #333;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    display: block;
-    margin-bottom: 4px;
-}
-
-input[type="email"],
-input[type="password"] {
-    width: 100%;
-    padding: 11px 12px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    background: #fafafa;
-    box-sizing: border-box;
-}
-
-input[type="email"]:focus,
-input[type="password"]:focus {
-    outline: none;
-    border-color: #2d2d2d;
-    background: white;
-}
-
-input[type="email"]::placeholder,
-input[type="password"]::placeholder {
-    color: #999;
-}
-
 /* Alert Messages */
 .alert {
     padding: 12px 14px;
@@ -183,18 +142,46 @@ input[type="password"]::placeholder {
     flex-shrink: 0;
     margin-top: 2px;
 }
-    color: #3a3;
-    border-left: 4px solid #3a3;
-}
-
-.alert-success i {
-    color: #3a3;
-    font-size: 18px;
-}
 
 form {
     display: flex;
     flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    background: #fafafa;
+    box-sizing: border-box;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #2d2d2d;
+    background: white;
+}
+
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
+    color: #999;
 }
 
 input, select {
@@ -572,8 +559,8 @@ input, select {
 
 /* announcement ----------------------------------------------------------------------------------------------*/
 .announcement-section {
-    max-width: 1230px;
-    margin: 0 auto;
+    max-width: 1280px;
+    margin: 0 auto 30px;
     padding: 0 20px;
     box-sizing: border-box;
 }

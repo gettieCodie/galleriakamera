@@ -222,3 +222,5 @@ include 'gk-chat-service/chat-widget.php';
 </div>
 
 <script src="assets/js/dashboard_user.js"></script>
+
+<?php include 'includes/marketplace_footer.php'; ?>

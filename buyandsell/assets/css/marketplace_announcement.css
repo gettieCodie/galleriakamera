@@ -1,0 +1,71 @@
+/* Marketplace-specific Announcement Banner Customization */
+
+/* Adjust announcement banner to rounded rectangle */
+.announcement-section {
+    max-width: 1280px;
+    height: 300px;
+    overflow: visible;
+    margin: 20px auto 30px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.announcement-section .carousel {
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.announcement-section .carousel-inner {
+    height: 100%;
+}
+
+.announcement-section .carousel-item {
+    height: 100%;
+}
+
+.announcement-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Carousel control styling */
+.announcement-section .carousel-control-prev,
+.announcement-section .carousel-control-next {
+    width: auto;
+    padding: 10px;
+}
+
+/* Responsive height adjustments */
+@media (max-width: 1024px) {
+    .announcement-section {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .announcement-section {
+        height: 200px;
+        margin-bottom: 25px;
+        padding: 0 15px;
+    }
+    
+    .announcement-section .carousel {
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 640px) {
+    .announcement-section {
+        height: 150px;
+        margin-bottom: 20px;
+        padding: 0 12px;
+    }
+    
+    .announcement-section .carousel {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+}

@@ -1,0 +1,461 @@
+/* Marketplace Footer Styles */
+.marketplace-footer {
+    background: linear-gradient(to bottom, #0f0f0f 0%, #1a1a1a 100%);
+    color: #e0e0e0;
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin-top: 100px;
+    padding: 0;
+}
+
+.marketplace-footer-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Main Footer Content */
+.marketplace-footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1.2fr 1.2fr;
+    gap: 40px;
+    padding: 60px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Brand Column */
+.footer-brand-col {
+    grid-column: span 1;
+}
+
+.footer-brand-logo {
+    margin-bottom: 20px;
+}
+
+.brand-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+    letter-spacing: 0.5px;
+}
+
+.brand-tagline {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+}
+
+.brand-description {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #b0b0b0;
+    margin-bottom: 20px;
+}
+
+/* Badges */
+.footer-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #e0e0e0;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid #4a9eff;
+    transition: all 0.3s ease;
+}
+
+.footer-badge i {
+    color: #4a9eff;
+    font-size: 14px;
+}
+
+.footer-badge:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: #6fb5ff;
+}
+
+/* Footer Column Titles */
+.footer-col-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Footer Lists */
+.footer-col-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.footer-col-list li a {
+    color: #b0b0b0;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.footer-col-list li a::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #4a9eff;
+    transition: width 0.3s ease;
+}
+
+.footer-col-list li a:hover {
+    color: #ffffff;
+}
+
+.footer-col-list li a:hover::before {
+    width: 100%;
+}
+
+/* Footer Contact */
+.footer-contact {
+    font-size: 12px;
+}
+
+.footer-contact p {
+    margin: 8px 0;
+    color: #b0b0b0;
+}
+
+.footer-contact p strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Newsletter Section */
+.newsletter-section {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 40px;
+    padding: 40px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-content h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+}
+
+.newsletter-content p {
+    font-size: 13px;
+    color: #b0b0b0;
+    margin: 0 0 15px 0;
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 8px;
+}
+
+.newsletter-form input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+.newsletter-form input::placeholder {
+    color: #888;
+}
+
+.newsletter-form input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #4a9eff;
+    box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.1);
+}
+
+.newsletter-form button {
+    padding: 10px 20px;
+    background: #4a9eff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.newsletter-form button:hover {
+    background: #6fb5ff;
+    transform: translateY(-1px);
+}
+
+.newsletter-form button:active {
+    transform: translateY(0);
+}
+
+/* Social Section */
+.social-section h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.social-icons {
+    display: flex;
+    gap: 12px;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 16px;
+}
+
+.social-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #4a9eff;
+    transform: translateY(-3px);
+}
+
+.social-icon.fb:hover {
+    background: #1877F2;
+    border-color: #1877F2;
+    color: #ffffff;
+}
+
+.social-icon.ig:hover {
+    background: linear-gradient(45deg, #E4405F, #8134AF);
+    border-color: transparent;
+    color: #ffffff;
+}
+
+.social-icon.tt:hover {
+    background: #000000;
+    border-color: #000000;
+    color: #ffffff;
+}
+
+/* Footer Divider */
+.footer-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 0 30px 0;
+}
+
+/* Footer Bottom */
+.marketplace-footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 0;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.copyright {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+}
+
+.footer-links-bottom {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-links-bottom a {
+    font-size: 12px;
+    color: #888;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links-bottom a:hover {
+    color: #b0b0b0;
+}
+
+/* Payment Icons */
+.footer-bottom-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.payment-label {
+    font-size: 12px;
+    color: #888;
+    font-weight: 600;
+}
+
+.payment-icons {
+    display: flex;
+    gap: 12px;
+    font-size: 20px;
+    color: #b0b0b0;
+    transition: color 0.3s ease;
+}
+
+.payment-icons i {
+    transition: color 0.3s ease;
+}
+
+.payment-icons i:hover {
+    color: #ffffff;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .marketplace-footer-content {
+        grid-template-columns: 1.5fr 1fr 1fr;
+        gap: 30px;
+        padding: 50px 0;
+    }
+
+    .footer-brand-col {
+        grid-column: span 3;
+    }
+
+    .newsletter-section {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .marketplace-footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        padding: 40px 0;
+    }
+
+    .footer-brand-col {
+        grid-column: span 2;
+    }
+
+    .newsletter-section {
+        flex-direction: column;
+        padding: 30px 0;
+    }
+
+    .marketplace-footer-bottom {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 25px 0;
+    }
+
+    .footer-bottom-left,
+    .footer-bottom-right {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .footer-links-bottom {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .marketplace-footer-wrapper {
+        padding: 0 15px;
+    }
+
+    .marketplace-footer-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 30px 0;
+    }
+
+    .footer-brand-col {
+        grid-column: span 1;
+    }
+
+    .footer-col-title {
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+
+    .footer-col-list {
+        gap: 10px;
+    }
+
+    .footer-col-list li a {
+        font-size: 12px;
+    }
+
+    .newsletter-form {
+        flex-direction: column;
+    }
+
+    .newsletter-form input,
+    .newsletter-form button {
+        width: 100%;
+    }
+
+    .marketplace-footer-bottom {
+        padding: 20px 0;
+    }
+
+    .copyright,
+    .payment-label {
+        font-size: 11px;
+    }
+
+    .footer-links-bottom {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .social-icons {
+        justify-content: center;
+    }
+}
