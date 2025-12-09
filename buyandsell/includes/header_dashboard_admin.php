@@ -19,7 +19,7 @@
     <header class="navbar">
         <div class="container">
             <!-- Logo Section -->
-            <a href="../marketplace.php" class="logo">
+            <a href="#" class="logo" style="cursor: default; pointer-events: none;">
                 <img src="../assets/images/logo.svg" alt="Logo">
             </a>
 
