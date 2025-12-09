@@ -95,18 +95,24 @@ try {
     if ($result) {
         $row = $result->fetch_assoc();
         $yesterday_revenue = $row['total'] ? (float)$row['total'] : 0;
+        // Calculate trend percentage (if no yesterday data, show 0, otherwise calculate percentage change)
         if ($yesterday_revenue > 0) {
             $revenue_trend_percent = (($kpi_total_revenue - $yesterday_revenue) / $yesterday_revenue) * 100;
+        } else if ($kpi_total_revenue > 0) {
+            // If there was revenue today but not yesterday, show positive trend
+            $revenue_trend_percent = 100;
+        } else {
+            $revenue_trend_percent = 0;
         }
     }
     
-    // Total Profit (sum of selling_price - original_price for completed orders)
-    // We need to calculate based on the marketplace listings that have been sold
-    $sql = "SELECT SUM(l.selling_price - l.original_price) as profit
-            FROM listings l
-            JOIN orderitems oi ON CONCAT(l.brand, ' ', l.model) = oi.ProductName
+    // Total Profit (Selling Price - Original Price for all completed orders)
+    // Calculates profit margin on each item sold
+    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.original_price)) as profit
+            FROM orderitems oi
+            JOIN listings l ON oi.ListingID = l.listing_id
             JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE o.Status = 'completed'";
+            WHERE o.Status = 'completed' OR o.Status = 'Completed'";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
@@ -114,17 +120,24 @@ try {
     }
     
     // Profit trend (compare with yesterday)
-    $sql = "SELECT SUM(l.selling_price - l.original_price) as profit
-            FROM listings l
-            JOIN orderitems oi ON CONCAT(l.brand, ' ', l.model) = oi.ProductName
+    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.original_price)) as profit
+            FROM orderitems oi
+            JOIN listings l ON oi.ListingID = l.listing_id
             JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE o.Status = 'completed' AND DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+            WHERE (o.Status = 'completed' OR o.Status = 'Completed')
+            AND DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
         $yesterday_profit = $row['profit'] ? (float)$row['profit'] : 0;
+        // Calculate trend percentage
         if ($yesterday_profit > 0) {
             $profit_trend_percent = (($kpi_total_profit - $yesterday_profit) / $yesterday_profit) * 100;
+        } else if ($kpi_total_profit > 0) {
+            // If there was profit today but not yesterday, show positive trend
+            $profit_trend_percent = 100;
+        } else {
+            $profit_trend_percent = 0;
         }
     }
 } catch (Exception $e) {
