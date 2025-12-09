@@ -409,6 +409,14 @@
     color: #0c5460;
 }
 
+.type {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
 .type.sold {
     background: #d4edda;
     color: #155724;
@@ -666,7 +674,7 @@
 }
 
 .chart-placeholder {
-    height: 200px;
+    min-height: 320px;
     background: #f8f9fa;
     border-radius: 8px;
     display: flex;
@@ -674,6 +682,7 @@
     justify-content: center;
     color: #666;
     margin-top: 16px;
+    padding: 16px;
 }
 
 .chart-dummy {

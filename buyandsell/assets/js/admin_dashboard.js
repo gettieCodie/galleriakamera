@@ -789,8 +789,8 @@ function displayAnalytics(analytics) {
             
             // Build SVG and legend with hover tooltips
             let svg = `
-                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center; position: relative;">
-                    <svg width="200" height="190" style="overflow: visible; cursor: pointer;">
+                <div style="display: flex; flex-direction: column; gap: 0; align-items: center; position: relative; width: 100%; overflow: visible;">
+                    <svg width="200" height="160" style="overflow: visible; cursor: pointer; flex-shrink: 0;">
                         <!-- Pie chart slices with hover effects -->
                         ${paths.map((p, idx) => `
                             <g class="pie-slice" data-status="${p.status}" style="cursor: pointer;">
@@ -812,17 +812,19 @@ function displayAnalytics(analytics) {
                             </g>
                         `).join('')}
                     </svg>
-                    <div style="width: 100%; display: flex; flex-direction: row; gap: 12px; padding: 8px 10px; margin-top: -10px; justify-content: center; flex-wrap: wrap;">
+                    <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; margin-top: 4px; max-height: 130px; overflow-y: auto; overflow-x: hidden;">
                         ${paths.map(p => `
                             <div 
                                 class="status-legend-item"
                                 data-status="${p.status}"
-                                style="display: flex; align-items: center; gap: 6px; font-size: 11px; padding: 4px 8px; border-radius: 4px;"
+                                style="display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 4px 6px; border-radius: 4px; transition: background-color 0.2s ease; cursor: pointer; flex-shrink: 0;"
+                                onmouseover="this.style.backgroundColor='#f8f8f8';"
+                                onmouseout="this.style.backgroundColor='transparent';"
                             >
-                                <div style="width: 8px; height: 8px; background-color: ${p.color}; border-radius: 2px; flex-shrink: 0;"></div>
-                                <div style="flex: 1; white-space: nowrap;">
-                                    <span style="font-weight: 600; color: #333;">${p.status}:</span>
-                                    <span style="color: #666;">${p.count} (${p.percentage}%)</span>
+                                <div style="width: 10px; height: 10px; background-color: ${p.color}; border-radius: 2px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1);"></div>
+                                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; gap: 8px; min-width: 0;">
+                                    <span style="font-weight: 600; color: #222; white-space: nowrap;">${p.status}</span>
+                                    <span style="color: #666; font-size: 11px; font-weight: 500; white-space: nowrap;">${p.count} (${p.percentage}%)</span>
                                 </div>
                             </div>
                         `).join('')}
