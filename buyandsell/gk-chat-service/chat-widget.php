@@ -140,9 +140,13 @@
   margin-bottom: 16px;
   padding: 12px 16px;
   border-radius: 12px;
-  max-width: 80%;
+  max-width: 85%;
   word-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
   animation: slideIn 0.3s ease;
+  line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 @keyframes slideIn {
@@ -161,12 +165,28 @@
   color: white;
   margin-left: auto;
   text-align: right;
+  max-width: 85%;
 }
 
 .gk-chat-message.gk-bot {
   background: white;
   border: 2px solid #e0e0e0;
   color: #333;
+  max-width: 95%;
+}
+
+.gk-chat-message strong {
+  font-weight: 600;
+}
+
+.gk-chat-message em {
+  font-style: italic;
+}
+
+.gk-chat-message br {
+  content: "";
+  display: block;
+  margin: 8px 0;
 }
 
 .gk-chat-loading {
@@ -314,14 +334,16 @@
       // Remove loading
       messagesContainer.removeChild(loadingDiv);
 
-      if (data.ok) {
+      if (data.ok && data.text) {
+        console.log('Bot response received:', data.text);
         addMessage(data.text, 'bot');
         conversationHistory.push({
           role: 'model',
           parts: [{ text: data.text }]
         });
       } else {
-        addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+        console.error('API Error:', data.error || 'Unknown error');
+        addMessage('Sorry, I encountered an error: ' + (data.error || 'No response text') + '. Please try again.', 'bot');
       }
     } catch (error) {
       messagesContainer.removeChild(loadingDiv);
@@ -338,7 +360,23 @@
   function addMessage(text, type) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `gk-chat-message gk-${type}`;
-    messageDiv.textContent = text;
+    
+    if (type === 'bot') {
+      // Format markdown-style text for bot messages
+      let formattedText = text
+        // Convert **bold** to <strong>
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // Convert *italic* to <em> (but not **bold**)
+        .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+        // Replace newlines with line breaks
+        .replace(/\n/g, '<br>');
+      
+      messageDiv.innerHTML = formattedText;
+    } else {
+      // User messages are plain text
+      messageDiv.textContent = text;
+    }
+    
     messagesContainer.appendChild(messageDiv);
     scrollToBottom();
   }

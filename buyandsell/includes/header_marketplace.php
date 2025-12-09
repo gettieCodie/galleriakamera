@@ -22,32 +22,24 @@
                 <img src="assets/images/logo.svg" alt="Logo">
             </a>
 
-            <!-- Camera Brand Menu (center) -->
-            <div class="camera-brands">
-                <div class="brand-item">
-                    <span>Fujifilm</span>
-                    <ul class="camera-models">
-                        <li><a href="#">Fujifilm X-T4</a></li>
-                        <li><a href="#">Fujifilm X100V</a></li>
-                        <li><a href="#">Fujifilm GFX 100</a></li>
-                    </ul>
+            <!-- Price Range Filter -->
+            <div class="price-range-filter">
+                <div class="filter-group">
+                    <label for="minPrice">Min Price</label>
+                    <div class="price-input-wrapper">
+                        <span class="currency">₱</span>
+                        <input type="number" id="minPrice" placeholder="0" min="0" step="1000">
+                    </div>
                 </div>
-                <div class="brand-item">
-                    <span>Sony</span>
-                    <ul class="camera-models">
-                        <li><a href="#">Sony A7 III</a></li>
-                        <li><a href="#">Sony A9</a></li>
-                        <li><a href="#">Sony Alpha 1</a></li>
-                    </ul>
+                <div class="filter-separator">—</div>
+                <div class="filter-group">
+                    <label for="maxPrice">Max Price</label>
+                    <div class="price-input-wrapper">
+                        <span class="currency">₱</span>
+                        <input type="number" id="maxPrice" placeholder="999,999" min="0" step="1000">
+                    </div>
                 </div>
-                <div class="brand-item">
-                    <span>Canon</span>
-                    <ul class="camera-models">
-                        <li><a href="#">Canon EOS R5</a></li>
-                        <li><a href="#">Canon EOS 5D Mark IV</a></li>
-                        <li><a href="#">Canon EOS Rebel T7</a></li>
-                    </ul>
-                </div>
+                <button class="filter-apply-btn" onclick="applyPriceFilter()">Filter</button>
             </div>
 
             <!-- Navigation Links (right side) -->

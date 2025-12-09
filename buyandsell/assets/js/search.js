@@ -180,3 +180,34 @@ function initializeSearch() {
 
     console.log("Search initialized successfully")
 }
+
+// Price filter function
+window.applyPriceFilter = function() {
+    const minPriceInput = document.getElementById("minPrice");
+    const maxPriceInput = document.getElementById("maxPrice");
+    const minPrice = minPriceInput.value ? parseFloat(minPriceInput.value) : 0;
+    const maxPrice = maxPriceInput.value ? parseFloat(maxPriceInput.value) : Infinity;
+    
+    const filteredProducts = window.allProducts.filter(product => {
+        const price = parseFloat(product.selling_price);
+        return price >= minPrice && price <= maxPrice;
+    });
+    
+    console.log(`Filtering by price: ₱${minPrice} - ₱${maxPrice}`);
+    console.log(`Filtered products: ${filteredProducts.length}`);
+    
+    if (filteredProducts.length > 0) {
+        displayProducts(filteredProducts);
+    } else {
+        const productList = document.getElementById("product-list");
+        const noListings = document.getElementById("no-listings");
+        productList.innerHTML = `
+            <div class="no-results">
+                <img src="assets/images/empty.png" alt="No results" style="width: 150px; opacity: 0.5;">
+                <h3>No products found in price range ₱${minPrice.toLocaleString()} - ₱${maxPrice.toLocaleString()}</h3>
+                <p>Try adjusting your price filter</p>
+            </div>
+        `;
+        noListings.style.display = "none";
+    }
+}

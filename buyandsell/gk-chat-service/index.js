@@ -25,8 +25,10 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 app.post("/api/chat", async (req, res) => {
   try {
     const { messages } = req.body;
+    console.log('📨 Received chat request with', messages?.length || 0, 'messages');
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      console.error('❌ Invalid messages format');
       return res.status(400).json({ 
         ok: false, 
         error: "Messages array is required" 
@@ -48,7 +50,7 @@ app.post("/api/chat", async (req, res) => {
     const chat = model.startChat({
       history: history,
       generationConfig: {
-        maxOutputTokens: 1000,
+        maxOutputTokens: 500,
         temperature: 0.7,
       },
     });
@@ -56,25 +58,39 @@ app.post("/api/chat", async (req, res) => {
     // Get the last user message
     const lastMessage = messages[messages.length - 1];
     const userText = lastMessage.parts?.[0]?.text || lastMessage.content || "";
+    console.log('💬 User message:', userText.substring(0, 50) + '...');
 
     // Add system context to first message
     const contextualMessage = history.length === 0 
-      ? `You are a helpful assistant for Galleria Kamera, an online camera marketplace. ${userText}`
+      ? `You are a helpful assistant for Galleria Kamera, an online camera marketplace. Answer questions about cameras, recommendations, and orders. Keep responses conversational and friendly. ${userText}`
       : userText;
 
     // Send the message and get response
+    console.log('🤖 Calling Gemini API...');
     const result = await chat.sendMessage(contextualMessage);
-    const response = await result.response;
-    const text = response.text();
+    
+    // Make sure we have a valid response
+    if (!result || !result.response) {
+      throw new Error('No response from Gemini API');
+    }
+    
+    const responseText = result.response.text();
+    
+    if (!responseText) {
+      throw new Error('Empty response text from Gemini API');
+    }
+    
+    console.log('✅ Got response:', responseText.substring(0, 100) + '...');
 
     res.json({ 
       ok: true, 
-      text,
+      text: responseText,
       role: "model"
     });
 
   } catch (err) {
-    console.error("Chat error:", err);
+    console.error("❌ Chat error:", err.message);
+    console.error("Full error:", err);
     
     // Provide more specific error messages
     let errorMessage = err.message || err.toString();

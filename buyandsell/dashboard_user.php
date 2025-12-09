@@ -1,4 +1,5 @@
 <?php 
+include 'gk-chat-service/chat-widget.php';
 session_start();
 if(!isset($_SESSION['user_id'])) {
     header("Location: login.php");

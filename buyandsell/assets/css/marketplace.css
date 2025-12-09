@@ -101,6 +101,105 @@ body {
     background-color: #f0f0f0;
 }
 
+/* Price Range Filter */
+.price-range-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.price-range-filter .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.price-range-filter label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin: 0;
+    height: 14px;
+    line-height: 14px;
+}
+
+.price-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 32px;
+}
+
+.price-input-wrapper .currency {
+    padding: 0 6px;
+    font-weight: 600;
+    color: #333;
+    background: #f8f9fa;
+    font-size: 11px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.price-input-wrapper input {
+    flex: 1;
+    border: none;
+    padding: 7px 6px;
+    font-size: 12px;
+    outline: none;
+    width: 70px;
+    margin: 0;
+    height: 100%;
+}
+
+.price-input-wrapper input::placeholder {
+    color: #bbb;
+}
+
+.price-range-filter .filter-separator {
+    font-size: 14px;
+    color: #ccc;
+    margin: 0;
+    padding: 0 2px;
+}
+
+.filter-apply-btn {
+    padding: 7px 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    margin: 0;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-apply-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.filter-apply-btn:active {
+    transform: translateY(0);
+}
+
 /* Navigation links (right side) */
 .nav-links {
     display: flex;

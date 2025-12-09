@@ -27,4 +27,24 @@ include 'gk-chat-service/chat-widget.php';
 <script src="assets/js/marketplace.js"></script>
 <script src="assets/js/search.js" defer></script>
 
-
+<!-- Price Filter Initialization -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const minPriceInput = document.getElementById('minPrice');
+    const maxPriceInput = document.getElementById('maxPrice');
+    
+    if (minPriceInput && maxPriceInput) {
+        minPriceInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                window.applyPriceFilter();
+            }
+        });
+        
+        maxPriceInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                window.applyPriceFilter();
+            }
+        });
+    }
+});
+</script>
