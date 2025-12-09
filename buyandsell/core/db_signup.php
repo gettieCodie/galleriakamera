@@ -9,21 +9,48 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 $secretKey = "6LdcWw8sAAAAAGupVBCFI1oFHD0ZoPJgva14a_mt";
-$recaptchaResponse = $_POST['g-recaptcha-response'];
-$verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$recaptchaResponse");
-$responseData = json_decode($verifyResponse, true);
+$recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
 
-if(!$responseData['success']){
+if (empty($recaptchaResponse)) {
     $_SESSION['error'] = "Please complete the CAPTCHA.";
     header("Location: ../signup.php");
     exit;
 }
 
+$verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$recaptchaResponse");
+$responseData = json_decode($verifyResponse, true);
+
+if(!$responseData['success']){
+    $_SESSION['error'] = "CAPTCHA verification failed. Please try again.";
+    header("Location: ../signup.php");
+    exit;
+}
+
 // Get form data
-$fullname = trim($_POST['fullname']);
-$email = trim($_POST['email']);
-$password = trim($_POST['password']);
-$role = $_POST['role'];
+$fullname = trim($_POST['fullname'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$password = trim($_POST['password'] ?? '');
+$role = $_POST['role'] ?? '';
+
+// Validate inputs
+if (empty($fullname) || empty($email) || empty($password) || empty($role)) {
+    $_SESSION['error'] = "All fields are required.";
+    header("Location: ../signup.php");
+    exit;
+}
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $_SESSION['error'] = "Please enter a valid email address.";
+    header("Location: ../signup.php");
+    exit;
+}
+
+if (strlen($password) < 6) {
+    $_SESSION['error'] = "Password must be at least 6 characters long.";
+    header("Location: ../signup.php");
+    exit;
+}
+
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
 $_SESSION['signup_email'] = $email;
@@ -31,6 +58,12 @@ $_SESSION['signup_name'] = $fullname;
 
 // Check if email exists
 $stmt = $conn->prepare("SELECT * FROM Customers WHERE Email = ?");
+if (!$stmt) {
+    $_SESSION['error'] = "Database error: " . $conn->error;
+    header("Location: ../signup.php");
+    exit;
+}
+
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -40,13 +73,21 @@ if($result->num_rows > 0){
     header("Location: ../signup.php");
     exit;
 }
+$stmt->close();
 
 $token = bin2hex(random_bytes(16));
 
 $stmt = $conn->prepare("INSERT INTO Customers (FullName, Email, Password, Role, VerifyToken, IsVerified) VALUES (?, ?, ?, ?, ?, 0)");
+if (!$stmt) {
+    $_SESSION['error'] = "Database error: " . $conn->error;
+    header("Location: ../signup.php");
+    exit;
+}
+
 $stmt->bind_param("sssss", $fullname, $email, $hashed_password, $role, $token);
 
 if($stmt->execute()){
+    $stmt->close();
     // Send verification email
     $mail = new PHPMailer(true);
     try {
@@ -129,14 +170,15 @@ if($stmt->execute()){
         exit;
 
     } catch (Exception $e) {
-        $_SESSION['error'] = "Error sending email. Try again.";
+        $_SESSION['error'] = "Error sending email: " . $mail->ErrorInfo . " Please try again later.";
         header("Location: ../signup.php");
         exit;
     }
 
 } else {
-    $_SESSION['error'] = "Account creation failed.";
+    $_SESSION['error'] = "Account creation failed: " . $stmt->error;
     header("Location: ../signup.php");
     exit;
 }
+$stmt->close();
 ?>

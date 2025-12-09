@@ -33,6 +33,11 @@ function initializeQuickActions() {
             const listingModal = document.getElementById('listingModal');
             if (listingModal) {
                 listingModal.style.display = 'flex';
+                // Reset form when opening
+                const form = document.getElementById('cameraForm');
+                if (form) form.reset();
+                const filePreview = document.getElementById('filePreview');
+                if (filePreview) filePreview.innerHTML = '';
             } else {
                 alert('Listing modal not found');
             }
@@ -427,7 +432,8 @@ function displayTransactions(transactions) {
     
     let html = '';
     
-    transactions.slice(0, 10).forEach(transaction => {
+    // Show only 3 latest transactions on overview page
+    transactions.slice(0, 3).forEach(transaction => {
         const statusClass = transaction.status.toLowerCase().replace(/\s+/g, '-');
         const transactionDate = formatTransactionDate(transaction.date);
         
@@ -456,24 +462,69 @@ function viewTransactionDetails(transactionId) {
     window.location.href = `../receipt.php?order_id=${orderId}&source=admin`;
 }
 
-// Load all transactions - switch to Customer Orders tab
+// Load all transactions - switch to transactions view
 async function loadMoreTransactions() {
     try {
-        // Switch to the Customer Orders tab
-        switchToTab('customer-orders');
+        // Load full transaction list
+        const response = await fetch('../core/get_admin_transactions.php');
+        const data = await response.json();
         
-        // Scroll to top of the tab
-        setTimeout(() => {
-            const customerOrdersTab = document.getElementById('customer-orders');
-            if (customerOrdersTab) {
-                customerOrdersTab.scrollIntoView({ behavior: 'smooth' });
-            }
-        }, 300);
-        
+        if (data.status === 'success') {
+            displayAllTransactions(data.transactions);
+            // Switch to the Customer Orders tab
+            switchToTab('customer-orders');
+            
+            // Scroll to top of the tab
+            setTimeout(() => {
+                const customerOrdersTab = document.getElementById('customer-orders');
+                if (customerOrdersTab) {
+                    customerOrdersTab.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 300);
+        }
     } catch (error) {
-        console.error('Error switching to Customer Orders:', error);
-        alert('Error switching to Customer Orders tab');
+        console.error('Error loading transactions:', error);
+        alert('Error loading transactions');
     }
+}
+
+// Display all transactions (for View All)
+function displayAllTransactions(transactions) {
+    const tableBody = document.getElementById('transactions-table-body');
+    
+    if (!tableBody) {
+        console.error('Transactions table body not found');
+        return;
+    }
+    
+    if (transactions.length === 0) {
+        tableBody.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No transactions found.</div>';
+        return;
+    }
+    
+    let html = '';
+    
+    // Show all transactions
+    transactions.forEach(transaction => {
+        const statusClass = transaction.status.toLowerCase().replace(/\s+/g, '-');
+        const transactionDate = formatTransactionDate(transaction.date);
+        
+        html += `
+            <div class="table-row">
+                <div class="col">#${transaction.transaction_id}</div>
+                <div class="col"><span class="type ${transaction.type.toLowerCase()}">${transaction.type}</span></div>
+                <div class="col">${escapeHtml(transaction.camera_name)}</div>
+                <div class="col price">₱${formatCurrency(transaction.amount)}</div>
+                <div class="col">${transactionDate}</div>
+                <div class="col"><span class="status ${statusClass}">${transaction.status}</span></div>
+                <div class="col">
+                    <button class="btn-action view-more" onclick="viewTransactionDetails('${escapeHtml(transaction.transaction_id)}')">View Details</button>
+                </div>
+            </div>
+        `;
+    });
+    
+    tableBody.innerHTML = html;
 }
 
 // Format currency

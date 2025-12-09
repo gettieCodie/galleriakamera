@@ -861,6 +861,7 @@ try {
 
 <!-- Include the Add Listing Modal -->
 <?php include '../includes/admin_addlisting.php'; ?>
+<script src="../assets/js/notifications.js"></script>
 <script src="../assets/js/admin_dashboard.js"></script>
 
 <style>
@@ -1151,6 +1152,9 @@ function displayOrdersError(message) {
 
 async function updateOrderStatus(orderId, newStatus, selectElement) {
     try {
+        // Show loading toast
+        const loadingToastId = Toast.loading('Updating Order', 'Processing status update...');
+        
         const formData = new FormData();
         formData.append('order_id', orderId);
         formData.append('status', newStatus);
@@ -1163,18 +1167,47 @@ async function updateOrderStatus(orderId, newStatus, selectElement) {
         const data = await response.json();
         
         if (data.status === 'ok') {
+            // Remove loading toast
+            Toast.remove(loadingToastId);
+            
             // Update visual feedback
             selectElement.className = `status-select status-${newStatus.toLowerCase()}`;
             selectElement.setAttribute('data-current', newStatus);
-            alert('Order status updated successfully');
-            loadCustomerOrders();
+            
+            // Show success toast
+            Toast.success(
+                'Order Updated Successfully',
+                `Order #${orderId} status changed to ${newStatus}`,
+                5000
+            );
+            
+            // Reload orders after a short delay
+            setTimeout(() => {
+                loadCustomerOrders();
+            }, 500);
         } else {
-            alert('Failed to update status: ' + (data.message || 'Unknown error'));
+            // Remove loading toast
+            Toast.remove(loadingToastId);
+            
+            // Show error toast
+            Toast.error(
+                'Update Failed',
+                data.message || 'Failed to update order status',
+                5000
+            );
+            
             selectElement.value = selectElement.getAttribute('data-current');
         }
     } catch (error) {
         console.error('Error updating status:', error);
-        alert('Error updating status');
+        
+        // Show error toast
+        Toast.error(
+            'Error',
+            'An error occurred while updating the order status',
+            5000
+        );
+        
         selectElement.value = selectElement.getAttribute('data-current');
     }
 }

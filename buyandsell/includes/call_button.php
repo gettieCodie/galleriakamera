@@ -19,6 +19,7 @@
             font-weight: 450;
             letter-spacing: 0.5px;
             margin-left: 15px;
+            position: relative;
         }
         
         .call-btn:hover {
@@ -30,6 +31,72 @@
         .call-btn.playing {
             background: #2c2c2c;
             animation: pulse 1.5s infinite;
+        }
+        
+        /* Contact Details Tooltip */
+        .contact-tooltip {
+            position: absolute;
+            bottom: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            min-width: 200px;
+            text-align: left;
+            white-space: normal;
+        }
+        
+        .contact-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid #2c2c2c;
+        }
+        
+        .call-btn:hover .contact-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-10px);
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .contact-item i {
+            width: 16px;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .contact-item span {
+            font-weight: 500;
+            font-size: 13px;
         }
         
         @keyframes pulse {
@@ -47,7 +114,19 @@
 </head>
 <body>
     <!-- This is the call button - just add this to your nav bar -->
-    <button class="call-btn" id="callButton">Contact Us</button>
+    <button class="call-btn" id="callButton">
+        Contact Us
+        <div class="contact-tooltip">
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <span>0912 345 6789</span>
+            </div>
+            <div class="contact-item">
+                <i class="fab fa-facebook"></i>
+                <span>Galleria Kamera</span>
+            </div>
+        </div>
+    </button>
     
     <!-- Hidden audio element -->
     <audio id="audioPlayer" preload="auto">
