@@ -84,7 +84,6 @@ include 'gk-chat-service/chat-widget.php';
                     <button class="status-tab active" data-status="all">All</button>
                     <button class="status-tab" data-status="pending">Pending</button>
                     <button class="status-tab" data-status="approved">Approved</button>
-                    <button class="status-tab" data-status="sold">Sold</button>
                 </div>
 
                 <!-- Selling Items List -->
@@ -128,22 +127,7 @@ include 'gk-chat-service/chat-widget.php';
                         <p>Save cameras you're interested in from the marketplace</p>
                     </div>
                 </div>
-            </section>
-
-            <!-- Reviews Section -->
-            <section class="reviews-section">
-                <h2 class="section-title">Reviews</h2>
-                <p class="section-subtitle">Your product reviews and ratings</p>
-                
-                <div class="reviews-list" id="reviews-list">
-                    <!-- Reviews will be loaded here -->
-                    <div class="empty-state">
-                        <img src="assets/images/empty.png" alt="Empty wishlist" class="empty-icon">
-                        <h3>No reviews yet</h3>
-                        <p>Your reviews will appear here after purchasing items</p>
-                    </div>
-                </div>
-            </section>
+                </section>
         </section>
     </div>
 </div>

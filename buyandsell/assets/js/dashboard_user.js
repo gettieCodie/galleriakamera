@@ -155,11 +155,13 @@ function loadKPIs() {
         .catch(err => console.error('Wishlist count error:', err));
 }
 
-function loadSellingItems() {
-    console.log('Loading selling items...');
+function loadSellingItems(status = 'all') {
+    console.log('Loading selling items with status:', status);
     const container = document.getElementById('selling-items-list');
     
-    fetch('core/get_user_listings.php')
+    const url = status === 'all' ? 'core/get_user_listings.php' : `core/get_user_listings.php?status=${status}`;
+    
+    fetch(url)
         .then(res => res.json())
         .then(data => {
             console.log('Selling items data:', data);
@@ -310,23 +312,10 @@ function initializeStatusTabs() {
             // Add active class to clicked tab
             this.classList.add('active');
             
-            // Filter items based on status
+            // Fetch items from backend based on status
             const status = this.getAttribute('data-status');
-            filterSellingItems(status);
+            loadSellingItems(status);
         });
-    });
-}
-
-// Filter selling items by status
-function filterSellingItems(status) {
-    const items = document.querySelectorAll('.item-card');
-    
-    items.forEach(item => {
-        if (status === 'all' || item.getAttribute('data-status') === status) {
-            item.style.display = 'flex';
-        } else {
-            item.style.display = 'none';
-        }
     });
 }
 
@@ -347,7 +336,7 @@ function submitSellItemForm() {
     .then(res => res.json())
     .then(data => {
         if (data.status === 'success') {
-            alert('Your camera has been submitted for review!');
+            showSuccessNotification('Your camera has been submitted for review!');
             document.getElementById('sellItemModal').style.display = 'none';
             form.reset();
             loadSellingItems();
@@ -356,7 +345,7 @@ function submitSellItemForm() {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit for Review';
         } else {
-            alert('Error: ' + (data.message || 'Failed to submit'));
+            showErrorNotification('Error: ' + (data.message || 'Failed to submit'));
             // Reset button
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit for Review';
@@ -364,7 +353,7 @@ function submitSellItemForm() {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error submitting form: ' + error.message);
+        showErrorNotification('Error submitting form: ' + error.message);
         // Reset button
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit for Review';
@@ -396,44 +385,150 @@ async function addToCartWishlist(listingId) {
         const data = await res.json();
 
         if (data.status === "ok") {
-            alert("Added to cart! 🛒");
+            showSuccessNotification("Added to cart! 🛒");
             loadKPIs();
         } else {
-            alert(data.msg || "Failed to add to cart");
+            showErrorNotification(data.msg || "Failed to add to cart");
         }
     } catch (error) {
         console.error("Error adding to cart:", error);
-        alert("Error adding to cart");
+        showErrorNotification("Error adding to cart");
     }
 }
 
 // Remove from wishlist
 async function removeWishlistItem(listingId) {
-    if (!confirm("Remove this item from your wishlist?")) {
-        return;
-    }
-
-    try {
-        const formData = new FormData();
-        formData.append("listing_id", listingId);
-        
-        const res = await fetch("core/delete_wishlist.php", {
-            method: "POST",
-            body: formData
-        });
-        
-        const data = await res.json();
-        console.log("Remove response:", data);
-        
-        if (data.status === "ok") {
-            alert("Removed from wishlist");
-            loadWishlist();
-            loadKPIs();
-        } else {
-            alert("Failed to remove from wishlist");
+    // Show confirmation modal instead of browser confirm
+    showConfirmationModal(
+        "Remove from Wishlist?",
+        "Are you sure you want to remove this item from your wishlist?",
+        async () => {
+            try {
+                const formData = new FormData();
+                formData.append("listing_id", listingId);
+                
+                const res = await fetch("core/delete_wishlist.php", {
+                    method: "POST",
+                    body: formData
+                });
+                
+                const data = await res.json();
+                console.log("Remove response:", data);
+                
+                if (data.status === "ok") {
+                    showSuccessNotification("Removed from wishlist");
+                    loadWishlist();
+                    loadKPIs();
+                } else {
+                    showErrorNotification("Failed to remove from wishlist");
+                }
+            } catch (error) {
+                console.error("Error removing from wishlist:", error);
+                showErrorNotification("Error removing item");
+            }
         }
-    } catch (error) {
-        console.error("Error removing from wishlist:", error);
-        alert("Error removing item");
-    }
+    );
+}
+
+// Success Notification UI
+function showSuccessNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification notification-success';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div class="notification-icon">
+                <i class="fa-solid fa-check-circle"></i>
+            </div>
+            <div class="notification-text">
+                <h4 class="notification-title">Success</h4>
+                <p class="notification-message">${message}</p>
+            </div>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Error Notification UI
+function showErrorNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification notification-error';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div class="notification-icon">
+                <i class="fa-solid fa-exclamation-circle"></i>
+            </div>
+            <div class="notification-text">
+                <h4 class="notification-title">Error</h4>
+                <p class="notification-message">${message}</p>
+            </div>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Confirmation Modal UI
+function showConfirmationModal(title, message, onConfirm, onCancel = null) {
+    const modal = document.createElement('div');
+    modal.className = 'confirmation-modal-overlay';
+    modal.innerHTML = `
+        <div class="confirmation-modal">
+            <div class="confirmation-modal-header">
+                <h3 class="confirmation-modal-title">${title}</h3>
+                <button class="confirmation-modal-close" onclick="this.closest('.confirmation-modal-overlay').remove()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="confirmation-modal-body">
+                <p class="confirmation-modal-message">${message}</p>
+            </div>
+            <div class="confirmation-modal-footer">
+                <button class="confirmation-btn cancel" onclick="
+                    const modal = this.closest('.confirmation-modal-overlay');
+                    modal.remove();
+                ">Cancel</button>
+                <button class="confirmation-btn confirm" onclick="
+                    const modal = this.closest('.confirmation-modal-overlay');
+                    modal.remove();
+                ">Remove</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Handle confirm button click
+    const confirmBtn = modal.querySelector('.confirmation-btn.confirm');
+    confirmBtn.addEventListener('click', () => {
+        if (onConfirm) onConfirm();
+    });
+    
+    // Close modal when clicking overlay
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+            if (onCancel) onCancel();
+        }
+    });
 }

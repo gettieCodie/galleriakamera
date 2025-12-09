@@ -177,22 +177,38 @@ let modalCarousel = null;
 async function openProductModal(product) {
     currentModalProduct = product;
     
+    console.log('Opening modal for product:', product);
+    
     // Fetch all images for this product
     let allImages = [];
     try {
+        // Make sure listing_id exists
+        if (!product.listing_id) {
+            console.error('Product listing_id is missing:', product);
+            throw new Error('Product listing_id is required');
+        }
+        
         const response = await fetch(`core/get_listings.php?listing_id=${product.listing_id}`);
+        console.log('Image fetch response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
-        if (data && data.images) {
+        console.log('Image fetch data:', data);
+        
+        if (data && data.images && Array.isArray(data.images)) {
             allImages = data.images;
+            console.log('Loaded images:', allImages);
+        } else {
+            console.warn('No images array in response, using fallback');
+            // Fallback to single image if fetch returns no images
+            allImages = [product.image_path || 'assets/images/empty.png'];
         }
     } catch (error) {
         console.error('Error fetching product images:', error);
         // Fallback to single image if fetch fails
-        allImages = [product.image_path];
-    }
-    
-    // If no images fetched, use the main product image
-    if (allImages.length === 0) {
         allImages = [product.image_path || 'assets/images/empty.png'];
     }
     

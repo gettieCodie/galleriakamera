@@ -173,7 +173,7 @@ body {
 
 .filter-apply-btn {
     padding: 7px 14px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #111;
     color: white;
     border: none;
     border-radius: 4px;
@@ -191,14 +191,6 @@ body {
     justify-content: center;
 }
 
-.filter-apply-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.filter-apply-btn:active {
-    transform: translateY(0);
-}
 
 /* Navigation links (right side) */
 .nav-links {
@@ -562,7 +554,7 @@ body {
 .action-btn img {
   width: 24px;
   height: 24px;
-  opacity: 0.7;
+  opacity: 0.7; 
 }
 
 .product-image {

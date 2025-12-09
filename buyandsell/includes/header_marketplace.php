@@ -25,18 +25,17 @@
             <!-- Price Range Filter -->
             <div class="price-range-filter">
                 <div class="filter-group">
-                    <label for="minPrice">Min Price</label>
                     <div class="price-input-wrapper">
                         <span class="currency">₱</span>
-                        <input type="number" id="minPrice" placeholder="0" min="0" step="1000">
+                        <input type="number" id="minPrice" placeholder="min" min="0" step="1000">
                     </div>
                 </div>
                 <div class="filter-separator">—</div>
                 <div class="filter-group">
-                    <label for="maxPrice">Max Price</label>
+
                     <div class="price-input-wrapper">
                         <span class="currency">₱</span>
-                        <input type="number" id="maxPrice" placeholder="999,999" min="0" step="1000">
+                        <input type="number" id="maxPrice" placeholder="max" min="0" step="1000">
                     </div>
                 </div>
                 <button class="filter-apply-btn" onclick="applyPriceFilter()">Filter</button>
