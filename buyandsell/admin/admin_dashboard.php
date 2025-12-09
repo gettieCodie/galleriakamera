@@ -692,17 +692,32 @@ try {
                             <p>Last 7 days (Completed Orders)</p>
                         </div>
                         <div class="activity-stats">
-                            <div class="stat-item">
-                                <span class="stat-value">3</span>
-                                <span class="stat-label">Items Sold</span>
+                            <div class="stat-item" style="text-align: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #000;">
+                                        <path d="M12 2L15.09 8.26H22L17.55 12.5L19.64 18.74L12 14.49L4.36 18.74L6.45 12.5L2 8.26H8.91L12 2Z"/>
+                                    </svg>
+                                    <span class="stat-label" style="margin: 0; font-size: 13px; font-weight: 500;">Items Sold</span>
+                                </div>
+                                <span class="stat-value" style="font-size: 36px; margin-top: 8px;">4</span>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-value">2</span>
-                                <span class="stat-label">Orders</span>
+                            <div class="stat-item" style="text-align: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #000;">
+                                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                    <span class="stat-label" style="margin: 0; font-size: 13px; font-weight: 500;">Orders</span>
+                                </div>
+                                <span class="stat-value" style="font-size: 36px; margin-top: 8px;">3</span>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-value">1.5</span>
-                                <span class="stat-label">Avg Items/Order</span>
+                            <div class="stat-item" style="text-align: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #000;">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                    </svg>
+                                    <span class="stat-label" style="margin: 0; font-size: 13px; font-weight: 500;">Avg Items/Order</span>
+                                </div>
+                                <span class="stat-value" style="font-size: 36px; margin-top: 8px;">1.3</span>
                             </div>
                         </div>
                     </div>

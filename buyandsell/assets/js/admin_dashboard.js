@@ -636,11 +636,11 @@ function displayAnalytics(analytics) {
                     <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${padding + chartHeight}" stroke="#ccc" stroke-width="1"/>
                     <line x1="${padding}" y1="${padding + chartHeight}" x2="${padding + chartWidth}" y2="${padding + chartHeight}" stroke="#ccc" stroke-width="1"/>
                     
-                    <!-- Gradient for area under curve -->
+                    <!-- Gradient for area under curve (MONOCHROME) -->
                     <defs>
                         <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.3" />
-                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0" />
+                            <stop offset="0%" style="stop-color:#333333;stop-opacity:0.3" />
+                            <stop offset="100%" style="stop-color:#666666;stop-opacity:0" />
                         </linearGradient>
                     </defs>
                     
@@ -650,17 +650,17 @@ function displayAnalytics(analytics) {
                     <!-- Line -->
                     <path d="${pathD}" fill="none" stroke="url(#lineGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                     
-                    <!-- Define line gradient -->
+                    <!-- Define line gradient (MONOCHROME) -->
                     <defs>
                         <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#667eea" />
-                            <stop offset="100%" style="stop-color:#764ba2" />
+                            <stop offset="0%" style="stop-color:#333333" />
+                            <stop offset="100%" style="stop-color:#666666" />
                         </linearGradient>
                     </defs>
                     
                     <!-- Data points -->
                     ${points.map((point, idx) => `
-                        <circle cx="${point.x}" cy="${point.y}" r="5" fill="white" stroke="#667eea" stroke-width="2" style="cursor: pointer;" data-index="${idx}"/>
+                        <circle cx="${point.x}" cy="${point.y}" r="5" fill="white" stroke="#333333" stroke-width="2" style="cursor: pointer;" data-index="${idx}"/>
                     `).join('')}
                     
                     <!-- Month labels -->
@@ -789,7 +789,7 @@ function displayAnalytics(analytics) {
             
             // Build SVG and legend with hover tooltips
             let svg = `
-                <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; position: relative;">
+                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center; position: relative;">
                     <svg width="200" height="190" style="overflow: visible; cursor: pointer;">
                         <!-- Pie chart slices with hover effects -->
                         ${paths.map((p, idx) => `
@@ -812,17 +812,17 @@ function displayAnalytics(analytics) {
                             </g>
                         `).join('')}
                     </svg>
-                    <div style="width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 10px;">
+                    <div style="width: 100%; display: flex; flex-direction: row; gap: 12px; padding: 8px 10px; margin-top: -10px; justify-content: center; flex-wrap: wrap;">
                         ${paths.map(p => `
                             <div 
                                 class="status-legend-item"
                                 data-status="${p.status}"
-                                style="display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 6px; border-radius: 4px;"
+                                style="display: flex; align-items: center; gap: 6px; font-size: 11px; padding: 4px 8px; border-radius: 4px;"
                             >
-                                <div style="width: 10px; height: 10px; background-color: ${p.color}; border-radius: 2px; flex-shrink: 0;"></div>
-                                <div style="flex: 1;">
-                                    <div style="font-weight: 600; color: #333;">${p.status}</div>
-                                    <div style="color: #666; font-size: 12px;">${p.count} (${p.percentage}%)</div>
+                                <div style="width: 8px; height: 8px; background-color: ${p.color}; border-radius: 2px; flex-shrink: 0;"></div>
+                                <div style="flex: 1; white-space: nowrap;">
+                                    <span style="font-weight: 600; color: #333;">${p.status}:</span>
+                                    <span style="color: #666;">${p.count} (${p.percentage}%)</span>
                                 </div>
                             </div>
                         `).join('')}
@@ -979,13 +979,13 @@ function displayAnalytics(analytics) {
             const radius = 60;
             const donutWidth = 20;
             
-            // Define colors for payment methods
+            // Define colors for payment methods (MONOCHROME - GRAYSCALE)
             const methodColors = {
-                'COD': '#667eea',
-                'PayMaya': '#764ba2',
-                'GCash': '#FF6B6B',
-                'Maribank': '#4ECDC4',
-                'Other': '#999999'
+                'COD': '#333333',
+                'PayMaya': '#666666',
+                'GCash': '#999999',
+                'Maribank': '#CCCCCC',
+                'Other': '#E8E8E8'
             };
             
             let sliceStart = 0;
@@ -1133,18 +1133,19 @@ function displayAnalytics(analytics) {
     if (monthlyItemsChart) {
         if (monthlyItems.length > 0) {
             const maxItems = Math.max(...monthlyItems.map(m => m.items || 0));
-            const padding = 40;
+            const padding = 10;
+            const topPadding = 140;
             const svgWidth = monthlyItemsChart.parentElement.offsetWidth - 80;
-            const svgHeight = 250;
+            const svgHeight = 310;
             const chartWidth = svgWidth - (padding * 2);
-            const chartHeight = svgHeight - (padding * 2);
+            const chartHeight = svgHeight - topPadding - (padding * 2);
             
             // Calculate points for line chart
             const pointSpacing = chartWidth / (monthlyItems.length - 1 || 1);
             const points = monthlyItems.map((data, idx) => {
                 const x = padding + (idx * pointSpacing);
                 const yRatio = maxItems > 0 ? (data.items / maxItems) : 0;
-                const y = padding + (chartHeight * (1 - yRatio));
+                const y = topPadding + (chartHeight * (1 - yRatio));
                 return { x, y, data };
             });
             
@@ -1155,41 +1156,43 @@ function displayAnalytics(analytics) {
             }
             
             let svg = `
+                <div style="margin-top: 30px;">
                 <svg width="${svgWidth}" height="${svgHeight}" style="overflow: visible;">
                     <!-- Grid lines -->
-                    <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${padding + chartHeight}" stroke="#ccc" stroke-width="1"/>
-                    <line x1="${padding}" y1="${padding + chartHeight}" x2="${padding + chartWidth}" y2="${padding + chartHeight}" stroke="#ccc" stroke-width="1"/>
+                    <line x1="${padding}" y1="${topPadding}" x2="${padding}" y2="${topPadding + chartHeight}" stroke="#ccc" stroke-width="1"/>
+                    <line x1="${padding}" y1="${topPadding + chartHeight}" x2="${padding + chartWidth}" y2="${topPadding + chartHeight}" stroke="#ccc" stroke-width="1"/>
                     
-                    <!-- Gradient for area under curve -->
+                    <!-- Gradient for area under curve (MONOCHROME) -->
                     <defs>
                         <linearGradient id="itemsAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.3" />
-                            <stop offset="100%" style="stop-color:#667eea;stop-opacity:0" />
+                            <stop offset="0%" style="stop-color:#333333;stop-opacity:0.3" />
+                            <stop offset="100%" style="stop-color:#666666;stop-opacity:0" />
                         </linearGradient>
                         <linearGradient id="itemsLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" style="stop-color:#667eea" />
-                            <stop offset="100%" style="stop-color:#764ba2" />
+                            <stop offset="0%" style="stop-color:#333333" />
+                            <stop offset="100%" style="stop-color:#666666" />
                         </linearGradient>
                     </defs>
                     
                     <!-- Area under curve -->
-                    <path d="${pathD} L ${points[points.length - 1].x} ${padding + chartHeight} Z" fill="url(#itemsAreaGradient)" stroke="none"/>
+                    <path d="${pathD} L ${points[points.length - 1].x} ${topPadding + chartHeight} Z" fill="url(#itemsAreaGradient)" stroke="none"/>
                     
                     <!-- Line -->
                     <path d="${pathD}" fill="none" stroke="url(#itemsLineGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                     
                     <!-- Data points -->
                     ${points.map((point, idx) => `
-                        <circle cx="${point.x}" cy="${point.y}" r="5" fill="white" stroke="#667eea" stroke-width="2" style="cursor: pointer;" data-index="${idx}"/>
+                        <circle cx="${point.x}" cy="${point.y}" r="5" fill="white" stroke="#333333" stroke-width="2" style="cursor: pointer;" data-index="${idx}"/>
                     `).join('')}
                     
                     <!-- Month labels -->
                     ${points.map((point, idx) => `
-                        <text x="${point.x}" y="${padding + chartHeight + 25}" text-anchor="middle" font-size="12" fill="#666" font-weight="${monthlyItems[idx].items > 0 ? 'bold' : 'normal'}">
+                        <text x="${point.x}" y="${topPadding + chartHeight + 25}" text-anchor="middle" font-size="12" fill="#666" font-weight="${monthlyItems[idx].items > 0 ? 'bold' : 'normal'}">
                             ${monthlyItems[idx].short_month || '—'}
                         </text>
                     `).join('')}
                 </svg>
+                </div>
             `;
             
             monthlyItemsChart.innerHTML = svg;
