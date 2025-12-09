@@ -1,5 +1,4 @@
 <?php 
-include 'gk-chat-service/chat-widget.php';
 session_start();
 if(!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -10,6 +9,7 @@ $user_id = $_SESSION['user_id'];
 
 include 'includes/header_dashboard_user.php';
 include 'includes/product_modal.php';
+include 'gk-chat-service/chat-widget.php';
 ?>
 
 <div class="dashboard-wrapper">
