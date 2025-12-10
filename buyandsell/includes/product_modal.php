@@ -35,7 +35,7 @@
                 <!-- Header -->
                 <div>
                     <!-- Brand Badge -->
-                    <span id="productBrand" class="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-full mb-2"></span>
+                    <span id="productBrand" class="inline-block px-3 py-1 bg-gray-200 text-gray-800 text-sm font-semibold rounded-full mb-2"></span>
                     
                     <!-- Title -->
                     <h1 id="productTitle" class="text-2xl lg:text-3xl font-bold text-gray-900 mb-3 leading-tight line-clamp-2"></h1>
@@ -44,7 +44,7 @@
                     <div class="flex items-baseline gap-3 mb-4">
                         <span id="productPrice" class="text-2xl font-bold text-gray-900">₱0.00</span>
                         <span id="originalPrice" class="text-sm text-gray-500 line-through">₱0.00</span>
-                        <span id="discount" class="text-sm font-semibold text-red-500 bg-red-50 px-2 py-1 rounded"></span>
+                        <span id="discount" class="text-sm font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded"></span>
                     </div>
                     
                     <!-- Divider -->
@@ -71,14 +71,14 @@
                 <!-- Action Buttons -->
                 <div class="flex gap-3 pt-2">
                     <!-- Wishlist Button -->
-                    <button onclick="toggleWishlistModal()" class="flex-shrink-0 w-11 h-11 rounded-lg border-2 border-gray-200 hover:border-red-500 hover:bg-red-50 transition-all flex items-center justify-center">
-                        <svg class="w-5 h-5 text-gray-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="toggleWishlistModal()" class="flex-shrink-0 w-11 h-11 rounded-lg border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-500 hover:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                         </svg>
                     </button>
                     
-                    <!-- Add to Cart Button -->
-                    <button onclick="addToCartModal()" class="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm">
+                    <!-- Add to Cart Button (Secondary) -->
+                    <button onclick="addToCartModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 active:bg-gray-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
@@ -86,8 +86,8 @@
                     </button>
                 </div>
 
-                <!-- Checkout Button -->
-                <button onclick="goToCheckout()" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2.5 px-4 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-sm">
+                <!-- Checkout Button (Primary) -->
+                <button onclick="goToCheckout()" class="w-full bg-black hover:bg-gray-800 active:bg-gray-900 text-white font-semibold py-2.5 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
