@@ -1307,6 +1307,8 @@ document.addEventListener('click', function(e) {
 
 </script>
 
+<?php include '../includes/admin_footer.php'; ?>
+
 
 
 
