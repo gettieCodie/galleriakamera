@@ -203,8 +203,8 @@ try {
 <script>
 let deleteListingId = null;
 
+// editListing function - simply redirect to edit page
 function editListing(listingId) {
-    // Redirect to edit page or open edit modal
     window.location.href = 'edit_listing.php?id=' + listingId;
 }
 

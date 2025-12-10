@@ -1,18 +1,30 @@
 <?php 
 session_start();
-if(!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
+
+// Allow access from both user and admin sessions
+$source = $_GET['source'] ?? 'user';
+if ($source === 'admin') {
+    // Admin access - check for admin_id or user_id with admin privileges
+    if (!isset($_SESSION['admin_id']) && !isset($_SESSION['user_id'])) {
+        header("Location: admin/admin_login.php");
+        exit;
+    }
+} else {
+    // User access - check for user_id
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: login.php");
+        exit;
+    }
 }
 
 $order_id = $_GET['order_id'] ?? null;
 if (!$order_id) {
-    header("Location: dashboard_user.php");
+    $redirect = ($source === 'admin') ? 'admin/admin_dashboard.php' : 'dashboard_user.php';
+    header("Location: $redirect");
     exit;
 }
 
 // Determine redirect URL based on source parameter
-$source = $_GET['source'] ?? 'user';
 if ($source === 'admin') {
     $dashboard_url = 'admin/admin_dashboard.php';
 } else {

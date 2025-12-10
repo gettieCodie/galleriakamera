@@ -5,9 +5,11 @@ require_once "db_connect.php";
 header('Content-Type: application/json; charset=utf-8');
 
 $customerID = $_SESSION['user_id'] ?? null;
+$isAdmin = isset($_SESSION['admin_id']);
 $orderID = $_GET['order_id'] ?? null;
 
-if (!$customerID) {
+// Allow access for logged-in users or admins
+if (!$customerID && !$isAdmin) {
     http_response_code(401);
     die(json_encode(["status" => "error", "message" => "User not logged in"]));
 }
@@ -18,33 +20,64 @@ if (!$orderID) {
 }
 
 try {
-    // Get order details
-    $sqlOrder = "SELECT 
-                    o.OrderID,
-                    o.OrderDate,
-                    o.TotalAmount,
-                    o.PaymentMethod,
-                    o.Status,
-                    o.Email,
-                    s.FirstName,
-                    s.LastName,
-                    s.Mobile,
-                    s.AddressLine1,
-                    s.AddressLine2,
-                    s.City,
-                    s.Region,
-                    s.PostalCode
-                 FROM orders o
-                 LEFT JOIN shippingaddress s ON o.OrderID = s.OrderID
-                 WHERE o.OrderID = ? AND o.CustomerID = ?
-                 LIMIT 1";
-    
-    $stmtOrder = $conn->prepare($sqlOrder);
-    if (!$stmtOrder) {
-        throw new Exception("Order prepare failed: " . $conn->error);
+    // Get order details - admins can see any order, users can only see their own
+    if ($isAdmin) {
+        // Admin: can view any order
+        $sqlOrder = "SELECT 
+                        o.OrderID,
+                        o.OrderDate,
+                        o.TotalAmount,
+                        o.PaymentMethod,
+                        o.Status,
+                        o.Email,
+                        s.FirstName,
+                        s.LastName,
+                        s.Mobile,
+                        s.AddressLine1,
+                        s.AddressLine2,
+                        s.City,
+                        s.Region,
+                        s.PostalCode
+                     FROM orders o
+                     LEFT JOIN shippingaddress s ON o.OrderID = s.OrderID
+                     WHERE o.OrderID = ?
+                     LIMIT 1";
+        
+        $stmtOrder = $conn->prepare($sqlOrder);
+        if (!$stmtOrder) {
+            throw new Exception("Order prepare failed: " . $conn->error);
+        }
+        
+        $stmtOrder->bind_param("i", $orderID);
+    } else {
+        // User: can only view their own orders
+        $sqlOrder = "SELECT 
+                        o.OrderID,
+                        o.OrderDate,
+                        o.TotalAmount,
+                        o.PaymentMethod,
+                        o.Status,
+                        o.Email,
+                        s.FirstName,
+                        s.LastName,
+                        s.Mobile,
+                        s.AddressLine1,
+                        s.AddressLine2,
+                        s.City,
+                        s.Region,
+                        s.PostalCode
+                     FROM orders o
+                     LEFT JOIN shippingaddress s ON o.OrderID = s.OrderID
+                     WHERE o.OrderID = ? AND o.CustomerID = ?
+                     LIMIT 1";
+        
+        $stmtOrder = $conn->prepare($sqlOrder);
+        if (!$stmtOrder) {
+            throw new Exception("Order prepare failed: " . $conn->error);
+        }
+        
+        $stmtOrder->bind_param("ii", $orderID, $customerID);
     }
-    
-    $stmtOrder->bind_param("ii", $orderID, $customerID);
     
     if (!$stmtOrder->execute()) {
         throw new Exception("Order execute failed: " . $stmtOrder->error);
