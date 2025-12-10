@@ -251,7 +251,7 @@ function rejectCurrentItem() {
 
 // Approve item submission
 function approveItem(listingId) {
-    if (confirm('Are you sure you want to approve this item?')) {
+    showConfirmationModal('Are you sure you want to approve this item?', () => {
         fetch('approve_reject_item.php', {
             method: 'POST',
             headers: {
@@ -269,26 +269,28 @@ function approveItem(listingId) {
             try {
                 const data = JSON.parse(text);
                 if (data.status === 'success') {
-                    alert('Item approved successfully!');
-                    location.reload();
+                    Toast.success('Item approved successfully!');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 } else {
-                    alert('Error: ' + data.message);
+                    Toast.error('Error: ' + data.message);
                 }
             } catch (e) {
                 console.error('Failed to parse response:', text);
-                alert('Error: Invalid response from server. Check console for details.');
+                Toast.error('Error: Invalid response from server. Check console for details.');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error approving item: ' + error.message);
+            Toast.error('Error approving item: ' + error.message);
         });
-    }
+    });
 }
 
 // Reject item submission
 function rejectItem(listingId) {
-    if (confirm('Are you sure you want to reject this item?')) {
+    showConfirmationModal('Are you sure you want to reject this item?', () => {
         fetch('approve_reject_item.php', {
             method: 'POST',
             headers: {
@@ -306,21 +308,23 @@ function rejectItem(listingId) {
             try {
                 const data = JSON.parse(text);
                 if (data.status === 'success') {
-                    alert('Item rejected successfully!');
-                    location.reload();
+                    Toast.success('Item rejected successfully!');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 } else {
-                    alert('Error: ' + data.message);
+                    Toast.error('Error: ' + data.message);
                 }
             } catch (e) {
                 console.error('Failed to parse response:', text);
-                alert('Error: Invalid response from server. Check console for details.');
+                Toast.error('Error: Invalid response from server. Check console for details.');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error rejecting item: ' + error.message);
+            Toast.error('Error rejecting item: ' + error.message);
         });
-    }
+    });
 }
 
 // Store current item ID for modal actions
@@ -1256,4 +1260,124 @@ function displayAnalytics(analytics) {
             monthlyItemsChart.innerHTML = '<div style="padding: 40px 0; text-align: center; color: #999;">No sales data available</div>';
         }
     }
+}
+
+// Custom confirmation modal function
+function showConfirmationModal(message, onConfirm, onCancel = null) {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    `;
+
+    // Create modal content
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 400px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        animation: slideIn 0.3s ease-out;
+    `;
+
+    modal.innerHTML = `
+        <h2 style="margin: 0 0 15px 0; color: #333; font-size: 20px;">Confirm Action</h2>
+        <p style="margin: 0 0 30px 0; color: #666; font-size: 16px;">${message}</p>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button class="confirm-cancel-btn" style="
+                padding: 10px 20px;
+                border: 1px solid #ddd;
+                background: #f0f0f0;
+                color: #333;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 500;
+                transition: all 0.2s;
+            ">Cancel</button>
+            <button class="confirm-action-btn" style="
+                padding: 10px 20px;
+                border: none;
+                background: #dc3545;
+                color: white;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 500;
+                transition: all 0.2s;
+            ">Confirm</button>
+        </div>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Handle button clicks
+    const confirmBtn = modal.querySelector('.confirm-action-btn');
+    const cancelBtn = modal.querySelector('.confirm-cancel-btn');
+
+    const closeModal = () => {
+        overlay.style.animation = 'slideOut 0.2s ease-out forwards';
+        setTimeout(() => {
+            overlay.remove();
+        }, 200);
+    };
+
+    confirmBtn.addEventListener('click', () => {
+        closeModal();
+        if (onConfirm) onConfirm();
+    });
+
+    confirmBtn.addEventListener('mouseover', () => {
+        confirmBtn.style.background = '#c82333';
+    });
+
+    confirmBtn.addEventListener('mouseout', () => {
+        confirmBtn.style.background = '#dc3545';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        closeModal();
+        if (onCancel) onCancel();
+    });
+
+    cancelBtn.addEventListener('mouseover', () => {
+        cancelBtn.style.background = '#e0e0e0';
+    });
+
+    cancelBtn.addEventListener('mouseout', () => {
+        cancelBtn.style.background = '#f0f0f0';
+    });
+
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            closeModal();
+            if (onCancel) onCancel();
+        }
+    });
 }
