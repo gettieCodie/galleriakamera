@@ -204,6 +204,58 @@ try {
 <script>
 let deleteListingId = null;
 
+// Simple Toast notification function
+function showToast(message, type = 'success') {
+    // Create toast container if it doesn't exist
+    let container = document.getElementById('simple-toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'simple-toast-container';
+        container.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        `;
+        document.body.appendChild(container);
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: white;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        min-width: 280px;
+        max-width: 350px;
+    `;
+
+    if (type === 'success') {
+        toast.style.backgroundColor = '#10b981';
+        toast.textContent = '✓ ' + message;
+    } else if (type === 'error') {
+        toast.style.backgroundColor = '#ef4444';
+        toast.textContent = '✕ ' + message;
+    } else {
+        toast.style.backgroundColor = '#3b82f6';
+        toast.textContent = 'ℹ ' + message;
+    }
+
+    container.appendChild(toast);
+
+    // Remove after 4 seconds
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+}
+
 // editListing function - simply redirect to edit page
 function editListing(listingId) {
     window.location.href = 'edit_listing_simple.php?id=' + listingId;
@@ -240,16 +292,18 @@ function confirmDelete() {
     })
     .then(data => {
         if (data.success) {
-            alert('Listing deleted successfully!');
-            location.reload();
+            showToast('Listing deleted successfully!', 'success');
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
         } else {
-            alert('Error deleting listing: ' + (data.message || 'Unknown error'));
+            showToast('Error deleting listing: ' + (data.message || 'Unknown error'), 'error');
             console.log('Delete response:', data);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error: ' + error.message);
+        showToast('Error: ' + error.message, 'error');
     });
     
     closeDeleteModal();
