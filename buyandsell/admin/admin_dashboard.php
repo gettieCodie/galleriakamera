@@ -107,14 +107,11 @@ try {
         }
     }
     
-    // Total Profit (Selling Price - Original Price for all completed orders)
-    // Calculates profit margin on each item sold (selling_price - asking_price which is what we paid)
-    // Use LOWER for case-insensitive comparison
-    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.selling_price)) as profit
+    // Total Profit (Selling Price - Cost Price for all sold items)
+    // Calculates profit margin on each item sold (oi.Price - cost_price which is what we paid)
+    $sql = "SELECT COALESCE(SUM(oi.Quantity * (oi.Price - COALESCE(l.cost_price, 0))), 0) as profit
             FROM orderitems oi
-            JOIN listings l ON oi.ListingID = l.listing_id
-            JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE LOWER(o.Status) = 'completed'";
+            LEFT JOIN listings l ON oi.ListingID = l.listing_id";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
@@ -126,12 +123,11 @@ try {
     }
     
     // Profit trend (compare with yesterday)
-    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.selling_price)) as profit
+    $sql = "SELECT COALESCE(SUM(oi.Quantity * (oi.Price - COALESCE(l.cost_price, 0))), 0) as profit
             FROM orderitems oi
-            JOIN listings l ON oi.ListingID = l.listing_id
-            JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE LOWER(o.Status) = 'completed'
-            AND DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+            LEFT JOIN listings l ON oi.ListingID = l.listing_id
+            INNER JOIN orders o ON oi.OrderID = o.OrderID
+            WHERE DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
