@@ -1,7 +1,7 @@
 .wishlist-wrapper {
     min-height: 100vh;
     padding: 2rem 1rem;
-    background: #f5f7fa;
+    background: #ffffff;
     max-width: 1280px;      /* Maximum width */
     margin: 60px auto 0;
     padding: 0 20px;        /* Optional padding for smaller screens */
@@ -19,7 +19,7 @@
 .cart-wrapper {
     min-height: 100vh;
     padding: 2rem 1rem;
-    background: #f5f7fa;
+    background: #ffffff;
     max-width: 1280px;      /* Maximum width */
     margin: 60px auto 0;
     padding: 0 20px;        /* Optional padding for smaller screens */
