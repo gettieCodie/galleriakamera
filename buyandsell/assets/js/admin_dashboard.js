@@ -215,6 +215,12 @@ function updateOrderStatus(orderId, action) {
 // View More functionality
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('view-more')) {
+        // Check if this is a transaction view details button (has onclick with viewTransactionDetails)
+        if (e.target.getAttribute('onclick') && e.target.getAttribute('onclick').includes('viewTransactionDetails')) {
+            // Let the onclick handler take care of it
+            return;
+        }
+        
         const itemId = e.target.getAttribute('data-id');
         showItemDetails(itemId);
     }
@@ -222,8 +228,7 @@ document.addEventListener('click', function(e) {
 
 function showItemDetails(itemId) {
     // In real implementation, this would show a modal or expand the row
-    alert(`Showing details for item ${itemId}`);
-    // You can implement a modal or expandable row here
+    // Alert removed - let inline onclick handlers execute instead
 }
 
 // Approve item from modal
