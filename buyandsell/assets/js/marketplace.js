@@ -1,23 +1,88 @@
 const productList = document.getElementById("product-list");
 const noListings = document.getElementById("no-listings");
 
+// Simple Toast notification function
+function showToast(message, type = 'success') {
+    // Create toast container if it doesn't exist
+    let container = document.getElementById('simple-toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'simple-toast-container';
+        container.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        `;
+        document.body.appendChild(container);
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: white;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        min-width: 280px;
+        max-width: 350px;
+    `;
+
+    if (type === 'success') {
+        toast.style.backgroundColor = '#10b981';
+        toast.textContent = '✓ ' + message;
+    } else if (type === 'error') {
+        toast.style.backgroundColor = '#ef4444';
+        toast.textContent = '✕ ' + message;
+    } else {
+        toast.style.backgroundColor = '#3b82f6';
+        toast.textContent = 'ℹ ' + message;
+    }
+
+    container.appendChild(toast);
+
+    // Remove after 4 seconds
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease-in forwards';
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 4000);
+}
+
 window.addToWishlist = async function(listingId) {
     const formData = new FormData();
     formData.append("listing_id", listingId);
 
-    const res = await fetch("core/add_wishlist.php", {
-        method: "POST",
-        body: formData,
-        credentials: "same-origin"
-    });
+    try {
+        const res = await fetch("core/add_wishlist.php", {
+            method: "POST",
+            body: formData,
+            credentials: "same-origin"
+        });
 
-    const data = await res.json();
+        const data = await res.json();
+        console.log("Add to wishlist response:", data);
 
-    if (data.status === "ok") {
-        updateWishlistBadge();
-        Toast.success("Added to wishlist! ❤️");
-    } else {
-        Toast.error(data.msg || "Failed to add to wishlist");
+        if (data.status === "ok") {
+            updateWishlistBadge();
+            showToast("Added to wishlist! ❤️", 'success');
+        } else if (data.status === "error") {
+            if (data.msg === "not_logged_in") {
+                showToast("Please log in to add to wishlist", 'error');
+            } else {
+                showToast(data.msg || "Failed to add to wishlist", 'error');
+            }
+        }
+    } catch (error) {
+        console.error("Error adding to wishlist:", error);
+        showToast("Error adding to wishlist", 'error');
     }
 }
 
@@ -25,19 +90,29 @@ window.addToCart = async function(listingId) {
     const formData = new FormData();
     formData.append("listing_id", listingId);
 
-    const res = await fetch("core/add_cart.php", {
-        method: "POST",
-        body: formData,
-        credentials: "same-origin"
-    });
+    try {
+        const res = await fetch("core/add_cart.php", {
+            method: "POST",
+            body: formData,
+            credentials: "same-origin"
+        });
 
-    const data = await res.json();
+        const data = await res.json();
+        console.log("Add to cart response:", data);
 
-    if (data.status === "ok") {
-        updateCartBadge();
-        Toast.success("Added to cart! 🛒");
-    } else {
-        Toast.error(data.msg || "Failed to add to cart");
+        if (data.status === "ok") {
+            updateCartBadge();
+            showToast("Added to cart! 🛒", 'success');
+        } else if (data.status === "error") {
+            if (data.msg === "not_logged_in") {
+                showToast("Please log in to add to cart", 'error');
+            } else {
+                showToast(data.msg || "Failed to add to cart", 'error');
+            }
+        }
+    } catch (error) {
+        console.error("Error adding to cart:", error);
+        showToast("Error adding to cart", 'error');
     }
 }
 
