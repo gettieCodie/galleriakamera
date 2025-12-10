@@ -107,12 +107,13 @@ try {
     }
     
     // Total Profit (Selling Price - Original Price for all completed orders)
-    // Calculates profit margin on each item sold
-    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.original_price)) as profit
+    // Calculates profit margin on each item sold (selling_price - asking_price which is what we paid)
+    // Use LOWER for case-insensitive comparison
+    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.selling_price)) as profit
             FROM orderitems oi
             JOIN listings l ON oi.ListingID = l.listing_id
             JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE o.Status = 'completed' OR o.Status = 'Completed'";
+            WHERE LOWER(o.Status) = 'completed'";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
@@ -120,11 +121,11 @@ try {
     }
     
     // Profit trend (compare with yesterday)
-    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.original_price)) as profit
+    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.selling_price)) as profit
             FROM orderitems oi
             JOIN listings l ON oi.ListingID = l.listing_id
             JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE (o.Status = 'completed' OR o.Status = 'Completed')
+            WHERE LOWER(o.Status) = 'completed'
             AND DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
     $result = $conn->query($sql);
     if ($result) {
