@@ -1020,6 +1020,14 @@
     white-space: nowrap;
 }
 
+.admin-footer-brand-name {
+    min-width: 80px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff !important;
+    white-space: nowrap;
+}
+
 .brand-bar {
     flex: 1;
     height: 24px;

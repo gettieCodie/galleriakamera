@@ -5,7 +5,7 @@
             <!-- Left Section: Brand -->
             <div class="footer-col admin-footer-brand">
                 <div class="footer-brand-logo">
-                    <h3 class="brand-name">Galleria Kamera Admin</h3>
+                    <h3 class="admin-footer-brand-name">Galleria Kamera Admin</h3>
                     <p class="brand-tagline">Management Portal</p>
                 </div>
                 <p class="brand-description">
