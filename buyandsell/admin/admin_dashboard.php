@@ -107,12 +107,14 @@ try {
         }
     }
     
-    // Total Profit - (Selling Price - Cost Price) for all sold items
-    $sql = "SELECT 
-                COALESCE(SUM(oi.Quantity * (oi.Price - COALESCE(l.cost_price, 0))), 0) as profit
+    // Total Profit (Selling Price - Original Price for all completed orders)
+    // Calculates profit margin on each item sold (selling_price - asking_price which is what we paid)
+    // Use LOWER for case-insensitive comparison
+    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.selling_price)) as profit
             FROM orderitems oi
-            LEFT JOIN listings l ON oi.ListingID = l.listing_id";
-    
+            JOIN listings l ON oi.ListingID = l.listing_id
+            JOIN orders o ON oi.OrderID = o.OrderID
+            WHERE LOWER(o.Status) = 'completed'";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
@@ -124,13 +126,12 @@ try {
     }
     
     // Profit trend (compare with yesterday)
-    $sql = "SELECT 
-                COALESCE(SUM(oi.Quantity * (oi.Price - COALESCE(l.cost_price, 0))), 0) as profit
+    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.selling_price)) as profit
             FROM orderitems oi
-            LEFT JOIN listings l ON oi.ListingID = l.listing_id
-            INNER JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
-    
+            JOIN listings l ON oi.ListingID = l.listing_id
+            JOIN orders o ON oi.OrderID = o.OrderID
+            WHERE LOWER(o.Status) = 'completed'
+            AND DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
@@ -1154,11 +1155,9 @@ function displayOrders(orders) {
             <div class="col"><strong>#${order.order_id}</strong></div>
             <div class="col">
                 <div>${order.customer_name}</div>
-                <small>${order.customer_email}</small>
             </div>
             <div class="col">
-                <div>${order.item_count} item(s)</div>
-                <small>${order.total_items} camera(s)</small>
+                <div>${order.total_items} item(s)</div>
             </div>
             <div class="col price"><strong>₱${parseFloat(order.total).toLocaleString('en-PH', {minimumFractionDigits: 2})}</strong></div>
             <div class="col">
