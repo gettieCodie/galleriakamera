@@ -239,32 +239,16 @@ function confirmDelete() {
     })
     .then(data => {
         if (data.success) {
-            // Show success notification
-            const toast = document.createElement('div');
-            toast.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #27ae60; color: white; padding: 16px 20px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 9999; font-weight: 600; display: flex; align-items: center; gap: 10px;';
-            toast.innerHTML = '<i class="fas fa-check-circle"></i> Listing deleted successfully!';
-            document.body.appendChild(toast);
-            
-            // Reload after 1.5 seconds
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
+            alert('Listing deleted successfully!');
+            location.reload();
         } else {
-            // Show error notification
-            const toast = document.createElement('div');
-            toast.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #e74c3c; color: white; padding: 16px 20px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 9999; font-weight: 600; display: flex; align-items: center; gap: 10px;';
-            toast.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error: ' + (data.message || 'Unknown error');
-            document.body.appendChild(toast);
+            alert('Error deleting listing: ' + (data.message || 'Unknown error'));
             console.log('Delete response:', data);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        // Show error notification
-        const toast = document.createElement('div');
-        toast.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #e74c3c; color: white; padding: 16px 20px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 9999; font-weight: 600; display: flex; align-items: center; gap: 10px;';
-        toast.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error: ' + error.message;
-        document.body.appendChild(toast);
+        alert('Error: ' + error.message);
     });
     
     closeDeleteModal();
@@ -279,4 +263,4 @@ window.onclick = function(event) {
 }
 </script>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/admin_footer.php'; ?>

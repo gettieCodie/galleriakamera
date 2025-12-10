@@ -1148,11 +1148,9 @@ function displayOrders(orders) {
             <div class="col"><strong>#${order.order_id}</strong></div>
             <div class="col">
                 <div>${order.customer_name}</div>
-                <small>${order.customer_email}</small>
             </div>
             <div class="col">
-                <div>${order.item_count} item(s)</div>
-                <small>${order.total_items} camera(s)</small>
+                <div>${order.total_items} item(s)</div>
             </div>
             <div class="col price"><strong>₱${parseFloat(order.total).toLocaleString('en-PH', {minimumFractionDigits: 2})}</strong></div>
             <div class="col">
@@ -1309,6 +1307,8 @@ document.addEventListener('click', function(e) {
 });
 
 </script>
+
+<?php include '../includes/admin_footer.php'; ?>
 
 
 
