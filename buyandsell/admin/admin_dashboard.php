@@ -1079,16 +1079,18 @@ function confirmDelete() {
     })
     .then(data => {
         if (data.success) {
-            alert('Listing deleted successfully!');
-            location.reload();
+            Toast.success('Listing deleted successfully!');
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
         } else {
-            alert('Error deleting listing: ' + (data.message || 'Unknown error'));
+            Toast.error('Error deleting listing: ' + (data.message || 'Unknown error'));
             console.log('Delete response:', data);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error: ' + error.message);
+        Toast.error('Error: ' + error.message);
     });
     
     closeDeleteModal();
