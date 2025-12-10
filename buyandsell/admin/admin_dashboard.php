@@ -11,6 +11,7 @@ try {
         l.listing_id,
         l.brand,
         l.model,
+        COALESCE(l.cost_price, 0) as cost_price,
         l.selling_price,
         l.original_price,
         l.created_at,
@@ -81,8 +82,8 @@ try {
         $pending_orders_trend = $kpi_pending_orders - $yesterday_pending_orders;
     }
     
-    // Total Revenue (sum of all completed orders)
-    $sql = "SELECT SUM(TotalAmount) as total FROM orders WHERE Status = 'completed'";
+    // Total Revenue (sum of price of all sold items from orderitems)
+    $sql = "SELECT SUM(oi.Price * oi.Quantity) as total FROM orderitems oi";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
@@ -90,7 +91,7 @@ try {
     }
     
     // Revenue trend (compare with yesterday)
-    $sql = "SELECT SUM(TotalAmount) as total FROM orders WHERE Status = 'completed' AND DATE(OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    $sql = "SELECT SUM(oi.Price * oi.Quantity) as total FROM orderitems oi INNER JOIN orders o ON oi.OrderID = o.OrderID WHERE DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
@@ -106,39 +107,45 @@ try {
         }
     }
     
-    // Total Profit (Selling Price - Original Price for all completed orders)
-    // Calculates profit margin on each item sold
-    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.original_price)) as profit
+    // Total Profit - (Selling Price - Cost Price) for all sold items
+    $sql = "SELECT 
+                COALESCE(SUM(oi.Quantity * (oi.Price - COALESCE(l.cost_price, 0))), 0) as profit
             FROM orderitems oi
-            JOIN listings l ON oi.ListingID = l.listing_id
-            JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE o.Status = 'completed' OR o.Status = 'Completed'";
+            LEFT JOIN listings l ON oi.ListingID = l.listing_id";
+    
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
-        $kpi_total_profit = $row['profit'] ? (float)$row['profit'] : 0;
+        $kpi_total_profit = (float)$row['profit'];
+        error_log("Profit calculation - Total: " . $kpi_total_profit . ", Details: " . json_encode($row));
+    } else {
+        error_log("Profit query error: " . $conn->error);
+        $kpi_total_profit = 0;
     }
     
     // Profit trend (compare with yesterday)
-    $sql = "SELECT SUM(oi.Quantity * (oi.Price - l.original_price)) as profit
+    $sql = "SELECT 
+                COALESCE(SUM(oi.Quantity * (oi.Price - COALESCE(l.cost_price, 0))), 0) as profit
             FROM orderitems oi
-            JOIN listings l ON oi.ListingID = l.listing_id
-            JOIN orders o ON oi.OrderID = o.OrderID
-            WHERE (o.Status = 'completed' OR o.Status = 'Completed')
-            AND DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+            LEFT JOIN listings l ON oi.ListingID = l.listing_id
+            INNER JOIN orders o ON oi.OrderID = o.OrderID
+            WHERE DATE(o.OrderDate) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    
     $result = $conn->query($sql);
     if ($result) {
         $row = $result->fetch_assoc();
-        $yesterday_profit = $row['profit'] ? (float)$row['profit'] : 0;
-        // Calculate trend percentage
+        $yesterday_profit = (float)$row['profit'];
+        error_log("Yesterday profit: " . $yesterday_profit);
+        
         if ($yesterday_profit > 0) {
             $profit_trend_percent = (($kpi_total_profit - $yesterday_profit) / $yesterday_profit) * 100;
         } else if ($kpi_total_profit > 0) {
-            // If there was profit today but not yesterday, show positive trend
             $profit_trend_percent = 100;
         } else {
             $profit_trend_percent = 0;
         }
+    } else {
+        error_log("Yesterday profit query error: " . $conn->error);
     }
 } catch (Exception $e) {
     error_log("Error fetching KPI metrics: " . $e->getMessage());
@@ -436,6 +443,7 @@ try {
                             <div class="col">Camera</div>
                             <div class="col">Status</div>
                             <div class="col">Days Listed</div>
+                            <div class="col">Cost</div>
                             <div class="col">Price</div>
                             <div class="col">Original</div>
                             <div class="col">Actions</div>
@@ -453,6 +461,7 @@ try {
                                         </div>
                                         <div class="col"><span class="status in-stock">Listed</span></div>
                                         <div class="col"><?php echo (int)$item['days_listed']; ?> day<?php echo $item['days_listed'] !== '1' ? 's' : ''; ?></div>
+                                        <div class="col">₱<?php echo number_format((float)$item['cost_price'], 2); ?></div>
                                         <div class="col price">₱<?php echo number_format((float)$item['selling_price'], 2); ?></div>
                                         <div class="col">₱<?php echo number_format((float)$item['original_price'], 2); ?></div>
                                         <div class="col">
@@ -462,10 +471,8 @@ try {
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <div class="table-row">
-                                    <div class="col" style="grid-column: 1/-1; text-align: center; padding: 30px; color: #999;">
-                                        <p>No listings yet. Add a new listing to get started.</p>
-                                    </div>
+                                <div class="empty-message">
+                                    <p>No listings yet. Add a new listing to get started.</p>
                                 </div>
                             <?php endif; ?>
                         </div>

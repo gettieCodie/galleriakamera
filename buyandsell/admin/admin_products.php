@@ -10,6 +10,7 @@ try {
         l.listing_id,
         l.brand,
         l.model,
+        COALESCE(l.cost_price, 0) as cost_price,
         l.selling_price,
         l.original_price,
         l.created_at,
@@ -55,6 +56,7 @@ try {
                     <div class="col">Camera</div>
                     <div class="col">Status</div>
                     <div class="col">Days Listed</div>
+                    <div class="col">Cost</div>
                     <div class="col">Price</div>
                     <div class="col">Original</div>
                     <div class="col">Actions</div>
@@ -72,6 +74,7 @@ try {
                                 </div>
                                 <div class="col"><span class="status in-stock">Listed</span></div>
                                 <div class="col"><?php echo (int)$item['days_listed']; ?> day<?php echo $item['days_listed'] !== '1' ? 's' : ''; ?></div>
+                                <div class="col">₱<?php echo number_format((float)$item['cost_price'], 2); ?></div>
                                 <div class="col price">₱<?php echo number_format((float)$item['selling_price'], 2); ?></div>
                                 <div class="col">₱<?php echo number_format((float)$item['original_price'], 2); ?></div>
                                 <div class="col">
@@ -81,10 +84,8 @@ try {
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <div class="table-row">
-                            <div class="col" style="grid-column: 1/-1; text-align: center; padding: 30px; color: #999;">
-                                <p>No listings yet. Add a new listing to get started.</p>
-                            </div>
+                        <div class="empty-message">
+                            <p>No listings yet. Add a new listing to get started.</p>
                         </div>
                     <?php endif; ?>
                 </div>

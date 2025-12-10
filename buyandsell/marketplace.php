@@ -15,7 +15,7 @@ include 'gk-chat-service/chat-widget.php';
 
     <!-- No Listings Notice -->
     <div id="no-listings" class="no-listings">
-      <img src="assets/images/empty-box.png" alt="No listings" class="no-listings-icon">
+      <img src="assets/images/empty.png" alt="No listings" class="no-listings-icon">
       <h2>No products listed yet</h2>
       <p>Products will appear here once an admin posts a listing.</p>
     </div>

@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $megapixels = intval($_POST['megapixels'] ?? 0);
     $sensor = trim($_POST['sensor'] ?? '');
     $condition = trim($_POST['condition'] ?? '');
+    $cost_price = floatval($_POST['cost_price'] ?? 0);
     $original_price = floatval($_POST['original_price'] ?? 0);
     $selling_price = floatval($_POST['selling_price'] ?? 0);
 
@@ -51,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($megapixels <= 0) $errors[] = "Valid megapixels value is required";
     if (empty($sensor)) $errors[] = "Sensor type is required";
     if (!in_array($condition, ['New', 'Used'])) $errors[] = "Invalid condition value";
+    if ($cost_price <= 0) $errors[] = "Valid cost price is required";
     if ($original_price <= 0) $errors[] = "Valid original price is required";
     if ($selling_price <= 0) $errors[] = "Valid selling price is required";
 
@@ -79,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Insert into listings table
         $stmt = $pdo->prepare("
-            INSERT INTO listings (brand, model, description, megapixels, sensor, `condition`, original_price, selling_price) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO listings (brand, model, description, megapixels, sensor, `condition`, cost_price, original_price, selling_price) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         $stmt->execute([
-            $brand, $model, $description, $megapixels, $sensor, $condition, $original_price, $selling_price
+            $brand, $model, $description, $megapixels, $sensor, $condition, $cost_price, $original_price, $selling_price
         ]);
 
         $listing_id = $pdo->lastInsertId();

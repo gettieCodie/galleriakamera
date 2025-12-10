@@ -16,6 +16,7 @@ $description = $_POST['description'] ?? '';
 $megapixels = $_POST['megapixels'] ?? '';
 $sensor = $_POST['sensor'] ?? '';
 $condition = $_POST['condition'] ?? '';
+$cost_price = (float)($_POST['cost_price'] ?? 0);
 $original_price = (float)($_POST['original_price'] ?? 0);
 $selling_price = (float)($_POST['selling_price'] ?? 0);
 
@@ -25,7 +26,7 @@ if (!$listing_id || !$brand || !$model) {
 }
 
 try {
-    // Simple parameterized query - 9 question marks, 9 values
+    // Simple parameterized query - 10 question marks, 10 values
     // Note: 'condition' is escaped with backticks as it's a reserved keyword
     $sql = "UPDATE listings SET 
             brand = ?, 
@@ -34,6 +35,7 @@ try {
             megapixels = ?, 
             sensor = ?, 
             `condition` = ?, 
+            cost_price = ?, 
             original_price = ?, 
             selling_price = ? 
             WHERE listing_id = ?";
@@ -43,15 +45,16 @@ try {
         die(json_encode(['status' => 'error', 'message' => 'DB error: ' . $conn->error]));
     }
     
-    // 6 strings + 2 decimals + 1 int = ssssssddi (9 types for 9 params)
+    // 6 strings + 3 decimals + 1 int = ssssssddi (10 types for 10 params)
     $success = $stmt->bind_param(
-        'ssssssddi',
+        'ssssssdddi',
         $brand,
         $model,
         $description,
         $megapixels,
         $sensor,
         $condition,
+        $cost_price,
         $original_price,
         $selling_price,
         $listing_id

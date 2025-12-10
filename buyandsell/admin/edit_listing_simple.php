@@ -216,6 +216,10 @@ try {
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="cost_price">Cost Price</label>
+                    <input type="number" id="cost_price" name="cost_price" value="<?php echo htmlspecialchars($listing['cost_price'] ?? ''); ?>" step="0.01">
+                </div>
+                <div class="form-group">
                     <label for="original_price">Original Price</label>
                     <input type="number" id="original_price" name="original_price" value="<?php echo htmlspecialchars($listing['original_price'] ?? ''); ?>" step="0.01">
                 </div>

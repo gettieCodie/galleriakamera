@@ -73,13 +73,23 @@
         <h3 class="listing-section-title">Pricing</h3>
         <div class="listing-form-grid-2">
           <div class="listing-form-group">
+            <label for="cost_price" class="listing-label">Cost Price <span class="listing-required">*</span></label>
+            <div class="listing-input-prefix">
+              <span class="listing-currency">₱</span>
+              <input type="number" id="cost_price" name="cost_price" class="listing-input" placeholder="0.00" min="0.01" step="0.01" required>
+            </div>
+          </div>
+
+          <div class="listing-form-group">
             <label for="original_price" class="listing-label">Original Price <span class="listing-required">*</span></label>
             <div class="listing-input-prefix">
               <span class="listing-currency">₱</span>
               <input type="number" id="original_price" name="original_price" class="listing-input" placeholder="0.00" min="0.01" step="0.01" required>
             </div>
           </div>
+        </div>
 
+        <div class="listing-form-grid-2">
           <div class="listing-form-group">
             <label for="selling_price" class="listing-label">Selling Price <span class="listing-required">*</span></label>
             <div class="listing-input-prefix">
